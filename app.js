@@ -5,13 +5,17 @@ import dotenv from "dotenv";
 import cors from "cors";
 import globalErrorHandler from "./src/utils/errorHandler.js";
 import config from "./src/config/index.js";
+import {signup} from "./src/controllers/authcontrollers.js"
 
 dotenv.config({ path: "./configenv.env" });
 
 const mongoURI = config.MONGODB_CONNECTION_URL;
 
 mongoose
-  .connect(mongoURI)
+  .connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(console.log("Database connection is established"))
   .catch((err) => console.log(err.message));
 const port = config.PORT;
@@ -23,7 +27,7 @@ app.use(express.json());
 app.use(cors());
 
 // Routes
-// app.use("");
+ app.post("/signup", signup);
 
 app.use(
   cors({
