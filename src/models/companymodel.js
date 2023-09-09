@@ -1,7 +1,7 @@
 import  {Schema, model} from 'mongoose';
 //import { validateEmail, validatePassword } from '../utils/validation';
 
-const userSchema = new Schema({
+const companySchema = new Schema({
   companyName: {
     type: String,
     required: [true, 'Please provide a Username'],
@@ -16,17 +16,41 @@ const userSchema = new Schema({
     lowercase: true,
     unique: true,
   },
-  contactPhone: {
+  isEmailConfirmed: {
+    type: Boolean,
+    default: false,
+  },
+  phoneNumber: {
     type: String,
     required: [true, 'Please provide a contact phone number'],
   },
-  officialAddress: {
+  officeAddress: {
     type: String,
     required: [true, 'Please confirm your official address'],
   },
+  cac: {
+    type: String,
+  },
+  industry: {
+    type: String,
+    required: [true, 'Please provide a valid industry'],
+  },
+  password: {
+    type: String,
+    required: [true, 'Please provide a password'],
+  },
+  website: {
+    type: String,
+  },
+  yourBio: {
+    type: String,
+  },
+  alternativeEmailAddress: {
+    type: String,
+  }
 });
 
-export const User = model('User', userSchema);
+export const Company = model('Company', companySchema);
 
 
 

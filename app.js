@@ -5,7 +5,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import globalErrorHandler from "./src/utils/errorHandler.js";
 import config from "./src/config/index.js";
-import {signup} from "./src/controllers/authcontrollers.js"
+
+import authRouter from "./src/routers/auths.js";
 
 dotenv.config({ path: "./configenv.env" });
 
@@ -26,8 +27,7 @@ app.use(morgan("tiny"));
 app.use(express.json());
 app.use(cors());
 
-// Routes
- app.post("/signup", signup);
+ app.use('/', authRouter);
 
 app.use(
   cors({
