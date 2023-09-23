@@ -31,6 +31,10 @@ const productSchema = new Schema({
     },
     default: 'unassigned'
   },
+  assignedTo : [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  }],
 });
 
 export const Product = model('Product', productSchema);
