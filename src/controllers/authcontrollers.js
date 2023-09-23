@@ -211,7 +211,7 @@ export const adminLogin = async (req, res) => {
               });
             }
 
-          return res.status(200).json({  // 200 OK status code indicates a successful request.
+          return res.status(200).json({ 
             status: 'success',
             data: { admin },
           });
@@ -223,12 +223,12 @@ export const adminLogin = async (req, res) => {
 
     res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 }); 
 
-    return res.status(401).json({  // 401 Unauthorized status code indicates that the request lacks valid authentication credentials.
+    return res.status(401).json({  
       status: 'fail',
       message: 'Invalid email/password',
     });
   } catch (error) {
-    res.status(500).json({  // 500 Internal Server Error status code indicates a server-side error.
+    res.status(500).json({  
       status: 'fail',
       message: error.message,
     });
@@ -241,7 +241,7 @@ export const companySignup = async (req, res) => {
     const validate = companyRegister.validate(req.body, options);
     if (validate.error) {
       const message = validate.error.details.map((detail) => detail.message).join(',');
-      return res.status(400).json({  // 400 Bad Request status code indicates a client-side validation error.
+      return res.status(400).json({ 
         status: 'fail',
         message,
       });
@@ -250,7 +250,7 @@ export const companySignup = async (req, res) => {
     // Check if company exists
     const existingCompany = await Company.findOne({ officialEmail: req.body.officialEmail });
     if (existingCompany) {
-      return res.status(409).json({  // 409 Conflict status code indicates that the resource (company) already exists.
+      return res.status(409).json({
         status: 'fail',
         message: 'Company with that email already exists',
       });
@@ -259,7 +259,7 @@ export const companySignup = async (req, res) => {
     // Check if password and passwordConfirm are the same
     const passwordCheck = passwordMatch(req.body.password, req.body.passwordConfirm);
     if (!passwordCheck) {
-      return res.status(400).json({  // 400 Bad Request status code indicates a client-side validation error.
+      return res.status(400).json({
         status: 'fail',
         message: 'Passwords do not match',
       });
@@ -302,7 +302,7 @@ export const companySignup = async (req, res) => {
          });
        }
   } catch (error) {
-    res.status(500).json({  // 500 Internal Server Error status code indicates a server-side error.
+    res.status(500).json({ 
       status: 'fail',
       message: error.message,
     });
@@ -312,16 +312,6 @@ export const companySignup = async (req, res) => {
 export const companyLogin = async (req, res) => {
   try {
     const { officialEmail, password } = req.body;
-
-    // // Validate company inputs
-    // const validate = CompanyLogin.validate(req.body, options);
-    // if (validate.error) {
-    //   const message = validate.error.details.map((detail) => detail.message).join(',');
-    //   return res.status(400).json({  // 400 Bad Request status code indicates a client-side validation error.
-    //     status: 'fail',
-    //     message,
-    //   });
-    // }
 
     // Check if company exists
     const company = await Company.findOne({ officialEmail });
@@ -349,15 +339,12 @@ export const companyLogin = async (req, res) => {
             res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 });
               console.log(token)
 
-
         return res.status(200).json({ 
           status: 'success',
           data: { company },
         });
       }
   
-   
-
     return res.status(401).json({ 
       status: 'fail',
       message: 'Invalid email/password',
@@ -377,7 +364,7 @@ export const lawyerSignup = async (req, res) => {
     const validate = lawyerRegister.validate(req.body, options);
     if (validate.error) {
       const message = validate.error.details.map((detail) => detail.message).join(',');
-      return res.status(400).json({  // 400 Bad Request status code indicates a client-side validation error.
+      return res.status(400).json({ 
         status: 'fail',
         message,
       });
@@ -386,7 +373,7 @@ export const lawyerSignup = async (req, res) => {
     // Check if lawyer exists
     const existingLawyer = await Lawyer.findOne({ officialEmail: req.body.officialEmail });
     if (existingLawyer) {
-      return res.status(409).json({  // 409 Conflict status code indicates a conflict with an existing resource (lawyer).
+      return res.status(409).json({
         status: 'fail',
         message: 'Lawyer with that email already exists',
       });
@@ -395,12 +382,11 @@ export const lawyerSignup = async (req, res) => {
     // Check if password and passwordConfirm are the same
     const passwordCheck = passwordMatch(req.body.password, req.body.passwordConfirm);
     if (!passwordCheck) {
-      return res.status(400).json({  // 400 Bad Request status code indicates a client-side validation error.
+      return res.status(400).json({ 
         status: 'fail',
         message: 'Passwords do not match',
       });
     }
-
     // Hash password and create new lawyer
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const newLawyer = new Lawyer({
@@ -429,14 +415,13 @@ export const lawyerSignup = async (req, res) => {
            },
           });
         } else {
-          // Handle email sending error
           res.status(500).json({
             status: 'failure',
             message: 'Confirmation email not sent. Visit Contact center for Help',
           });
         }
   } catch (error) {
-    return res.status(500).json({  // 500 Internal Server Error status code indicates a server-side error.
+    return res.status(500).json({ 
       status: 'fail',
       message: 'Internal server error',
     });
@@ -451,7 +436,7 @@ export const lawyerLogin = async (req, res) => {
     const lawyer = await Lawyer.findOne({ officialEmail });
 
     if (!lawyer) {
-      return res.status(401).json({  // Use 401 Unauthorized for invalid login credentials.
+      return res.status(401).json({ 
         status: 'fail',
         message: 'You are not a registered lawyer here',
       });
@@ -463,32 +448,29 @@ export const lawyerLogin = async (req, res) => {
       if (passwordCheck) {
            // Check if the lawyer's email is confirmed
             if (!lawyer.isEmailConfirmed) {
-              return res.status(403).json({  // Use 403 Forbidden when access is denied.
+              return res.status(403).json({ 
                 status: 'fail',
                 message: 'Please confirm your email address to log in.',
               });
             }
 
-        return res.status(200).json({  // Use 200 OK for a successful login.
+        return res.status(200).json({ 
           status: 'success',
           data: { lawyer },
         });
       }
 
-   
     // Generate token and set cookie with token to be sent to the client and kept for 30 days
     const { _id } = lawyer;
     const token = generateToken(_id);
     res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 });
 
-  
-
-    return res.status(401).json({  // Use 401 Unauthorized for invalid login credentials.
+    return res.status(401).json({ 
       status: 'fail',
       message: 'Invalid email/password',
     });
   } catch (error) {
-    return res.status(500).json({  // Use 500 Internal Server Error for server-side errors.
+    return res.status(500).json({ 
       status: 'fail',
       message: 'Internal server error',
     });
