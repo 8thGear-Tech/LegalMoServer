@@ -32,6 +32,12 @@ const adminSchema = new Schema({
   },
    jobs: {
     type: [String],
+  },
+  passwordToken: {
+    type: String
+  },
+  resetPasswordExpires: {
+     type:  Date
   }
 });
 

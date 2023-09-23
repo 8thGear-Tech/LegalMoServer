@@ -49,6 +49,12 @@ const lawyerSchema = new Schema({
   },
   alternativeEmailAddress: {
     type: String,
+  },
+  passwordToken: {
+    type: String,
+  },
+  resetPasswordExpires: {
+     type: Date,
   }
 });
 
