@@ -590,8 +590,8 @@ export const resetPasswordToken = async (req, res) => {
       if (user) {
         validToken = true;
         userType = userModel.modelName.toLowerCase();
-        validUser = user; // Store the valid user
-        break; // Exit the loop if a valid user is found
+        validUser = user; 
+        break; 
       }
     }
 
@@ -599,8 +599,13 @@ export const resetPasswordToken = async (req, res) => {
       return res.status(400).json({ message: 'Invalid or expired token' });
     }
 
-    res.status(200)
-      .json({ message: `Token is valid for ${userType}. You can proceed to reset your password` });
+    // Include the token in the reset password URL
+    const resetPasswordUrl = `http://localhost:5005/reset-password?token=${token}`;
+
+    res.status(200).json(
+      { 
+        message: `Token is valid for ${userType}. Follow ${resetPasswordUrl} to reset your password` 
+      });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
@@ -608,6 +613,7 @@ export const resetPasswordToken = async (req, res) => {
 };
 export const resetPassword = async (req, res) => {
   try {
+    const { token } = req.query;
     const { officialEmail, password, passwordConfirm } = req.body;
 
     const userModels = [Admin, Company, Lawyer];
@@ -621,15 +627,8 @@ export const resetPassword = async (req, res) => {
         message,
       });
     }
-    // Check if password and passwordConfirm are the same
-    const passwordCheck = passwordMatch(password, passwordConfirm);
-    if (!passwordCheck) {
-      return res.status(400).json({ 
-        status: 'fail',
-        message: 'Passwords do not match',
-      });
-    }
 
+    // Find the user based on the officialEmail
     for (const userModel of userModels) {
       user = await userModel.findOne({ officialEmail });
 
@@ -642,7 +641,17 @@ export const resetPassword = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-       // Update the user's password
+    // Check if there is a valid token and it's not expired
+    if (!user.passwordToken || user.resetPasswordExpires <= new Date()) {
+      return res.status(400).json({ message: 'Invalid or expired token' });
+    }
+
+    // Check if the token in the query parameter matches the one in the database
+    if (user.passwordToken !== token) {
+      return res.status(400).json({ message: 'Invalid token' });
+    }
+
+    // Update the user's password
     const hashPassword = await bcrypt.hash(password, 10);
     user.password = hashPassword;
 
@@ -656,6 +665,8 @@ export const resetPassword = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+
 
 
 
