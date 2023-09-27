@@ -23,18 +23,11 @@ const productSchema = new Schema({
     type: String,
     required: [true, 'Please provide a detailed description of the service you are rendering'],
   },
-  status: {
-    type: String,
-    enum : {
-      values: ['unassigned', 'pending', 'completed'],
-      message: 'status not supported'
-    },
-    default: 'unassigned'
-  },
-  assignedTo : [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  }],
-});
+}
+,
+    {
+        timestamps: true
+    }
+);
 
 export const Product = model('Product', productSchema);

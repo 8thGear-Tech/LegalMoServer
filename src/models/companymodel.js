@@ -47,7 +47,11 @@ const companySchema = new Schema({
   },
   alternativeEmailAddress: {
     type: String,
-  }
+  },
+  purchase : [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Job",
+  }],
 });
 
 export const Company = model('Company', companySchema);

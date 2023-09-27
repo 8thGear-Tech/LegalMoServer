@@ -49,7 +49,12 @@ const lawyerSchema = new Schema({
   },
   alternativeEmailAddress: {
     type: String,
-  }
+  },
+  job
+   : [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Job",
+  }],
 });
 
 export const Lawyer = model('Lawyer', lawyerSchema);

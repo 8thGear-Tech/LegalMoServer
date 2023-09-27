@@ -49,29 +49,47 @@ export const getProducts = async (req, res) => {
     }
 
 export const updateProduct = async (req, res) => {
-    try {
-        const { productName, productPrice, productDescription } = req.body;
-     
-        const updateProduct = await Product.findByIdAndUpdate(req.params.id, 
-            {$set: {productName, productPrice, productDescription}}, {new: true});
-        res.status(200).json(updateProduct);
-        if(!updateProduct) throw Error('Something went wrong while updating the product');
+    const { productName, productPrice, productDescription, adminId } = req.body;
+    const _id = adminId
+    const adminExists = await Admin.findOne({ _id });
+    if (adminExists) {
+        try {
+            const updateProduct = await Product.findByIdAndUpdate(req.params.id, 
+                  {$set: {productName, productPrice, productDescription}}, {new: true});
+              res.status(200).json(updateProduct);
+              if(!updateProduct) throw Error('Something went wrong while updating the product');
+          }
+          catch{
+              res.send(error)
+              console.log(error)
+          }   
     }
-    catch{
-        res.send(error)
-        console.log(error)
-    }       
+    else{
+        res.status(403);
+        throw new Error("You are not authorized to update this product");
+    }
+        
 }
 
 export const deleteProduct = async (req, res) => {
-    try {
-        const product = await Product.findByIdAndDelete(req.params.id);
-        if(!product) throw Error('No product found!');
-        res.status(200).json({success: true});
+    const { adminId } = req.body;
+    const _id = adminId
+    const adminExists = await Admin.findOne({ _id });
+    if (adminExists) {
+        try {
+            const product = await Product.findByIdAndDelete(req.params.id);
+            if(!product) throw Error('No product found!');
+            res.status(200).json({success: true});
+        }
+        catch(err){
+            res.status(400).json({msg: err})
+        }
     }
-    catch(err){
-        res.status(400).json({msg: err})
+    else{
+        res.status(403);
+        throw new Error("You are not authorized to delete this product");
     }
+    
 }
 
 export const singleProduct = async(req, res) => {
