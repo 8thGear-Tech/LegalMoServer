@@ -35,4 +35,4 @@ const jobSchema = new Schema({
     }
 );
 
-export const Product = model('Job', jobSchema);
+export const Job = model('Job', jobSchema);

@@ -33,4 +33,4 @@ const cartSchema = new Schema({
     }
 );
 
-export const Product = model('Cart', cartSchema);
+export const Cart = model('Cart', cartSchema);

@@ -1,5 +1,6 @@
 import  {Schema, model} from 'mongoose';
 //import { validateEmail, validatePassword } from '../utils/validation';
+import mongoose from 'mongoose';
 
 const companySchema = new Schema({
   companyName: {
