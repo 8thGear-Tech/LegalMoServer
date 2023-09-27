@@ -8,7 +8,15 @@ export const productcreation = Joi.object().keys({
     productImage:  Joi.string().required(),
 })
 
-
+export const options = {
+    abortEarly: false,
+    errors: {
+      wrap: {
+        label: "",
+      },
+    },
+  };
+  
 
 // export const productSchemas = { 
 

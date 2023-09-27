@@ -2,8 +2,18 @@ import {Product} from '../models/productmodel.js';
 import {Admin } from '../models/adminmodel.js';
 import {Company} from '../models/companymodel.js'
 import {Lawyer} from '../models/lawyermodel.js'
+import { productcreation, options } from '../utils/productvalidation.js';
+
 
 export const create = async (req, res) => {
+    const validate = productcreation.validate(req.body, options)
+        if (validate.error) {
+            const message = validate.error.details.map((detail) => detail.message).join(',');
+                return res.send({
+                    status: 'fail',
+                    message,
+                })
+          }
     const { productName,  productPrice, productDescription, adminId, productImage } = req.body;
     if (!productName || !productPrice || !productDescription || !adminId || !productImage) {
       console.log("Invalid data passed into request");
