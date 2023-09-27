@@ -2,30 +2,30 @@ import jwt from 'jsonwebtoken';
 import { adminLogin, companyLogin, lawyerLogin } from './authcontrollers.js';
 import { getOneAdmin, getOneCompany, getOneLawyer } from './usersControllers.js';
 
+const jwtsecret = process.env.JWT_SECRET;
 export const authenticateUser = async (req, res, next) => {
-    try {
-      // Get the token from the request cookies
-      const token = req.cookies.jwt;
-
-      if (!token) {
-        // Unauthorized if no token is provided
-        return res.status(401).json({ message: 'Unauthorized' });
-      }
-  
-      // Verify the token
-      const decoded = jwt.verify(token, jwtsecret);
-  
-      // Set user data in the request object for use in route handlers
-      req.userId = decoded.id;
-      req.userType = decoded.userType;
-  
-      // Proceed to the next middleware or route handler
-      next();
-    } catch (error) {
-      // Invalid or expired token
-      res.status(401).json({ message: 'Unauthorized' });
+  try {
+    const token = req.headers.authorization?.split(' ')[1] || req.cookies.token;
+    console.log("Token:", token);
+    
+    if (!token) {
+      console.log("No Token");
+      return res.status(401).json({ message: 'Unauthorized' });
     }
-  };
+
+    const decoded = jwt.verify(token, jwtsecret);
+    console.log("Decoded Token:", decoded);
+    
+    req.userId = decoded.id;
+    req.userType = decoded.userType;
+
+    next();
+  } catch (error) {
+    console.error("Authentication Error:", error);
+    res.status(401).json({ message: 'You are not authorized' });
+  }
+};
+
   export const authorizeUser = (userTypes) => {
     return (req, res, next) => {
       if (!userTypes.includes(req.userType)) {

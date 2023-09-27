@@ -185,17 +185,19 @@ export const adminLogin = async (req, res) => {
               });
             }
 
+              // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
+              const { _id } = admin;
+              const token = generateToken(_id);
+
+              console.log(token)
+              res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 }); 
+
           return res.status(200).json({ 
             status: 'success',
             data: { admin },
           });
         }
 
-    // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
-    const { _id } = admin;
-    const token = generateToken(_id);
-
-    res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 }); 
 
     return res.status(401).json({  
       status: 'fail',
@@ -311,7 +313,7 @@ export const companyLogin = async (req, res) => {
             const { _id } = company;
             const token = generateToken(_id);
             res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 });
-              console.log(token)
+            console.log(token)
 
         return res.status(200).json({ 
           status: 'success',
@@ -428,16 +430,17 @@ export const lawyerLogin = async (req, res) => {
               });
             }
 
+            // Generate token and set cookie with token to be sent to the client and kept for 30 days
+            const { _id } = lawyer;
+            const token = generateToken(_id);
+            console.log(token)
+            res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 });
+
         return res.status(200).json({ 
           status: 'success',
           data: { lawyer },
         });
       }
-
-    // Generate token and set cookie with token to be sent to the client and kept for 30 days
-    const { _id } = lawyer;
-    const token = generateToken(_id);
-    res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 });
 
     return res.status(401).json({ 
       status: 'fail',
@@ -489,59 +492,6 @@ export const confirmEmail = async (req, res) => {
     res.status(400).send('Invalid or expired token.');
   }
 };
-
-//  export const forgotPassword = async (req, res) => {
-//   try {
-//     const { officialEmail } = req.body;
-//     const { userType } = req.params;
-
-//         let userModel;
-
-//         // Determine the user model based on the userType parameter
-//         switch (userType) {
-//           case 'admin':
-//             userModel = Admin;
-//             break;
-//           case 'company':
-//             userModel = Company;
-//             break;
-//           case 'lawyer':
-//             userModel = Lawyer;
-//             break;
-//           default:
-//             return res.status(400).json({ message: 'Invalid user type' });
-//         }
-    
-//        const validate = ValidateforgotPassword.validate(req.body, options);
-//        if (validate.error) {
-//          const message = validate.error.details.map((detail) => detail.message).join(',');
-//          return res.status(400).json({
-//            status: 'fail',
-//            message,
-//          });
-//        }
-
-//     const user = await userModel.findOne({ officialEmail });
-
-//     if (!user) {
-//       return res.status(404).json({ message: `${userType} account not found` });
-//     }
-
-//     const token = passwordResetToken();
-//     const expires = new Date(Date.now() + 3600000); // Token expires in 1 hour
-
-//     user.passwordToken = token;
-//     user.resetPasswordExpires = expires;
-//     await user.save();
-
-//     await sendResetPasswordEmail(officialEmail, token);
-
-//     res.status(200).json({ message: 'Password reset email sent' });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: 'Internal server error' });
-//   }
-// };
 
 export const forgotPassword = async (req, res) => {
   try {

@@ -2,6 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cookieParser from 'cookie-parser';
 import cors from "cors";
 import globalErrorHandler from "./src/utils/errorHandler.js";
 import config from "./src/config/index.js";
@@ -24,6 +25,7 @@ const port = config.PORT;
 const app = express();
 
 // Middleware
+app.use(cookieParser());
 app.use(morgan("tiny"));
 app.use(express.json());
 app.use(cors());
