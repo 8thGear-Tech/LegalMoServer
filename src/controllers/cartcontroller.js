@@ -72,6 +72,41 @@ export const getCart = async (req, res) => {
 }
 
 export const deleteCart = async (req, res) => {
-    
+    const companyId  = req.body;
+    const productId = req.params.id
+    try {
+        const cart = await Cart.findOne({companyId})
+
+        const productIndex = cart.products.findIndex((product)=> product.productId == productId)
+        if(productIndex > -1){
+            let product = cart.products[productIndex]
+            cart.bill -= product.quantity * product.price
+            if(cart.bill < 0){
+                cart.bill = 0
+            }
+            cart.products.splice(productIndex, 1)
+            cart.bill = cart.products.reduce((acc, curr) => {
+                return acc + curr.quantity * curr.price
+            }, 0)
+            cart = await cart.save()
+        }
+        else{
+            res.status(404).send("Product not found")
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).send("something went wrong")
+    }
 }
 
+export const clearCart = async (req, res) => {
+    const { companyId } = req.body;
+
+    try {
+        await Cart.deleteMany({companyId})
+        res.status(200).json({message: 'Cart cleared successfully'})
+    } catch (error) {
+        console.error(error)
+        res.status(500).send("something went wrong")
+    }
+}
