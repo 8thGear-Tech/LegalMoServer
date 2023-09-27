@@ -5,16 +5,16 @@ import dotenv from "dotenv";
 import cors from "cors";
 import globalErrorHandler from "./src/utils/errorHandler.js";
 import config from "./src/config/index.js";
-
 import authRouter from "./src/routers/auths.js";
 import productRouter from "./src/routers/product.js";
+import cartRouter from "./src/routers/cart.js"
 
 dotenv.config({ path: "./configenv.env" });
 
 const mongoURI = config.MONGODB_CONNECTION_URL;
 
 mongoose
-  .connect(mongoURI, {
+  .connect('mongodb+srv://legalmo:kQvhWA0S69hkOXTY@legalmo.n5ltuv1.mongodb.net/legalmodb?retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -23,6 +23,7 @@ mongoose
 const port = config.PORT;
 const app = express();
 
+
 // Middleware
 app.use(morgan("tiny"));
 app.use(express.json());
@@ -30,6 +31,7 @@ app.use(cors());
 
  app.use('/', authRouter);
  app.use('/', productRouter);
+ app.use('/', cartRouter)
 
 app.use(
   cors({
