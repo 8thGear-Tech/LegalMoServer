@@ -1,11 +1,21 @@
 import {Product} from '../models/productmodel.js';
 import {Cart} from '../models/cartmodel.js'
+import { addCart,options } from '../utils/cartvalidation.js';
+
 
 export const addToCart = async (req, res) => {
+    const validate = addCart.validate(req.body, options)
+        if (validate.error) {
+            const message = validate.error.details.map((detail) => detail.message).join(',');
+                return res.status(400).send({
+                    status: 'fail',
+                    message,
+                })
+          }
     const { companyId, productId, quantity } = req.body;
     try {
-        const cart = await Cart.findOne({companyId})
-        const product = await Product.findOne({productId})
+        const cart = await Cart.findById({companyId})
+        const product = await Product.findById({productId})
 
         if(!product){
             res.status(404).send({message : "product not found"})
@@ -50,6 +60,7 @@ export const addToCart = async (req, res) => {
         }
 
     } catch (error) {
+        console.log(error)
         res.status(500).send("something went wrong") 
     }
 

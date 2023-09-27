@@ -2,19 +2,21 @@ import {Product} from '../models/productmodel.js';
 import {Admin } from '../models/adminmodel.js';
 import {Company} from '../models/companymodel.js'
 import {Lawyer} from '../models/lawyermodel.js'
-import { productcreation, options } from '../utils/productvalidation.js';
+import { productcreation, options, productupdate } from '../utils/productvalidation.js';
 
 
 export const create = async (req, res) => {
     const validate = productcreation.validate(req.body, options)
         if (validate.error) {
             const message = validate.error.details.map((detail) => detail.message).join(',');
-                return res.send({
+                return res.status(400).send({
                     status: 'fail',
                     message,
                 })
           }
-    const { productName,  productPrice, productDescription, adminId, productImage } = req.body;
+    const { productName,  productPrice, productDescription, productImage, adminId } = req.body;
+    // const adminId = req.user.id
+    // console.log(adminId)
     if (!productName || !productPrice || !productDescription || !adminId || !productImage) {
       console.log("Invalid data passed into request");
      return res.sendStatus(400);      
@@ -59,6 +61,14 @@ export const getProducts = async (req, res) => {
     }
 
 export const updateProduct = async (req, res) => {
+    const validate = productupdate.validate(req.body, options)
+        if (validate.error) {
+            const message = validate.error.details.map((detail) => detail.message).join(',');
+                return res.status(400).send({
+                    status: 'fail',
+                    message,
+                })
+          }
     const { productName, productPrice, productDescription, adminId } = req.body;
     const _id = adminId
     const adminExists = await Admin.findOne({ _id });
