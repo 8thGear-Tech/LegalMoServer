@@ -60,32 +60,6 @@ async function sendConfirmationEmail(userEmail, token) {
   }
 }
 
-// async function sendResetPasswordEmail(userEmail, token) {
-//   try {
-//     const resetPasswordUrl = `http://localhost:5005/user/reset-password/${token}`;
-//     const currentUrl = "http://localhost:5005/"; //user/verify
-
-//     await sendEmail({
-//       email: userEmail,
-//       subject: 'Reset Password',
-//       message: `Click this link to reset your password: ${resetPasswordUrl}`,
-//       html: `
-//         <p>Click the link below to reset your password:</p>
-//         <p>This link <b>expires in 6 hours</b>.</p>
-//         <p>Press <a href="${currentUrl}user/reset-password/${token}">here</a> to proceed.</p>
-//       `,
-//     });
-
-//     // Return true to indicate that the email was successfully sent
-//     return true;
-//   } catch (error) {
-//     console.error('Email sending error:', error);
-
-//     // Return false to indicate that there was an error sending the email
-//     return false;
-//   }
-// }
-
 async function sendResetPasswordEmail(userEmail, token) {
   try {
     const currentUrl = "http://localhost:5005/";
@@ -516,51 +490,106 @@ export const confirmEmail = async (req, res) => {
   }
 };
 
- export const forgotPassword = async (req, res) => {
+//  export const forgotPassword = async (req, res) => {
+//   try {
+//     const { officialEmail } = req.body;
+//     const { userType } = req.params;
+
+//         let userModel;
+
+//         // Determine the user model based on the userType parameter
+//         switch (userType) {
+//           case 'admin':
+//             userModel = Admin;
+//             break;
+//           case 'company':
+//             userModel = Company;
+//             break;
+//           case 'lawyer':
+//             userModel = Lawyer;
+//             break;
+//           default:
+//             return res.status(400).json({ message: 'Invalid user type' });
+//         }
+    
+//        const validate = ValidateforgotPassword.validate(req.body, options);
+//        if (validate.error) {
+//          const message = validate.error.details.map((detail) => detail.message).join(',');
+//          return res.status(400).json({
+//            status: 'fail',
+//            message,
+//          });
+//        }
+
+//     const user = await userModel.findOne({ officialEmail });
+
+//     if (!user) {
+//       return res.status(404).json({ message: `${userType} account not found` });
+//     }
+
+//     const token = passwordResetToken();
+//     const expires = new Date(Date.now() + 3600000); // Token expires in 1 hour
+
+//     user.passwordToken = token;
+//     user.resetPasswordExpires = expires;
+//     await user.save();
+
+//     await sendResetPasswordEmail(officialEmail, token);
+
+//     res.status(200).json({ message: 'Password reset email sent' });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'Internal server error' });
+//   }
+// };
+
+export const forgotPassword = async (req, res) => {
   try {
     const { officialEmail } = req.body;
     const { userType } = req.params;
 
-        let userModel;
+    let userModel;
 
-        // Determine the user model based on the userType parameter
-        switch (userType) {
-          case 'admin':
-            userModel = Admin;
-            break;
-          case 'company':
-            userModel = Company;
-            break;
-          case 'lawyer':
-            userModel = Lawyer;
-            break;
-          default:
-            return res.status(400).json({ message: 'Invalid user type' });
-        }
-    
-       const validate = ValidateforgotPassword.validate(req.body, options);
-       if (validate.error) {
-         const message = validate.error.details.map((detail) => detail.message).join(',');
-         return res.status(400).json({
-           status: 'fail',
-           message,
-         });
-       }
-
-    const user = await userModel.findOne({ officialEmail });
-
-    if (!user) {
-      return res.status(404).json({ message: `${userType} account not found` });
+    // Determine the user model based on the userType parameter
+    switch (userType) {
+      case 'admin':
+        userModel = Admin;
+        break;
+      case 'company':
+        userModel = Company;
+        break;
+      case 'lawyer':
+        userModel = Lawyer;
+        break;
+      default:
+        return res.status(400).json({ message: 'Invalid user type' });
     }
 
+    const validate = ValidateforgotPassword.validate(req.body, options);
+    if (validate.error) {
+      const message = validate.error.details.map((detail) => detail.message).join(',');
+      return res.status(400).json({
+        status: 'fail',
+        message,
+      });
+    }
+
+    // Generate a password reset token
     const token = passwordResetToken();
     const expires = new Date(Date.now() + 3600000); // Token expires in 1 hour
 
-    user.passwordToken = token;
-    user.resetPasswordExpires = expires;
-    await user.save();
+    // Find the user and update the token and expiration date in parallel
+    const updateUserPromise = userModel.findOneAndUpdate(
+      { officialEmail },
+      { passwordToken: token, resetPasswordExpires: expires },
+      { new: true }
+    ).exec();
 
-    await sendResetPasswordEmail(officialEmail, token);
+    // Send the password reset email
+    const sendEmailPromise = sendResetPasswordEmail(officialEmail, token);
+
+    // Wait for both promises to resolve
+    await Promise.all([updateUserPromise, sendEmailPromise]);
 
     res.status(200).json({ message: 'Password reset email sent' });
   } catch (error) {

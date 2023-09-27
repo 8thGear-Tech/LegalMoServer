@@ -1,4 +1,6 @@
 import jwt from 'jsonwebtoken';
+import { adminLogin, companyLogin, lawyerLogin } from './authcontrollers.js';
+import { getOneAdmin, getOneCompany, getOneLawyer } from './usersControllers.js';
 
 export const authenticateUser = async (req, res, next) => {
     try {
@@ -24,7 +26,6 @@ export const authenticateUser = async (req, res, next) => {
       res.status(401).json({ message: 'Unauthorized' });
     }
   };
-  
   export const authorizeUser = (userTypes) => {
     return (req, res, next) => {
       if (!userTypes.includes(req.userType)) {
@@ -37,7 +38,6 @@ export const authenticateUser = async (req, res, next) => {
     };
   }
 
-  // export const validatePasswordResetToken = async (req, res, next) => {
   //   try {
   //     const { token } = req.body;
   //     const { userType } = req.params;
@@ -78,5 +78,60 @@ export const authenticateUser = async (req, res, next) => {
   //     res.status(401).json({ message: 'Unauthorized' });
   //   }
   // }
+
+  // Create a custom middleware to route requests based on user type
+export const routeBasedOnUserType = (req, res, next) => {
+  const {userType} = req.params;
+
+
+  if (!userType || !['company', 'admin', 'lawyer'].includes(userType)) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Invalid user type',
+    });
+  }
+
+
+  // Based on the user type, route the request to the appropriate login function
+  switch (userType) {
+    case 'company':
+      return companyLogin(req, res, next);
+    case 'admin':
+      return adminLogin(req, res, next);
+    case 'lawyer':
+      return lawyerLogin(req, res, next);
+    default:
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Invalid user type',
+      });
+  }
+};
+
+export const profileBasedOnUserType = (req, res, next) => {
+  const {userType} = req.params;
+
+  if (!userType || !['company', 'admin', 'lawyer'].includes(userType)) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Invalid user type',
+    });
+  }
+
+  // Based on the user type, route the request to the appropriate login function
+  switch (userType) {
+    case 'company':
+      return getOneCompany(req, res, next);
+    case 'admin':
+      return getOneAdmin(req, res, next);
+    case 'lawyer':
+      return getOneLawyer(req, res, next);
+    default:
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Invalid user type',
+      });
+  }
+};
 
  

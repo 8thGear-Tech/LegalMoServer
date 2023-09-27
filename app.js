@@ -7,6 +7,7 @@ import globalErrorHandler from "./src/utils/errorHandler.js";
 import config from "./src/config/index.js";
 
 import authRouter from "./src/routers/auths.js";
+import userRouter from "./src/routers/usersrouters.js";
 
 dotenv.config({ path: "./configenv.env" });
 
@@ -27,7 +28,8 @@ app.use(morgan("tiny"));
 app.use(express.json());
 app.use(cors());
 
- app.use('/', authRouter);
+ app.use('/api', authRouter);
+ app.use('/api', userRouter);
 
 app.use(
   cors({

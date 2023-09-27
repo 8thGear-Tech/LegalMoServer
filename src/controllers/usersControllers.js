@@ -1,11 +1,13 @@
-import Lawyer from './../models/lawyermodel';
-import Admin from './../models/adminmodel';
-import Company from './../models/companymodel';
+import {Company} from '../models/companymodel.js';
+import {Lawyer} from '../models/lawyermodel.js';
+import {Admin } from '../models/adminmodel.js';
 
 export const getOneLawyer = async (req, res) => {
-  const { lawyerId } = req.params;
+  const { userId } = req.params;
+
   try {
-    const lawyer = await Lawyer.findbyId(lawyerId)
+    const lawyer = await Lawyer.findOne({ _id: userId }); 
+
     if (!lawyer) {
       return res.status(404).json({ error: 'Lawyer not found' });
     }
@@ -13,7 +15,7 @@ export const getOneLawyer = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
-}
+};
 
 export const getAllLawyers = async (req, res) => {
   try {
@@ -26,9 +28,9 @@ export const getAllLawyers = async (req, res) => {
 }
 
 export const getOneCompany = async (req, res) => {
-  const { companyId } = req.params;
+  const { userId } = req.params;
   try {
-    const company = await Company.findbyId(companyId)
+    const company = await Company.findOne({ _id: userId})
     if (!company) {
       return res.status(404).json({ error: 'Company not found' });
     }
@@ -49,9 +51,10 @@ export const getAllCompanies = async (req, res) => {
 }
 
 export const getOneAdmin = async (req, res) => {
-  const { adminId } = req.params;
+  const { userId } = req.params
   try {
-    const admin = await Admin.findbyId(adminId)
+    const admin = await Admin.findOne({ _id: userId})
+  
     if (!admin) {
       return res.status(404).json({ error: 'Admin not found' });
     }
