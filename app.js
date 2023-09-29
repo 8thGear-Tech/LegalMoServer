@@ -2,7 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import cookieParser from 'cookie-parser';
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import globalErrorHandler from "./src/utils/errorHandler.js";
 import config from "./src/config/index.js";
@@ -30,8 +30,8 @@ app.use(morgan("tiny"));
 app.use(express.json());
 app.use(cors());
 
- app.use('/api', authRouter);
- app.use('/api', userRouter);
+app.use("/api", authRouter);
+app.use("/api", userRouter);
 
 app.use(
   cors({
