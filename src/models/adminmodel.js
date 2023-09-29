@@ -37,11 +37,9 @@ const adminSchema = new Schema({
     type: String
   },
   resetPasswordExpires: {
-     type:  Date
+    type:  Date
   }
 });
 
 export const Admin = model('Admin', adminSchema);
-
-
 

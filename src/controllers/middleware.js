@@ -26,17 +26,17 @@ export const authenticateUser = async (req, res, next) => {
   }
 };
 
-  export const authorizeUser = (userTypes) => {
-    return (req, res, next) => {
-      if (!userTypes.includes(req.userType)) {
-        // Forbidden if user is not allowed
-        return res.status(403).json({ message: 'Forbidden' });
-      }
+// export const authorizeUser = (userTypes) => {
+//     return (req, res, next) => {
+//       if (!userTypes.includes(req.userType)) {
+//         // Forbidden if user is not allowed
+//         return res.status(403).json({ message: 'Forbidden' });
+//       }
   
-      // Proceed to the next middleware or route handler
-      next();
-    };
-  }
+//       // Proceed to the next middleware or route handler
+//       next();
+//     };
+//   }
 
   //   try {
   //     const { token } = req.body;

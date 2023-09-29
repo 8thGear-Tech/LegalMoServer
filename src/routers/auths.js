@@ -1,6 +1,7 @@
 import express from "express";
-import { companySignup, companyLogin, lawyerLogin, lawyerSignup, adminLogin, adminSignup, confirmEmail, forgotPassword, resetPassword, resetPasswordToken} from "../controllers/authcontrollers.js";
- import {routeBasedOnUserType } from './../controllers/middleware.js'
+import { companySignup, lawyerSignup, adminSignup, confirmEmail} from "../controllers/authcontrollers.js";
+import {forgotPassword, resetPassword, resetPasswordToken} from "../controllers/passwords.js";
+import {routeBasedOnUserType } from './../controllers/middleware.js'
 
 const router = express.Router();
 
