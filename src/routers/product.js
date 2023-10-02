@@ -10,6 +10,6 @@ router.post("/api/create", create);
 router.get("/api/products", getProducts);
 router.put("/api/update/:id", updateProduct);
 router.delete("/api/delete/:id", deleteProduct);
-router.put("/api/product/:id", singleProduct);
+router.get("/api/product/:id", singleProduct);
 export default router;
 

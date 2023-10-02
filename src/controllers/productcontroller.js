@@ -14,6 +14,7 @@ export const create = async (req, res) => {
                     message,
                 })
           }
+
     const { productName,  productPrice, productDescription, productImage, adminId } = req.body;
     // const adminId = req.user.id
     // console.log(adminId)
@@ -72,6 +73,7 @@ export const updateProduct = async (req, res) => {
     const { productName, productPrice, productDescription, adminId } = req.body;
     const _id = adminId
     const adminExists = await Admin.findOne({ _id });
+
     if (adminExists) {
         try {
             const updateProduct = await Product.findByIdAndUpdate(req.params.id, 
@@ -92,6 +94,7 @@ export const updateProduct = async (req, res) => {
 }
 
 export const deleteProduct = async (req, res) => {
+    
     const { adminId } = req.body;
     const _id = adminId
     const adminExists = await Admin.findOne({ _id });
