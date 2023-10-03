@@ -2,7 +2,6 @@ import  {Schema, model} from 'mongoose';
 import mongoose from 'mongoose';
 
 const jobSchema = new Schema({
-  
   companyId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Company",
@@ -27,7 +26,7 @@ const jobSchema = new Schema({
   },
   assignedTo : [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "Lawyer",
   }],
 },
     {

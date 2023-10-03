@@ -1,7 +1,7 @@
 import {Product} from '../models/productmodel.js';
 import {Cart} from '../models/cartmodel.js'
 import { addCart,options } from '../utils/cartvalidation.js';
-
+import { Job } from '../models/jobmodel.js';
 
 export const addToCart = async (req, res) => {
     const validate = addCart.validate(req.body, options)
@@ -12,48 +12,52 @@ export const addToCart = async (req, res) => {
                     message,
                 })
           }
-    const { companyId, productId, quantity } = req.body;
+    const { companyId, productId, quantity, detail } = req.body;
+    if(!quantity){
+        const quantity = 1
+    }
     try {
-        const cart = await Cart.findById({companyId})
-        const product = await Product.findById({productId})
-
+        const cart = await Cart.findOne({companyId})
+        const product = await Product.findById(productId)
+        console.log(cart)
         if(!product){
             res.status(404).send({message : "product not found"})
             return
         }
-
-        const price = productPrice;
-        const name = productName;
+       
+        const price = product.productPrice;
+        const name = product.productName;
         
         if(cart){
             const productIndex = cart.products.findIndex((product)=> product.productId == productId)
-
+            console.log(productIndex)
             if(productIndex > -1){
                 let item = cart.products[productIndex]
                 item.quantity += quantity
-
+                item.detail = detail
                 cart.bill = cart.products.reduce((acc, curr) => {
                     return acc + curr.quantity * curr.price
-                }, 0)
-
+                }, 0)        
                 cart.products[productIndex] = item
                 await cart.save()
                 res.status(200).send(cart)
             }
             else{
-                cart.product.push({productId, name, quantity, price})
+                cart.products.push({productId, quantity, price, detail})
+                console.log(cart.bill)
                 cart.bill = cart.products.reduce((acc, curr) => {
                     return acc + curr.quantity * curr.price
                 }, 0)
+                console.log(cart.bill)
 
                 await cart.save()
                 res.status(200).send(cart)
             }
-        }
+        }      
         else{
             const newCart = await Cart.create({
                 companyId,
-                items: [{ productId, name, quantity, price}],
+                products: [{ productId, quantity, price, detail}],
                 bill : quantity * price ,
             });
             return res.status(201).send(newCart)
@@ -67,15 +71,19 @@ export const addToCart = async (req, res) => {
 
 }
 
+
 export const getCart = async (req, res) => {
     const { companyId } = req.body;
     try {
         const cart = await Cart.findOne({companyId})
-       if(cart && cart.items.lenght > 0){
+       if(cart){
+        console.log("not empty")
+        console.log(cart)
         res.status(200).send(cart)
        }
        else{
         res.send(null)
+        console.log("Nothing in the cart")
        }
     } catch (error) {
         res.status(500).send("something went wrong")
@@ -120,4 +128,21 @@ export const clearCart = async (req, res) => {
         console.error(error)
         res.status(500).send("something went wrong")
     }
+}
+
+export const checkout = async (req, res) => {
+    const { companyId } = req.body;  
+    const cart = await Cart.findOne({companyId})
+    try {
+        cart.map(async (job) => {
+            const newJob = await Job.create({
+                companyId : cart.companyId,
+                productId: job.productId,
+                detail:job.detail 
+            });
+            return res.status(201).send(newJob)
+        })
+    } catch (error) {
+        res.status(500).send("something went wrong")       
+    } 
 }
