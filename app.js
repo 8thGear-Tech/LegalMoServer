@@ -8,6 +8,7 @@ import config from "./src/config/index.js";
 import authRouter from "./src/routers/auths.js";
 import productRouter from "./src/routers/product.js";
 import cartRouter from "./src/routers/cart.js"
+import jobRouter from "./src/routers/job.js"
 
 dotenv.config({ path: "./configenv.env" });
 
@@ -32,6 +33,8 @@ app.use(cors());
  app.use('/', authRouter);
  app.use('/', productRouter);
  app.use('/', cartRouter)
+ app.use('/', jobRouter)
+
 
 app.use(
   cors({
