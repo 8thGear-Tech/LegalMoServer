@@ -27,6 +27,7 @@ const app = express();
 
 // Middleware
 app.use(morgan("tiny"));
+app.use(express.urlencoded({extended: false}))
 app.use(express.json());
 app.use(cors());
 

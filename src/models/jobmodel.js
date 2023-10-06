@@ -12,7 +12,7 @@ const jobSchema = new Schema({
     ref: "Product",
     required: true 
   },
-  details: {
+  detail: {
     type: String,
     required: [true, 'Please provide a detailed description of the service you are rendering'],
   },
@@ -35,3 +35,4 @@ const jobSchema = new Schema({
 );
 
 export const Job = model('Job', jobSchema);
+ 
