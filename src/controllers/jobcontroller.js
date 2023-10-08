@@ -2,17 +2,21 @@ import { Admin } from '../models/adminmodel.js';
 import { Company } from '../models/companymodel.js';
 import { Job } from '../models/jobmodel.js';
 import {Lawyer} from '../models/lawyermodel.js'
-import jwt from 'jsonwebtoken'
-
-
-// Generates a JSON Web Token (JWT) for a user.
- const jwtsecret = process.env.JWT_SECRET;
+;
  
-
 // FOR ADMIN
+export const allJob = async (req, res) => {
+    try {
+        const jobs = await Job.find()
+        return res.status(200).send(jobs)
+    } catch (error) {
+        res.status(500).json({error : error.message})
+    }
+}
+
 export const assignJob = async (req, res) => {
-    const jobId = req.params.id;
-    const { lawyerId } = req.body;
+   
+    const { lawyerId, jobId } = req.body;
     try {
         const job = await Job.findById(jobId)
         const lawyer = await Lawyer.findById(lawyerId)
@@ -25,6 +29,7 @@ export const assignJob = async (req, res) => {
         }
 
         job.assignedTo.push(lawyerId)
+        job.status = "pending"
         await job.save()
         return res.status(201).send(job)
     }
@@ -63,9 +68,51 @@ export const unassigned = async (req, res) => {
     }
 }
 
+export const removeLawyer = async (req, res) => {
+    const { lawyerId, jobId } = req.body;
+    try {
+        const job = await Job.findById(jobId)
+        const lawyer = await Lawyer.findById(lawyerId)
+        if(!job || !lawyer){
+            return res.status(400).json({ error: 'Job or Lawyer not found'})
+        }
+
+        if(!job.assignedTo.includes(lawyerId)){
+            return res.status(400).json({ error: 'Lawyer not assigned to this task'})
+        }
+
+        job.assignedTo = job.assignedTo.filter(id => id.toString() != lawyerId)
+        job.status = "unassigned"
+        await job.save()
+        return res.status(201).send(job)
+    }
+    catch(error){
+       res.status(500).json({error : error.message})
+    }       
+}
+
+export const companyProfile = async(req, res) => {
+    try {
+        const company = await Company.findById(req.params.id);
+        res.status(200).json({company})
+    } catch (error) {
+        res.status(500).json({error : error.message})
+    }
+}
+
+export const lawyerProfile = async(req, res) => {
+    try {
+        const lawyer = await Lawyer.findById(req.params.id);
+        res.status(200).json({lawyer})
+    } catch (error) {
+        res.status(500).json({error : error.message})
+    }
+}
+
 
 // FOR LAWYERS
 export const viewJob = async (req,res) => {
+
     const lawyerId = req.params.lawyerId
     try {
         const lawyerJobs = await Job.find({assignedTo: lawyerId})
@@ -81,42 +128,6 @@ export const viewJob = async (req,res) => {
     }
 }
 
-//Auth
+ 
 
-export const checkuser = async (req, res) => {
-    try {
-        const token = req.headers.authorization;
-        console.log(token)
-      // Verify the token
-      const decoded = jwt.verify(token, jwtsecret);
-  
-      // Determine the user type from the token payload
-      const userType = decoded.userType;
-  
-      // Find the user by their ID (decoded from the token) based on the user type
-      let user;
-  
-      if (userType === 'admin') {
-        user = await Admin.findById(decoded.id);
-      } else if (userType === 'company') {
-        user = await Company.findById(decoded.id);
-      } else if (userType === 'lawyer') {
-        user = await Lawyer.findById(decoded.id);
-      } else {
-        return res.status(400).send('Invalid user type.');
-      }
-  
-      if (!user) {
-        return res.status(404).send('User not found.');
-      }
-  
-     console.log(user)
-      // Optionally, you can redirect the user to a login page or show a confirmation success message.
-      res.status(200).send(` ${userType} Email confirmed successfully. You can now log in.`);
-    } catch (error) {
-      console.error('Email confirmation error:', error);
-      res.status(400).send('Invalid or expired token.');
-    }
-  };
-
-
+``

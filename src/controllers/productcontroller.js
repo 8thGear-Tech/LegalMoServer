@@ -70,14 +70,14 @@ export const updateProduct = async (req, res) => {
                     message,
                 })
           }
-    const { productName, productPrice, productDescription, adminId } = req.body;
+    const { productName, productPrice, productDescription, productImage, adminId } = req.body;
     const _id = adminId
     const adminExists = await Admin.findOne({ _id });
 
     if (adminExists) {
         try {
             const updateProduct = await Product.findByIdAndUpdate(req.params.id, 
-                  {$set: {productName, productPrice, productDescription}}, {new: true});
+                  {$set: {productName, productPrice,productImage, productDescription}}, {new: true});
               res.status(200).json(updateProduct);
               if(!updateProduct) throw Error('Something went wrong while updating the product');
           }
