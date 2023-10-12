@@ -127,6 +127,12 @@ export const adminSignup = async (req, res) => {
 };
 export const adminLogin = async (req, res) => {
   try {
+    if (req.url.startsWith("/auth/google/redirect/admin?code=")) {
+      // login with google
+      // const token = generateToken(req.user, res);
+      return res.send(`You have Signed in with Google`);
+    }
+
     const { officialEmail, password } = req.body;
 
     // Check if admin exists
@@ -249,6 +255,12 @@ export const companySignup = async (req, res) => {
 };
 export const companyLogin = async (req, res) => {
   try {
+
+    if (req.url.startsWith("/auth/google/redirect/company?code=")) {
+      // login with google
+      // const token = generateToken(req.user, res);
+      return res.send(`You have Signed in with Google`);
+    }
     const { officialEmail, password } = req.body;
 
     // Check if company exists
@@ -366,6 +378,14 @@ export const lawyerSignup = async (req, res) => {
 };
 export const lawyerLogin = async (req, res) => {
   try {
+    if (req.url.startsWith("/auth/google/redirect/lawyer?code=")) {
+      // login with google
+       // Generate token and set cookie with token to be sent to the client and kept for 30 days
+  
+
+      return res.send(`You have Signed in with Google`);
+    }
+
     const { officialEmail, password } = req.body;
 
     // Check if lawyer exists
@@ -393,7 +413,7 @@ export const lawyerLogin = async (req, res) => {
             // Generate token and set cookie with token to be sent to the client and kept for 30 days
             const { _id } = lawyer;
             const token = generateToken(_id);
-            console.log(token)
+            // console.log(token)
             res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 });
 
         return res.status(200).json({ 
