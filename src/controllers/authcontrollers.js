@@ -1,6 +1,6 @@
 import {Company} from '../models/companymodel.js';
 import {Lawyer} from '../models/lawyermodel.js';
-import {Admin } from '../models/adminmodel.js';
+import {Admin} from '../models/adminmodel.js';
 import { adminRegister, companyRegister, lawyerRegister, options } from '../utils/validator.js';
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
