@@ -8,7 +8,7 @@ const adminSchema = new Schema({
   },
    phoneNumber: {
     type: String,
-    required: [true, 'Please provide your phone number'],
+    required: false,
   },
   officialEmail: {
     type: String,
@@ -20,9 +20,13 @@ const adminSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  googleId: {
+    type: String,
+    allowNull: true,
+  },
   password: {
     type: String,
-    required: [true, 'Please provide a password'],
+    required: false,
   },
   companies: {
     type: [String],
@@ -37,11 +41,9 @@ const adminSchema = new Schema({
     type: String
   },
   resetPasswordExpires: {
-     type:  Date
+    type:  Date
   }
 });
 
 export const Admin = model('Admin', adminSchema);
-
-
 

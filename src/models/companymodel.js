@@ -2,13 +2,13 @@ import  {Schema, model} from 'mongoose';
 //import { validateEmail, validatePassword } from '../utils/validation';
 
 const companySchema = new Schema({
-  companyName: {
+  name: {
     type: String,
-    required: [true, 'Please provide a Username'],
+    required: [true, 'Please provide a Company Name'],
   },
   contactName: {
     type: String,
-    required: [true, 'Please provide a Username'],
+    required: false,
   },
   officialEmail: {
     type: String,
@@ -22,22 +22,26 @@ const companySchema = new Schema({
   },
   phoneNumber: {
     type: String,
-    required: [true, 'Please provide a contact phone number'],
+    required: false,
   },
   officeAddress: {
     type: String,
-    required: [true, 'Please confirm your official address'],
+    required: false,
+  },
+  googleId: {
+    type: String,
+    allowNull: true,
   },
   cac: {
     type: String,
   },
   industry: {
     type: String,
-    required: [true, 'Please provide a valid industry'],
+    required: false,
   },
   password: {
     type: String,
-    required: [true, 'Please provide a password'],
+    required: false,
   },
   website: {
     type: String,

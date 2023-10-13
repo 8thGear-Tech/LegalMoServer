@@ -8,13 +8,17 @@ const lawyerSchema = new Schema({
   },
   phoneNumber: {
     type: String,
-    required: [true, 'Please provide a contact phone number'],
+    required: false,
   },
   officialEmail: {
     type: String,
     required: [true, 'Please provide a valid email address'],
     lowercase: true,
     unique: true,
+  },
+  googleId: {
+    type: String,
+    allowNull: true,
   },
   isEmailConfirmed: {
     type: Boolean,
@@ -28,18 +32,18 @@ const lawyerSchema = new Schema({
   },
   scn: {
     type: String,
-    required: [true, 'Please provide your Supreme Court Enrolment Number'],
+    required: false,
   },
   cac: {
     type: String,
   },
   password: {
     type: String,
-    required: [true, 'Please provide a password'],
+    required: false,
   },
   areasOfPractise: {
     type: [String],
-    required: [true, 'Please provide your areas of practise'],
+    required: false,
   },
   yourBio: {
     type: String,

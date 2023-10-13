@@ -4,14 +4,10 @@ export const adminRegister = Joi.object().keys({
   officialEmail: Joi.string().email().trim().lowercase().required(),
   name: Joi.string().required(),
   password: Joi.string()
-    .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,30}$/)
-    .message('Password must contain at least one uppercase letter, one lowercase letter, one digit, and be between 8 and 30 characters in length.')
+    .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,30}$/)
+    .message('Password must contain at least one uppercase letter, one lowercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length.')
     .required(),
-  passwordConfirm: Joi.any()
-    .equal(Joi.ref("password"))
-    .required()
-    .label("Passwords")
-    .messages({ "any.only": "{{#label}} does not match" }),
+  passwordConfirm: Joi.string().required(),
   phoneNumber: Joi.string().pattern(/^[0-9]{11}$/).message('Invalid phone number format').required(),
 
 });
@@ -23,35 +19,25 @@ export const companyRegister = Joi.object().keys({
   officeAddress: Joi.string().required(),
   industry: Joi.string().required(),
   password: Joi.string()
-    .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,30}$/)
-    .message('Password must contain at least one uppercase letter, one lowercase letter, one digit, and be between 8 and 30 characters in length.')
+    .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,30}$/)
+    .message('Password must contain at least one uppercase letter, one lowercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length.')
     .required(),
-  passwordConfirm: Joi.any()
-    .equal(Joi.ref("password"))
-    .required()
-    .label("Passwords")
-    .messages({ "any.only": "{{#label}} does not match" }),
+  passwordConfirm: Joi.string().required(),
   phoneNumber: Joi.string().pattern(/^[0-9]{11}$/).message('Invalid phone number format').required(),
-
 });
 
 export const lawyerRegister = Joi.object().keys({
   officialEmail: Joi.string().email().trim().lowercase().required(),
   name: Joi.string().required(),
   password: Joi.string()
-    .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,30}$/)
-    .message('Password must contain at least one uppercase letter, one lowercase letter, one digit, and be between 8 and 30 characters in length.')
-    .required(),
-  passwordConfirm: Joi.any()
-    .equal(Joi.ref("password"))
-    .required()
-    .label("Passwords")
-    .messages({ "any.only": "{{#label}} does not match" }),
+  .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,30}$/)
+  .message('Password must contain at least one uppercase letter, one lowercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length.')
+  .required(),
+passwordConfirm: Joi.string().required(),
   phoneNumber: Joi.string().pattern(/^[0-9]{11}$/).message('Invalid phone number format').required(),
   scn: Joi.string().required(),
   areasOfPractise: Joi.array().items(Joi.string()).required(),
 });
-
 
 export const options = {
   abortEarly: false,
@@ -65,24 +51,24 @@ export const options = {
 export const AdminLogin = Joi.object().keys({
   officialEmail: Joi.string().email().trim().lowercase().required(),
   password: Joi.string()
-  .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,30}$/)
-  .message('Password must contain at least one uppercase letter, one lowercase letter, one digit, and be between 8 and 30 characters in length.')
-  .required(),
+    .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,30}$/)
+    .message('Password must contain at least one uppercase letter, one lowercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length.')
+    .required(),
 });
 
 export const CompanyLogin = Joi.object().keys({
   officialEmail: Joi.string().email().trim().lowercase().required(),
   password: Joi.string()
-    .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,30}$/)
-    .message('Password must contain at least one uppercase letter, one lowercase letter, one digit, and be between 8 and 30 characters in length.')
-    .required(),
+  .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,30}$/)
+  .message('Password must contain at least one uppercase letter, one lowercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length.')
+  .required(),
 });
 
 export const LawyerLogin = Joi.object().keys({
   officialEmail: Joi.string().email().trim().lowercase().required(),
   password: Joi.string()
-    .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,30}$/)
-    .message('Password must contain at least one uppercase letter, one lowercase letter, one digit, and be between 8 and 30 characters in length.')
+    .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,30}$/)
+    .message('Password must contain at least one uppercase letter, one lowercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length.')
     .required(),
 });
 
@@ -93,12 +79,8 @@ export const ValidateforgotPassword = Joi.object().keys({
 export const ValidateResetPassword = Joi.object().keys({
   officialEmail: Joi.string().email().trim().lowercase().required(),
   password: Joi.string()
-    .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,30}$/)
-    .message('Password must contain at least one uppercase letter, one lowercase letter, one digit, and be between 8 and 30 characters in length.')
+    .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,30}$/)
+    .message('Password must contain at least one uppercase letter, one lowercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length.')
     .required(),
-  passwordConfirm: Joi.any()
-    .equal(Joi.ref("password"))
-    .required()
-    .label("Passwords")
-    .messages({ "any.only": "{{#label}} does not match" }),
+  passwordConfirm: Joi.string().required(),
 });

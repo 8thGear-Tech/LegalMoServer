@@ -1,21 +1,22 @@
 import express from "express";
 import {
   companySignup,
-  companyLogin,
-  lawyerLogin,
   lawyerSignup,
-  adminLogin,
   adminSignup,
   confirmEmail,
+} from "../controllers/authcontrollers.js";
+import {
   forgotPassword,
   resetPassword,
   resetPasswordToken,
-} from "../controllers/authcontrollers.js";
-import { routeBasedOnUserType } from "./../controllers/middleware.js";
+} from "../controllers/passwords.js";
+import { routeBasedOnUserType } from "../controllers/middleware.js";
 
 const router = express.Router();
 
+// Use a route parameter to set the userType based on the route
 router.post("/login/:userType", routeBasedOnUserType);
+
 router.post("/company/signup", companySignup);
 router.post("/lawyer/signup", lawyerSignup);
 router.post("/admin/signup", adminSignup);

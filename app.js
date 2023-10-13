@@ -8,9 +8,14 @@ import globalErrorHandler from "./src/utils/errorHandler.js";
 import config from "./src/config/index.js";
 
 import authRouter from "./src/routers/auths.js";
+import { passportSetup } from "./src/config/passport.js";
 import userRouter from "./src/routers/usersrouters.js";
+import passportRouter from "./src/routers/passportRoutes.js";
+import session from "express-session";
+import passport from "passport";
 
 dotenv.config({ path: "./configenv.env" });
+passportSetup("company" || "lawyer" || "admin");
 
 const mongoURI = config.MONGODB_CONNECTION_URL;
 
@@ -22,6 +27,7 @@ mongoose
   .then(console.log("Database connection is established"))
   .catch((err) => console.log(err.message));
 const port = config.PORT;
+
 const app = express();
 
 // Middleware
@@ -39,7 +45,21 @@ app.use(
   })
 );
 
-// error handler
+app.use(
+  session({
+    secret: process.env.COOKIE_KEY,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use("/api", authRouter);
+app.use("/api", userRouter);
+app.use(passportRouter);
+
 app.use(globalErrorHandler);
 
 app.listen(port, () => {

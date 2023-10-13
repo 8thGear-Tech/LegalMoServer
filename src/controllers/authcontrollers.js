@@ -2,12 +2,10 @@ import { Company } from "../models/companymodel.js";
 import { Lawyer } from "../models/lawyermodel.js";
 import { Admin } from "../models/adminmodel.js";
 import {
-  ValidateResetPassword,
   adminRegister,
   companyRegister,
   lawyerRegister,
   options,
-  ValidateforgotPassword,
 } from "../utils/validator.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
@@ -18,33 +16,32 @@ dotenv.config({ path: "./configenv.env" });
 
 // Generates a JSON Web Token (JWT) for a user.
 const jwtsecret = process.env.JWT_SECRET;
+
 const generateToken = (id) => {
+  const expiresIn = "7d";
   return jwt.sign({ id }, jwtsecret, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
+    expiresIn,
+    // expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
 
 const emailConfirmationToken = (id, userType) => {
+  const expiresIn = "7d";
   return jwt.sign({ id, userType }, jwtsecret, {
-    expiresIn: process.env.EMAIL_CONFIRMATION_EXPIRES_IN,
+    expiresIn,
+    // expiresIn: process.env.EMAIL_CONFIRMATION_EXPIRES_IN,
   });
 };
-
-function passwordResetToken() {
-  const min = 100000; // Minimum 6-digit number
-  const max = 999999; // Maximum 6-digit number
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 const passwordMatch = (password, passwordConfirm) => {
   return password === passwordConfirm;
 };
-
 // Function to send confirmation email
 async function sendConfirmationEmail(userEmail, token) {
   try {
-    const confirmationUrl = `http://localhost:5005/useremail/confirm/${token}`;
-    const currentUrl = "http://localhost:5005/"; //user/verify
+    const confirmationUrl = `https://legalmo-server.onrender.com/api/useremail/confirm/${token}`;
+    // const confirmationUrl = `http://localhost:5005/api/useremail/confirm/${token}`;
+    const currentUrl = "https://legalmo-server.onrender.com/";
+    // const currentUrl = "http://localhost:5005/";
 
     await sendEmail({
       email: userEmail,
@@ -53,7 +50,7 @@ async function sendConfirmationEmail(userEmail, token) {
       html: `
         <p>Verify your email to complete your signup and login into your account</p>
         <p>This link <b>expires in 6 hours</b>.</p>
-        <p>Press <a href="${currentUrl}useremail/confirm/${token}">here</a> to proceed.</p>
+        <p>Press <a href="${currentUrl}api/useremail/confirm/${token}">here</a> to proceed.</p>
       `,
     });
 
@@ -66,36 +63,8 @@ async function sendConfirmationEmail(userEmail, token) {
     return false;
   }
 }
-
-async function sendResetPasswordEmail(userEmail, token) {
-  try {
-    const currentUrl = "http://localhost:5005/";
-
-    await sendEmail({
-      email: userEmail,
-      subject: "Reset Password",
-      message: `Your password reset token is: ${token}`,
-      html: `
-        <p>Your password reset token is:</p>
-        <p><strong>${token}</strong></p>
-        <p>This token is required to reset your password. Please copy it and input it in the password reset form on our website.</p>
-        <p>This token <b>expires in 1 hours</b>.</p>
-      `,
-    });
-
-    // Return true to indicate that the email was successfully sent
-    return true;
-  } catch (error) {
-    console.error("Email sending error:", error);
-
-    // Return false to indicate that there was an error sending the email
-    return false;
-  }
-}
-
 export const adminSignup = async (req, res) => {
   try {
-    // Validate admin inputs
     const validate = adminRegister.validate(req.body, options);
     if (validate.error) {
       const message = validate.error.details
@@ -177,6 +146,12 @@ export const adminSignup = async (req, res) => {
 };
 export const adminLogin = async (req, res) => {
   try {
+    if (req.url.startsWith("/auth/google/redirect/admin?code=")) {
+      // login with google
+      // const token = generateToken(req.user, res);
+      return res.send(`You have Signed in with Google`);
+    }
+
     const { officialEmail, password } = req.body;
 
     // Check if admin exists
@@ -198,7 +173,6 @@ export const adminLogin = async (req, res) => {
           message: "Please confirm your email address to log in.",
         });
       }
-
       // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
       const { _id } = admin;
       const token = generateToken(_id);
@@ -226,7 +200,6 @@ export const adminLogin = async (req, res) => {
     });
   }
 };
-
 export const companySignup = async (req, res) => {
   try {
     // Validate company inputs
@@ -294,6 +267,7 @@ export const companySignup = async (req, res) => {
         message: "Confirmation email sent successfully",
         data: {
           company: newCompany,
+          youtoken: token,
         },
       });
     } else {
@@ -310,9 +284,13 @@ export const companySignup = async (req, res) => {
     });
   }
 };
-
 export const companyLogin = async (req, res) => {
   try {
+    if (req.url.startsWith("/auth/google/redirect/company?code=")) {
+      // login with google
+      // const token = generateToken(req.user, res);
+      return res.send(`You have Signed in with Google`);
+    }
     const { officialEmail, password } = req.body;
 
     // Check if company exists
@@ -365,7 +343,6 @@ export const companyLogin = async (req, res) => {
     });
   }
 };
-
 export const lawyerSignup = async (req, res) => {
   try {
     // Validate lawyer inputs
@@ -429,7 +406,7 @@ export const lawyerSignup = async (req, res) => {
         status: "success",
         message: "Confirmation email sent successfully",
         data: {
-          company: newLawyer,
+          lawyer: newLawyer,
         },
       });
     } else {
@@ -445,9 +422,15 @@ export const lawyerSignup = async (req, res) => {
     });
   }
 };
-
 export const lawyerLogin = async (req, res) => {
   try {
+    if (req.url.startsWith("/auth/google/redirect/lawyer?code=")) {
+      // login with google
+      // Generate token and set cookie with token to be sent to the client and kept for 30 days
+
+      return res.send(`You have Signed in with Google`);
+    }
+
     const { officialEmail, password } = req.body;
 
     // Check if lawyer exists
@@ -475,7 +458,7 @@ export const lawyerLogin = async (req, res) => {
       // Generate token and set cookie with token to be sent to the client and kept for 30 days
       const { _id } = lawyer;
       const token = generateToken(_id);
-      console.log(token);
+      // console.log(token)
       res.cookie("jwt", token, {
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 7,
@@ -506,6 +489,18 @@ export const confirmEmail = async (req, res) => {
     // Verify the token
     const decoded = jwt.verify(token, jwtsecret);
 
+    if (!decoded) {
+      // Invalid or expired token
+      return res.status(400).send("Invalid token or expired token.");
+    }
+
+    // Check if the token has expired
+    const currentTime = Date.now();
+    if (decoded.exp * 1000 < currentTime) {
+      // Token has expired
+      return res.status(400).send("Token has expired.");
+    }
+
     // Determine the user type from the token payload
     const userType = decoded.userType;
 
@@ -526,6 +521,11 @@ export const confirmEmail = async (req, res) => {
       return res.status(404).send("User not found.");
     }
 
+    // Check if the email is already confirmed
+    if (user.isEmailConfirmed) {
+      return res.status(400).send("Email already confirmed.");
+    }
+
     // Mark the user's email as confirmed
     user.isEmailConfirmed = true;
     await user.save();
@@ -537,162 +537,5 @@ export const confirmEmail = async (req, res) => {
   } catch (error) {
     console.error("Email confirmation error:", error);
     res.status(400).send("Invalid or expired token.");
-  }
-};
-
-export const forgotPassword = async (req, res) => {
-  try {
-    const { officialEmail } = req.body;
-    const { userType } = req.params;
-
-    let userModel;
-
-    // Determine the user model based on the userType parameter
-    switch (userType) {
-      case "admin":
-        userModel = Admin;
-        break;
-      case "company":
-        userModel = Company;
-        break;
-      case "lawyer":
-        userModel = Lawyer;
-        break;
-      default:
-        return res.status(400).json({ message: "Invalid user type" });
-    }
-
-    const validate = ValidateforgotPassword.validate(req.body, options);
-    if (validate.error) {
-      const message = validate.error.details
-        .map((detail) => detail.message)
-        .join(",");
-      return res.status(400).json({
-        status: "fail",
-        message,
-      });
-    }
-
-    // Generate a password reset token
-    const token = passwordResetToken();
-    const expires = new Date(Date.now() + 3600000); // Token expires in 1 hour
-
-    // Find the user and update the token and expiration date in parallel
-    const updateUserPromise = userModel
-      .findOneAndUpdate(
-        { officialEmail },
-        { passwordToken: token, resetPasswordExpires: expires },
-        { new: true }
-      )
-      .exec();
-
-    // Send the password reset email
-    const sendEmailPromise = sendResetPasswordEmail(officialEmail, token);
-
-    // Wait for both promises to resolve
-    await Promise.all([updateUserPromise, sendEmailPromise]);
-
-    res.status(200).json({ message: "Password reset email sent" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-export const resetPasswordToken = async (req, res) => {
-  try {
-    const { token } = req.body;
-
-    // Define an array of user models for different types
-    const userModels = [Admin, Company, Lawyer];
-
-    let validToken = false;
-    let userType = "";
-    let validUser = null;
-
-    // Loop through user models to find a valid token and determine the user type
-    for (const userModel of userModels) {
-      const user = await userModel.findOne({
-        passwordToken: token,
-        resetPasswordExpires: { $gt: new Date() },
-      });
-
-      if (user) {
-        validToken = true;
-        userType = userModel.modelName.toLowerCase();
-        validUser = user;
-        break;
-      }
-    }
-
-    if (!validToken || validUser.passwordToken !== token) {
-      return res.status(400).json({ message: "Invalid or expired token" });
-    }
-
-    // Include the token in the reset password URL
-    const resetPasswordUrl = `http://localhost:5005/reset-password?token=${token}`;
-
-    res.status(200).json({
-      message: `Token is valid for ${userType}. Follow ${resetPasswordUrl} to reset your password`,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-export const resetPassword = async (req, res) => {
-  try {
-    const { token } = req.query;
-    const { officialEmail, password, passwordConfirm } = req.body;
-
-    const userModels = [Admin, Company, Lawyer];
-    let user = null;
-
-    const validate = ValidateResetPassword.validate(req.body, options);
-    if (validate.error) {
-      const message = validate.error.details
-        .map((detail) => detail.message)
-        .join(",");
-      return res.status(400).json({
-        status: "fail",
-        message,
-      });
-    }
-
-    // Find the user based on the officialEmail
-    for (const userModel of userModels) {
-      user = await userModel.findOne({ officialEmail });
-
-      if (user) {
-        break;
-      }
-    }
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // Check if there is a valid token and it's not expired
-    if (!user.passwordToken || user.resetPasswordExpires <= new Date()) {
-      return res.status(400).json({ message: "Invalid or expired token" });
-    }
-
-    // Check if the token in the query parameter matches the one in the database
-    if (user.passwordToken !== token) {
-      return res.status(400).json({ message: "Invalid token" });
-    }
-
-    // Update the user's password
-    const hashPassword = await bcrypt.hash(password, 10);
-    user.password = hashPassword;
-
-    user.passwordToken = undefined;
-    user.resetPasswordExpires = undefined;
-    await user.save();
-
-    res.status(200).json({ message: "Password reset successful" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal server error" });
   }
 };
