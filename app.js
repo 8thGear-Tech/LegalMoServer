@@ -4,15 +4,17 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cookieParser from 'cookie-parser';
 import cors from "cors";
-import globalErrorHandler from "./src/utils/errorHandler.js";
-import config from "./src/config/index.js";
+import session from "express-session";
+import passport from "passport";
+
 
 import authRouter from "./src/routers/auths.js";
 import {passportSetup} from "./src/config/passport.js";
 import userRouter from "./src/routers/usersrouters.js";
 import passportRouter from "./src/routers/passportRoutes.js";
-import session from "express-session";
-import passport from "passport";
+import globalErrorHandler from "./src/utils/errorHandler.js";
+import config from "./src/config/index.js";
+
 
 dotenv.config({ path: "./configenv.env" });
 passportSetup("company" || "lawyer" || "admin");

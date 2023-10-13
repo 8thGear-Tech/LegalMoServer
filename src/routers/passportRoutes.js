@@ -13,11 +13,9 @@ router.get('/auth/google/:userType',
     if (userType) {
       // Use the userType to set up Passport
       passportSetup(userType);
-
       passport.authenticate('google', { scope: ['profile', 'email'] })(req, res, next);
 
     } else {
-      // Handle the case where userType is not provided
       res.status(400).send('User type is required.');
     }
   }
@@ -27,7 +25,5 @@ router.get('/auth/google/redirect/:userType',
   passport.authenticate('google', { failureRedirect: '/' }),
   routeBasedOnUserType
 );
-
-// router.get("/google/redirect", passport.authenticate("google"), user.login);
 
 export default router;

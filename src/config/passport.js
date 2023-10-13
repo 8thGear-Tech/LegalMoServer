@@ -27,14 +27,14 @@ export function passportSetup(userType) {
         {
           clientID: process.env.GOOGLE_CLIENT_ID,
           clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-          callbackURL: `/auth/google/redirect/${userType}`, // Include the user type in the callback URL
+          callbackURL: `/auth/google/redirect/${userType}`,
         },
         async function (accessToken, refreshToken, profile, done) {
           // extract info from google profile
           const { sub, name, picture, email } = profile._json;
 
-          // check if user already exists in our db with the given profile ID
-          let user = await User.findOne({ googleId: sub });
+          // check if user already exists in our db with the given the email
+          let user = await User.findOne({ officialEmail: email});
           if (user) {
             return done(null, user);
           }

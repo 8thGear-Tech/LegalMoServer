@@ -14,7 +14,7 @@ export const adminRegister = Joi.object().keys({
 
 export const companyRegister = Joi.object().keys({
   officialEmail: Joi.string().email().trim().lowercase().required(),
-  companyName: Joi.string().required(),
+  name: Joi.string().required(),
   contactName: Joi.string().required(),
   officeAddress: Joi.string().required(),
   industry: Joi.string().required(),

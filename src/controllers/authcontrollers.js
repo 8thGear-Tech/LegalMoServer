@@ -11,7 +11,7 @@ dotenv.config ({ path: "./configenv.env" });
 
  // Generates a JSON Web Token (JWT) for a user.
 const jwtsecret = process.env.JWT_SECRET;
-const generateToken = (id) => {
+export const generateToken = (id) => {
   return jwt.sign({ id }, jwtsecret, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
@@ -212,7 +212,7 @@ export const companySignup = async (req, res) => {
     // Hash password and create a new company
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const newCompany = new Company({
-      companyName: req.body.companyName,
+      name: req.body.name,
       contactName: req.body.contactName,
       officialEmail: req.body.officialEmail,
       phoneNumber: req.body.phoneNumber,
@@ -351,6 +351,7 @@ export const lawyerSignup = async (req, res) => {
     const { _id } = newLawyer;
     const userType = 'lawyer';
     const token = emailConfirmationToken(_id, userType);
+    // console.log(token, "token expires in" + expiresIn)
 
     // Send the Confirmation Email to Lawyer
         const emailSent = await sendConfirmationEmail(newLawyer.officialEmail, token);
@@ -380,9 +381,6 @@ export const lawyerLogin = async (req, res) => {
   try {
     if (req.url.startsWith("/auth/google/redirect/lawyer?code=")) {
       // login with google
-       // Generate token and set cookie with token to be sent to the client and kept for 30 days
-  
-
       return res.send(`You have Signed in with Google`);
     }
 
