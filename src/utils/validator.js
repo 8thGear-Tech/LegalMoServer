@@ -56,7 +56,10 @@ export const lawyerRegister = Joi.object().keys({
     .pattern(/^[0-9]{11}$/)
     .message("Invalid phone number format")
     .required(),
+  lawFirmName: Joi.string(),
+  lawFirmAddress: Joi.string(),
   scn: Joi.string().required(),
+  cac: Joi.string(),
   areasOfPractise: Joi.array().items(Joi.string()).required(),
 });
 
