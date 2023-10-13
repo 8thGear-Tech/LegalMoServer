@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 //import { validateEmail, validatePassword } from '../utils/validation';
 
 const companySchema = new Schema({
-  name: {
+  companyName: {
     type: String,
     required: [true, "Please provide a Company Name"],
   },
