@@ -383,11 +383,14 @@ export const lawyerSignup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const newLawyer = new Lawyer({
       name: req.body.name,
-      officialEmail: req.body.officialEmail,
       phoneNumber: req.body.phoneNumber,
-      password: hashedPassword,
-      areasOfPractise: req.body.areasOfPractise,
+      officialEmail: req.body.officialEmail,
+      lawFirmName: req.body.lawFirmName,
+      lawFirmAddress: req.body.lawFirmAddress,
       scn: req.body.scn,
+      cac: req.body.cac,
+      areasOfPractise: req.body.areasOfPractise,
+      password: hashedPassword,
     });
 
     await newLawyer.save();
