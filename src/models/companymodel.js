@@ -1,10 +1,10 @@
-import  {Schema, model} from 'mongoose';
+import { Schema, model } from "mongoose";
 //import { validateEmail, validatePassword } from '../utils/validation';
 
 const companySchema = new Schema({
   name: {
     type: String,
-    required: [true, 'Please provide a Company Name'],
+    required: [true, "Please provide a Company Name"],
   },
   contactName: {
     type: String,
@@ -12,7 +12,7 @@ const companySchema = new Schema({
   },
   officialEmail: {
     type: String,
-    required: [true, 'Please provide a valid email address'],
+    required: [true, "Please provide a valid email address"],
     lowercase: true,
     unique: true,
   },
@@ -34,6 +34,7 @@ const companySchema = new Schema({
   },
   cac: {
     type: String,
+    required: false,
   },
   industry: {
     type: String,
@@ -56,11 +57,8 @@ const companySchema = new Schema({
     type: String,
   },
   resetPasswordExpires: {
-     type:  Date,
-  }
+    type: Date,
+  },
 });
 
-export const Company = model('Company', companySchema);
-
-
-
+export const Company = model("Company", companySchema);
