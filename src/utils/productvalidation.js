@@ -16,6 +16,13 @@ export const productupdate = Joi.object().keys({
   productImage:  Joi.string(),
 })
 
+export const paymentDetails = Joi.object().keys({ 
+  accountNumber: Joi.number(),
+   accountName: Joi.string(),
+   bank: Joi.string(),
+})
+
+
 export const options = {
     abortEarly: false,
     errors: {

@@ -56,6 +56,20 @@ const lawyerSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Job",
   }],
+  accountDetails: [{
+      accountNumber : {
+        type: Number,
+        required: true
+      },
+      accountName: {
+        type: String,
+        required: true
+      },
+      bank: {
+        type: String,
+        required: true
+      },
+  }],
 });
 
 export const Lawyer = model('Lawyer', lawyerSchema);

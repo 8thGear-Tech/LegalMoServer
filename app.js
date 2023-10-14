@@ -9,6 +9,7 @@ import authRouter from "./src/routers/auths.js";
 import productRouter from "./src/routers/product.js";
 import cartRouter from "./src/routers/cart.js"
 import jobRouter from "./src/routers/job.js"
+import adminRouter from "./src/routers/admin.js"
 
 dotenv.config({ path: "./configenv.env" });
 
@@ -35,6 +36,7 @@ app.use(cors());
  app.use('/', productRouter);
  app.use('/', cartRouter)
  app.use('/', jobRouter)
+ app.use('/', adminRouter)
 
 
 app.use(

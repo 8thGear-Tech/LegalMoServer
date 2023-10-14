@@ -1,8 +1,8 @@
 import { Admin } from '../models/adminmodel.js';
 import { Company } from '../models/companymodel.js';
 import { Job } from '../models/jobmodel.js';
-import {Lawyer} from '../models/lawyermodel.js'
-;
+import {Lawyer} from '../models/lawyermodel.js';
+import { paymentDetails, options } from '../utils/productvalidation.js';
  
 // FOR ADMIN
 export const allJob = async (req, res) => {
@@ -91,23 +91,6 @@ export const removeLawyer = async (req, res) => {
     }       
 }
 
-export const companyProfile = async(req, res) => {
-    try {
-        const company = await Company.findById(req.params.id);
-        res.status(200).json({company})
-    } catch (error) {
-        res.status(500).json({error : error.message})
-    }
-}
-
-export const lawyerProfile = async(req, res) => {
-    try {
-        const lawyer = await Lawyer.findById(req.params.id);
-        res.status(200).json({lawyer})
-    } catch (error) {
-        res.status(500).json({error : error.message})
-    }
-}
 
 
 // FOR LAWYERS
@@ -121,6 +104,32 @@ export const viewJob = async (req,res) => {
         }else{
             res.send(null)
             console.log("No job assigned to you")
+        }
+        
+    } catch (error) {
+        res.status(500).json({error : error.message})
+    }
+}
+
+export const paymentDetails = async(req, res) => {
+    const validate = paymentDetails.validate(req.body, options)
+    if (validate.error) {
+        const message = validate.error.details.map((detail) => detail.message).join(',');
+            return res.status(400).send({
+                status: 'fail',
+                message,
+            })
+      }
+    const lawyerId = req.params.lawyerId
+    const {accountNumber, accountName, bank} =  req.body
+    try {
+        const lawyer = await Lawyer.findById(lawyerId)
+        if(lawyer){
+            lawyer.accountDetails.push(accountNumber, accountName, bank)
+            res.status(200).json(lawyer)
+        }else{
+            res.send(null)
+            console.log("You are not a lawyer")
         }
         
     } catch (error) {
