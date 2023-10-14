@@ -1,4 +1,4 @@
-import { Rating } from "../models/ratingmodel";
+import { Rating } from "../models/ratingmodel.js";
 
 export const addRating = async (req, res) => {
     const { companyId, productId, review, status } = req.body;

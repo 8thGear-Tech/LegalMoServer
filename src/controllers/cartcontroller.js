@@ -129,16 +129,11 @@ export const deleteCart = async (req, res) => {
     const {companyId, productId}  = req.body;
     console.log(productId)
     try {
-        console.log("Cart findig")
+        console.log("Cart finding")
         const cart = await Cart.find({companyId: companyId})
         const products = cart[0].products
-        const objectIdToFind = new ObjectId(productId) 
-        console.log(products, objectIdToFind)
-        // const productIndex = products.findIndex((product)=> {
-        //     console.log( product.productId)
-        //     JSON.stringify(product.productId) == JSON.stringify(objectIdToFind)
-        // })
-        const productIndex = products.findIndex(product => product.equals(productId))
+        const objectIdToFind = mongoose.Types.ObjectId(productId)
+        const productIndex = products.findIndex(product => product.equals(objectIdToFind))
         console.log(productIndex)
         if(productIndex > -1){
             let product = cart.products[productIndex]

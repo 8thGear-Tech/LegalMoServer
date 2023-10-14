@@ -2,7 +2,7 @@ import { Admin } from '../models/adminmodel.js';
 import { Company } from '../models/companymodel.js';
 import { Job } from '../models/jobmodel.js';
 import {Lawyer} from '../models/lawyermodel.js';
-import { paymentDetails, options } from '../utils/productvalidation.js';
+import { paymentDetail, options } from '../utils/productvalidation.js';
  
 // FOR ADMIN
 export const allJob = async (req, res) => {
@@ -112,7 +112,7 @@ export const viewJob = async (req,res) => {
 }
 
 export const paymentDetails = async(req, res) => {
-    const validate = paymentDetails.validate(req.body, options)
+    const validate = paymentDetail.validate(req.body, options)
     if (validate.error) {
         const message = validate.error.details.map((detail) => detail.message).join(',');
             return res.status(400).send({

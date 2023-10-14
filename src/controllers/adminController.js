@@ -1,5 +1,5 @@
-import { Company } from "../models/companymodel";
-import { Lawyer } from "../models/lawyermodel";
+import { Company } from "../models/companymodel.js";
+import { Lawyer } from "../models/lawyermodel.js";
 
 export const companys = async(req, res) => {
     try {
