@@ -32,7 +32,7 @@ const companySchema = new Schema({
     type: String,
     allowNull: true,
   },
-  cac: {
+  cacRegNo: {
     type: String,
   },
   industry: {

@@ -1,56 +1,13 @@
-import {Company} from '../models/companymodel.js';
-import {Lawyer} from '../models/lawyermodel.js';
-import {Admin} from '../models/adminmodel.js';
+import { Company } from '../models/companymodel.js';
+import { Lawyer } from '../models/lawyermodel.js';
+import { Admin } from '../models/adminmodel.js';
 import { adminRegister, companyRegister, lawyerRegister, options } from '../utils/validator.js';
-import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import dotenv from "dotenv";
-import sendEmail from '../utils/email.js';
+import { generateToken, emailConfirmationToken, passwordMatch, sendConfirmationEmail } from '../utils/utils.js';
 
 dotenv.config ({ path: "./configenv.env" });
 
- // Generates a JSON Web Token (JWT) for a user.
-const jwtsecret = process.env.JWT_SECRET;
-export const generateToken = (id) => {
-  return jwt.sign({ id }, jwtsecret, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
-}
-
-const emailConfirmationToken = (id, userType) => {
-  return jwt.sign({ id, userType }, jwtsecret, {
-    expiresIn: process.env.EMAIL_CONFIRMATION_EXPIRES_IN,
-  });
-}
-const passwordMatch = (password, passwordConfirm) => {
-    return password === passwordConfirm;
-} 
-// Function to send confirmation email
-async function sendConfirmationEmail(userEmail, token) {
-  try {
-    const confirmationUrl = `http://localhost:5005/api/useremail/confirm/${token}`;
-    const currentUrl = "http://localhost:5005/"; 
-
-    await sendEmail({
-      email: userEmail,
-      subject: 'Verify Email Address',
-      message: `Click this link to confirm your email: ${confirmationUrl}`,
-      html: `
-        <p>Verify your email to complete your signup and login into your account</p>
-        <p>This link <b>expires in 6 hours</b>.</p>
-        <p>Press <a href="${currentUrl}api/useremail/confirm/${token}">here</a> to proceed.</p>
-      `,
-    });
-
-    // Return true to indicate that the email was successfully sent
-    return true;
-  } catch (error) {
-    console.error('Email sending error:', error);
-
-    // Return false to indicate that there was an error sending the email
-    return false;
-  }
-}
 export const adminSignup = async (req, res) => {
   try {
     const validate = adminRegister.validate(req.body, options);
@@ -217,7 +174,7 @@ export const companySignup = async (req, res) => {
       officialEmail: req.body.officialEmail,
       phoneNumber: req.body.phoneNumber,
       officeAddress: req.body.officeAddress,
-      cac: req.body.cac,
+      cacRegNo: req.body.cacRegNo,
       industry: req.body.industry,
       password: hashedPassword,
     });
@@ -345,6 +302,9 @@ export const lawyerSignup = async (req, res) => {
       password: hashedPassword,
       areasOfPractise: req.body.areasOfPractise,
       scn: req.body.scn,
+      cacAccNo: req.body.cacAccNo,
+      lawFirmAddress: req.body.lawFirmAddress,
+      lawFirmName: req.body.lawFirmName,
     });
 
     await newLawyer.save();
@@ -431,63 +391,6 @@ export const lawyerLogin = async (req, res) => {
     });
   }
 };
-export const confirmEmail = async (req, res) => {
-  try {
-    const { token } = req.params;
-
-    // Verify the token
-    const decoded = jwt.verify(token, jwtsecret);
-
-    if (!decoded) {
-      // Invalid or expired token
-      return res.status(400).send('Invalid token or expired token.');
-    }
-
-    // Check if the token has expired
-    const currentTime = Date.now();
-    if (decoded.exp * 1000 < currentTime) {
-      // Token has expired
-      return res.status(400).send('Token has expired.');
-    }
-
-    // Determine the user type from the token payload
-    const userType = decoded.userType;
-
-    // Find the user by their ID (decoded from the token) based on the user type
-    let user;
-
-    if (userType === 'admin') {
-      user = await Admin.findById(decoded.id);
-    } else if (userType === 'company') {
-      user = await Company.findById(decoded.id);
-    } else if (userType === 'lawyer') {
-      user = await Lawyer.findById(decoded.id);
-    } else {
-      return res.status(400).send('Invalid user type.');
-    }
-
-    if (!user) {
-      return res.status(404).send('User not found.');
-    }
-
-    // Check if the email is already confirmed
-    if (user.isEmailConfirmed) {
-      return res.status(400).send('Email already confirmed.');
-    }
-
-    // Mark the user's email as confirmed
-    user.isEmailConfirmed = true;
-    await user.save();
-
-    // Optionally, you can redirect the user to a login page or show a confirmation success message.
-    res.status(200).send(` ${userType} Email confirmed successfully. You can now log in.`);
-  } catch (error) {
-    console.error('Email confirmation error:', error);
-    res.status(400).send('Invalid or expired token.');
-  }
-};
-
-
 
 
 

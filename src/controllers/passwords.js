@@ -2,7 +2,7 @@ import {Company} from '../models/companymodel.js';
 import {Lawyer} from '../models/lawyermodel.js';
 import {Admin } from '../models/adminmodel.js';
 import { ValidateResetPassword, options, ValidateforgotPassword } from '../utils/validator.js';
-import sendEmail from '../utils/email.js';
+import { sendEmail } from '../utils/email.js';
 import bcrypt from 'bcrypt'
 
 function passwordResetToken() {

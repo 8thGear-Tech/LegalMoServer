@@ -1,5 +1,6 @@
 import express from "express";
-import { companySignup, lawyerSignup, adminSignup, confirmEmail } from "../controllers/authcontrollers.js";
+import { companySignup, lawyerSignup, adminSignup } from "../controllers/authcontrollers.js";
+import {confirmEmail} from "../utils/email.js"
 import { forgotPassword, resetPassword, resetPasswordToken } from "../controllers/passwords.js";
 import { routeBasedOnUserType } from "../controllers/middleware.js";
 

@@ -34,7 +34,7 @@ const lawyerSchema = new Schema({
     type: String,
     required: false,
   },
-  cac: {
+  cacAccNo: {
     type: String,
   },
   password: {
