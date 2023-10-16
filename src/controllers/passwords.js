@@ -95,7 +95,7 @@ export const forgotPassword = async (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
     }
 };
-  export const resetPasswordToken = async (req, res) => {
+export const resetPasswordToken = async (req, res) => {
     try {
       const { token } = req.body;
   
@@ -124,10 +124,9 @@ export const forgotPassword = async (req, res) => {
       if (!validToken || validUser.passwordToken !== token) {
         return res.status(400).json({ message: 'Invalid or expired token' });
       }
-  
+      const userEmail = validUser.officialEmail
       // Include the token in the reset password URL query
-      const newPasswordUrl = `http://localhost:5005/api/reset-password?token=${token}`;
-  
+      const newPasswordUrl = `http://localhost:5005/api/reset-password?userType=${userType}&userEmail=${userEmail}&token=${token}`;
       res.status(200).json(
         { 
           message: `Token is valid for ${userType}. Follow ${newPasswordUrl} to create your new password` 
@@ -138,65 +137,71 @@ export const forgotPassword = async (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
     }
 };
-  export const resetPassword = async (req, res) => {
-    try {
-      const { token } = req.query;
-      const { officialEmail, password, passwordConfirm } = req.body;
-  
-      const userModels = [Admin, Company, Lawyer];
-      let user = null;
-  
-      const validate = ValidateResetPassword.validate(req.body, options);
-      if (validate.error) {
-        const message = validate.error.details.map((detail) => detail.message).join(',');
-        return res.status(400).json({
-          status: 'fail',
-          message,
-        });
-      }
+export const resetPassword = async (req, res) => {
+  try {
+    const { token, userType } = req.query;
+    const officialEmail = req.query.userEmail;
 
-      const passwordCheck = passwordMatch(password, passwordConfirm);
-      if (!passwordCheck) {
-        return res.status(400).json({
-          status: 'fail',
-          message: 'Passwords do not match',
-        });
-      }
-
-      // Find the user based on the officialEmail
-      for (const userModel of userModels) {
-        user = await userModel.findOne({ officialEmail });
-  
-        if (user) {
-          break;
-        }
-      }
-  
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      // Check if there is a valid token and it's not expired
-      if (!user.passwordToken || user.resetPasswordExpires <= new Date()) {
-        return res.status(400).json({ message: 'Invalid or expired token' });
-      }
-  
-      // Check if the token in the query parameter matches the one in the database
-      if (user.passwordToken !== token) {
-        return res.status(400).json({ message: 'Invalid token' });
-      }
-  
-      // Update the user's password
-      const hashPassword = await bcrypt.hash(password, 10);
-      user.password = hashPassword;
-  
-      user.passwordToken = undefined;
-      user.resetPasswordExpires = undefined;
-      await user.save();
-  
-      res.status(200).json({ message: 'Password reset successful' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Internal server error' });
+    // Check if the userType is valid (e.g., admin, lawyer, company)
+    if (userType !== 'admin' && userType !== 'lawyer' && userType !== 'company') {
+      return res.status(400).json({ message: 'Invalid user type' });
     }
+
+    // Depending on the user type, choose the appropriate user model
+    let userModel;
+    switch (userType) {
+      case 'admin':
+        userModel = Admin;
+        break;
+      case 'lawyer':
+        userModel = Lawyer;
+        break;
+      case 'company':
+        userModel = Company;
+        break;
+      default:
+        return res.status(400).json({ message: 'Invalid user type' });
+    }
+
+    // Find the user based on the officialEmail
+    const user = await userModel.findOne({ officialEmail });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if there is a valid token and it's not expired
+    if (!user.passwordToken || user.resetPasswordExpires <= new Date()) {
+      return res.status(400).json({ message: 'Invalid or expired token' });
+    }
+
+    // Check if the token in the query parameter matches the one in the database
+    if (user.passwordToken !== token) {
+      return res.status(400).json({ message: 'Invalid token' });
+    }
+
+    // Update the user's password
+    const { password, passwordConfirm } = req.body;
+    const passwordCheck = passwordMatch(password, passwordConfirm);
+
+    if (!passwordCheck) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Passwords do not match',
+      });
+    }
+
+    const hashPassword = await bcrypt.hash(password, 10);
+    user.password = hashPassword;
+
+    user.passwordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    res.status(200).json({ message: 'Password reset successful' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 };
+

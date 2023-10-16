@@ -74,7 +74,6 @@ export const ValidateforgotPassword = Joi.object().keys({
 });
 
 export const ValidateResetPassword = Joi.object().keys({
-  officialEmail: Joi.string().email().trim().lowercase().required(),
   password: Joi.string()
     .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,30}$/)
     .message('Password must contain at least one uppercase letter, one lowercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length.')
