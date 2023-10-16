@@ -1,19 +1,65 @@
-## Password Requirements
+### AUTHENTICATION
+## Creating an account
+There are 3 usercases that can create accounts on the legalMo platform. The admin, a lawyer and a company. And all three accounts have different signup requirements hence diferent endpoints.
 
-To enhance the security of user accounts, our system enforces the following password rules:
+1. **To create an admin account, you can make a POST request to the /api/admin/signup endpoint. The request body should contain the following information:**
+  - name (string): The name of the Admin user.
+  - officialEmail (string): The email of the Admin user.
+  - phoneNumber (string): The phonenumber of the Admin user.
+  - password (string): A desired password for the Admin account.
+  - passwordConfirm (string): To confirm the password entered earlier.
+
+2. **To create a company account, you can make a POST request to the /api/company/signup endpoint. The request body should contain the following information:**
+  - name (string): The name of the company to be registered.
+  - contactName (string): The name of a person from the company that speeaks for the company.
+  - officialEmail (string): The email of the company.
+  - phoneNumber (string): contact phonenumber of the company.
+  - officeAddress (string): contact physical address of the company.
+  - cacRegNo (string): CAC registration number of the company.
+  - industry (string): the industry the company belongs to.
+  - password (string): A desired password for the Admin account.
+  - passwordConfirm (string): To confirm the password entered earlier.
+
+3. **To create a lawyer account, you can make a POST request to the /api/lawyer/signup endpoint. The request body should contain the following information:**
+  - name (string): The name of the lawyer.
+  - officialEmail (string): The email of the lawyer.
+  - phoneNumber (string): The phonenumber of the lawyer.
+  - areasOfPractise (string): The list of areas of practice of the lawyer.
+  - scn (string): The supreme court enrolment number of the lawyer.
+  - cacAccNo (string): The CAC accreditation number of the lawyer.
+  - lawFirmName (string): The name of the law firm the lawyer works.
+  - lawFirmAddress (string): The physical address of the lawfirm the lawyer works.
+  - password (string): A desired password for the Admin account.
+  - passwordConfirm (string): To confirm the password entered earlier.
+
+(On registering on the app, an email is sent to the email address provided for verification and confrimation).
+The response to these will be a JSON object with the following information:
+
+ - status (string): The status of the request (success or failure).
+ - message (string): A message indicating the success or failure of the sending of confirmation email.
+ - data (object): The details of the created account (name, officialEmail, phoneNumber etc).
+
+ ## Account confirmation email
+**The link sent to the user for confirmation send a GET request to /api/useremail/confirm/:token endpoint, which confirms the account in the db and a returns a message indicating the account confirmation.**
+
+## Signing into an account
+
+Only a confirmed account is allowed to signin. 
+Signing in an account is role based because there is only one endpoint to all signin.
+
+**To signin into an account, you can make a POST request to the /api/login/:userType endpoint. The userType attcahed as a parameter explicitly includes one of the following depending on who is signining in; admin, company or lawyer.** 
+## Sign-in with Google
+**To signin with a google account, you make a GET request to the /auth/google/:userType endpoint. The userType attcahed as a parameter also explicitly includes one of the following depending on who is signining in; admin, company or lawyer.** 
+
 
 1. **Contains at least one uppercase letter.**
    - Your password must include at least one uppercase letter (A-Z).
-
 2. **Contains at least one lowercase letter.**
    - Your password must include at least one lowercase letter (a-z).
-
 3. **Contains at least one digit.**
    - Your password must include at least one digit (0-9).
-
 4. **Can include special characters from the specified set (customize as needed).**
-   - You are allowed to use special characters like `@`, `$`, `!`, `%`, `*`, `?`, and `&` in your password. However, please note that the set of allowed special characters may vary depending on your specific application's requirements. Refer to the password creation interface for the exact list of accepted special characters.
-
+   - You are allowed to use special characters like `@`,`$`,`!`,`%`,`*`,`?`, and `&` in your password. However, please note that the set of allowed special characters may vary depending on your specific application's requirements. Refer to the password creation interface for the exact list of accepted special characters.
 5. **Has a length between 8 and 30 characters.**
    - Your password must have a length that falls within the range of 8 to 30 characters.
 

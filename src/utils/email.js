@@ -10,7 +10,6 @@ dotenv.config ({ path: "./configenv.env" });
 
 // Generates a JSON Web Token (JWT) for a user.
  const jwtsecret = process.env.JWT_SECRET;
-
 export const sendEmail = async (options) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
