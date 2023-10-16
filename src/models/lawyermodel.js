@@ -56,6 +56,10 @@ const lawyerSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Job",
   }],
+  verified : {
+    type : Boolean,
+    default : false
+  },
   accountDetails: [{
       accountNumber : {
         type: Number,

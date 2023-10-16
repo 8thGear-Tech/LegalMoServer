@@ -112,7 +112,6 @@ export const getCart = async (req, res) => {
     const cart = await Cart.find({companyId: params})
     // const cart = await Cart.findById(req.params.id);
     try {
-        
        if(cart){
         res.status(200).send(cart)
        }
@@ -130,11 +129,29 @@ export const deleteCart = async (req, res) => {
     console.log(productId)
     try {
         console.log("Cart finding")
-        const cart = await Cart.find({companyId: companyId})
-        const products = cart[0].products
-        const objectIdToFind = mongoose.Types.ObjectId(productId)
-        const productIndex = products.findIndex(product => product.equals(objectIdToFind))
+        let cart = await Cart.findOne({companyId})
+        if(!cart){
+            res.status(404).send("Cart not found")
+            return
+        }
+        let products = cart.products
+        console.log(products)
+        const objectIdToFind = new mongoose.Types.ObjectId(productId)
+        console.log(objectIdToFind)
+        console.log(typeof(objectIdToFind))
+
+        //  * Finds the index of a product in an array of products based on its ID.
+        //  * @param {Array} products - The array of products to search through.
+        //  * @param {string} objectIdToFind - The ID of the product to find.
+        //  * @returns {number} - The index of the product in the array, or -1 if not found.
+         
+        const productIndex = products.findIndex((product)=> {
+            console.log(product.productId)
+            console.log(typeof(product.productId))
+            ObjectId.is(product.productId, objectIdToFind)
+        })
         console.log(productIndex)
+
         if(productIndex > -1){
             let product = cart.products[productIndex]
             cart.bill -= product.quantity * product.price
@@ -151,7 +168,6 @@ export const deleteCart = async (req, res) => {
             res.status(404).send("Product not found")
         }
     } catch (error) {
-        console.log("jdjjdjd")
         console.log(error)
         res.status(500).send("something went wrong")
     }
