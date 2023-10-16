@@ -86,10 +86,9 @@ After sending the request, a link to create a new password will be displayed on 
 
 The response to these will be a JSON object with the following information:
  - status (string): The status of the request (success or failure).
- - message (string): It contains a link that makes a POST request to /api/reset-password?token=${token} redirecting the user to the new password page.
-## Create a new password
+ - message (string): It contains a link that makes a POST request to /api/reset-password?userType=${userType}&userEmail=${userEmail}&token=${token} redirecting the user to the new password page. 
+ ## Create a new password
 **To create a new password, you make a POST request to the /api/reset-password endpoint. The request body should contain the following information:**
-  - officialEmail (string): The email of the user.
   - password (string): A password different from the initil one.
   - passwordConfirm (string): To confirm the password entered earlier.
 Also, the token sent earlier will be included in the request query.
