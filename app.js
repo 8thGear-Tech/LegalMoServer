@@ -7,9 +7,9 @@ import cors from "cors";
 import globalErrorHandler from "./src/utils/errorHandler.js";
 import config from "./src/config/index.js";
 import authRouter from "./src/routers/auths.js";
-import { passportSetup } from "./src/config/passport.js";
+// import { passportSetup } from "./src/config/passport.js";
 import userRouter from "./src/routers/usersrouters.js";
-import passportRouter from "./src/routers/passportRoutes.js";
+// import passportRouter from "./src/routers/passportRoutes.js";
 import session from "express-session";
 import passport from "passport";
 import productRouter from "./src/routers/product.js";
@@ -19,18 +19,15 @@ import adminRouter from "./src/routers/admin.js";
 import ratingRouter from "./src/routers/rating.js";
 
 dotenv.config({ path: "./configenv.env" });
-passportSetup("company" || "lawyer" || "admin");
+// passportSetup("company" || "lawyer" || "admin");
 
 const mongoURI = config.MONGODB_CONNECTION_URL;
 
 mongoose
-  .connect(
-    "mongodb+srv://legalmo:kQvhWA0S69hkOXTY@legalmo.n5ltuv1.mongodb.net/legalmodb?retryWrites=true&w=majority",
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }
-  )
+  .connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(console.log("Database connection is established"))
   .catch((err) => console.log(err.message));
 const port = config.PORT;
@@ -72,7 +69,7 @@ app.use(passport.session());
 
 app.use("/api", authRouter);
 app.use("/api", userRouter);
-app.use(passportRouter);
+// app.use(passportRouter);
 
 app.use(globalErrorHandler);
 
