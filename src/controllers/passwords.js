@@ -24,7 +24,7 @@ async function sendResetPasswordEmail(userEmail, token) {
           <p>Your password reset token is:</p>
           <p><strong>${token}</strong></p>
           <p>This token is required to reset your password. Please copy it and input it in the password reset form on our website.</p>
-          <p>This token <b>expires in 1 hours</b>.</p>
+          <p>This token <b>expires in 5 minutes</b>.</p>
         `,
       });
   
@@ -37,7 +37,6 @@ async function sendResetPasswordEmail(userEmail, token) {
       return false;
     }
 }
-
 export const forgotPassword = async (req, res) => {
     try {
       const { officialEmail } = req.body;

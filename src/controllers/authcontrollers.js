@@ -84,10 +84,21 @@ export const adminSignup = async (req, res) => {
 };
 export const adminLogin = async (req, res) => {
   try {
+    // handle google SignIn
     if (req.url.startsWith("/auth/google/redirect/admin?code=")) {
-      // login with google
-      // const token = generateToken(req.user, res);
-      return res.send(`You have Signed in with Google`);
+      // return res.send(`You have Signed in with Google`);
+      const user = req.user
+         // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
+              const { _id } = user.id;
+              const token = generateToken(_id);
+
+              console.log(token)
+              res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 }); 
+
+          return res.status(200).json({ 
+            status: 'success',
+            data: { user },
+          });
     }
 
     const { officialEmail, password } = req.body;

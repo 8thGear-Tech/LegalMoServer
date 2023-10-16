@@ -15,7 +15,7 @@ router.post("/admin/signup", adminSignup);
 router.get("/useremail/confirm/:token", confirmEmail); 
 router.post('/forgot-password/:userType', forgotPassword);
 router.post("/confirm-reset-token", resetPasswordToken);
-router.post('/reset-password', resetPassword);
+router.patch('/reset-password', resetPassword);
 
 
 export default router;
