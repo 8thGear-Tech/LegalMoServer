@@ -33,6 +33,7 @@ There are 3 usercases that can create accounts on the legalMo platform. The admi
   - passwordConfirm (string): To confirm the password entered earlier.
 
 (On registering on the app, an email is sent to the email address provided for verification and confrimation).
+
 The response to these will be a JSON object with the following information:
 
  - status (string): The status of the request (success or failure).
@@ -48,8 +49,19 @@ Only a confirmed account is allowed to signin.
 Signing in an account is role based because there is only one endpoint to all signin.
 
 **To signin into an account, you can make a POST request to the /api/login/:userType endpoint. The userType attcahed as a parameter explicitly includes one of the following depending on who is signining in; admin, company or lawyer.** 
+**The request body should contain the following information:**
+ - officialEmail (string): The email of the user.
+ - password (string): The password for the account provided during registration.
+
 ## Sign-in with Google
 **To signin with a google account, you make a GET request to the /auth/google/:userType endpoint. The userType attcahed as a parameter also explicitly includes one of the following depending on who is signining in; admin, company or lawyer.** 
+
+The response to these will be a JSON object with the following information:
+
+ - status (string): The status of the request (success or failure).
+ - data (object): The details of the created account (name, officialEmail, phoneNumber etc).
+
+
 
 
 1. **Contains at least one uppercase letter.**
