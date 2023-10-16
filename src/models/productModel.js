@@ -12,6 +12,10 @@ const productSchema = new Schema(
       type: String,
       required: [true, "Please upload your product image"],
     },
+    productImagge: {
+      type: String,
+      required: [true, "Please upload your product image"],
+    },
     productName: {
       type: String,
       required: [true, "Please what service are you rendering"],
