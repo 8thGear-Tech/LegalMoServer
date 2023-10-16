@@ -1,4 +1,4 @@
-import { Product } from "../models/productmodel.js";
+import { Product } from "../models/productsmodel.js";
 import { Admin } from "../models/adminmodel.js";
 import { Company } from "../models/companymodel.js";
 import { Lawyer } from "../models/lawyermodel.js";
