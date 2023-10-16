@@ -1,4 +1,4 @@
-import { Product } from "../models/productsmodel.js";
+import { Product } from "../models/productmodel.js";
 import { Cart } from "../models/cartmodel.js";
 import { addCart, options } from "../utils/cartvalidation.js";
 import { Job } from "../models/jobmodel.js";
