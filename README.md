@@ -1,4 +1,4 @@
-### AUTHENTICATION
+# AUTHENTICATION
 ## Creating an account
 There are 3 usercases that can create accounts on the legalMo platform. The admin, a lawyer and a company. And all three accounts have different signup requirements hence diferent endpoints.
 
@@ -57,13 +57,11 @@ Signing in an account is role based because there is only one endpoint to all si
 **To signin with a google account, you make a GET request to the /auth/google/:userType endpoint. The userType attcahed as a parameter also explicitly includes one of the following depending on who is signining in; admin, company or lawyer.** 
 
 The response to these will be a JSON object with the following information:
-
  - status (string): The status of the request (success or failure).
  - data (object): The details of the created account (name, officialEmail, phoneNumber etc).
 
-
-
-
+### Passwords
+Passwords are expected to adhere to the following conventions:
 1. **Contains at least one uppercase letter.**
    - Your password must include at least one uppercase letter (A-Z).
 2. **Contains at least one lowercase letter.**
@@ -71,8 +69,31 @@ The response to these will be a JSON object with the following information:
 3. **Contains at least one digit.**
    - Your password must include at least one digit (0-9).
 4. **Can include special characters from the specified set (customize as needed).**
-   - You are allowed to use special characters like `@`,`$`,`!`,`%`,`*`,`?`, and `&` in your password. However, please note that the set of allowed special characters may vary depending on your specific application's requirements. Refer to the password creation interface for the exact list of accepted special characters.
+   - You are allowed to use special characters like `@`,`$`,`!`,`%`,`*`,`?`, and `&` in your password. 
 5. **Has a length between 8 and 30 characters.**
    - Your password must have a length that falls within the range of 8 to 30 characters.
 
-Please make sure to create a password that adheres to these rules to help ensure the security of your account.
+## Forgot Password
+**To fill the form for a user that forgets password, you make a POST request to the /api/forgot-password/:userType endpoint. The userType attcahed as a parameter also explicitly includes one of the following depending on who is signining in; admin, company or lawyer. The request body should contain the following information:**
+  - officialEmail (string): The email of the user.
+
+On doing this, a token is sent alongside the email.
+## Confirm Reset Password token
+**To confirm the token sent to the email address of a user that forgets password, you make a POST request to the /api/confirm-reset-token endpoint. The request body should contain the following information:**
+  - token (string): The token sent to the email address of the user.
+
+After sending the request, a link to create a new password will be displayed on the user's screen. 
+
+The response to these will be a JSON object with the following information:
+ - status (string): The status of the request (success or failure).
+ - message (string): It contains a link that makes a POST request to /api/reset-password?token=${token} redirecting the user to the new password page.
+## Create a new password
+**To create a new password, you make a POST request to the /api/reset-password endpoint. The request body should contain the following information:**
+  - officialEmail (string): The email of the user.
+  - password (string): A password different from the initil one.
+  - passwordConfirm (string): To confirm the password entered earlier.
+Also, the token sent earlier will be included in the request query.
+
+The response to these will be a JSON object with the following information:
+ - status (string): The status of the request (success or failure).
+ - message (string):  A message indicating the success or failure of the password reset process.

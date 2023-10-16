@@ -126,13 +126,14 @@ export const forgotPassword = async (req, res) => {
         return res.status(400).json({ message: 'Invalid or expired token' });
       }
   
-      // Include the token in the reset password URL
-      const resetPasswordUrl = `http://localhost:5005/api/reset-password?token=${token}`;
+      // Include the token in the reset password URL query
+      const newPasswordUrl = `http://localhost:5005/api/reset-password?token=${token}`;
   
       res.status(200).json(
         { 
-          message: `Token is valid for ${userType}. Follow ${resetPasswordUrl} to reset your password` 
+          message: `Token is valid for ${userType}. Follow ${newPasswordUrl} to create your new password` 
         });
+        
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Internal server error' });
