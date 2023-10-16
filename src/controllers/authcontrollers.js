@@ -14,6 +14,16 @@ import sendEmail from "../utils/email.js";
 
 dotenv.config({ path: "./configenv.env" });
 
+// // Generates a JSON Web Token (JWT) for a user.
+// export const getCompanys = async (req, res) => {
+//   try{
+//       const _id = "650b1c8f90c70c282222cacd"
+//       const admin = await Admin.find({_id});
+//       res.status(200).json({admin})
+//   }
+//   catch(err){res.status(500).json({error :  err.message})}
+//    }
+
 // Generates a JSON Web Token (JWT) for a user.
 const jwtsecret = process.env.JWT_SECRET;
 

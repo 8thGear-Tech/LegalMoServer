@@ -1,10 +1,11 @@
-import  {Schema, model} from 'mongoose';
+import { Schema, model } from "mongoose";
 //import { validateEmail, validatePassword } from '../utils/validation';
+import mongoose from "mongoose";
 
 const lawyerSchema = new Schema({
-   name: {
+  name: {
     type: String,
-    required: [true, 'Please provide a name'],
+    required: [true, "Please provide a name"],
   },
   phoneNumber: {
     type: String,
@@ -12,7 +13,7 @@ const lawyerSchema = new Schema({
   },
   officialEmail: {
     type: String,
-    required: [true, 'Please provide a valid email address'],
+    required: [true, "Please provide a valid email address"],
     lowercase: true,
     unique: true,
   },
@@ -58,11 +59,30 @@ const lawyerSchema = new Schema({
     type: String,
   },
   resetPasswordExpires: {
-     type: Date,
-  }
+    type: Date,
+  },
+  job: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Job",
+    },
+  ],
+  accountDetails: [
+    {
+      accountNumber: {
+        type: Number,
+        required: true,
+      },
+      accountName: {
+        type: String,
+        required: true,
+      },
+      bank: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
 });
 
-export const Lawyer = model('Lawyer', lawyerSchema);
-
-
-
+export const Lawyer = model("Lawyer", lawyerSchema);
