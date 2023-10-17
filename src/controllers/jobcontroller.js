@@ -240,36 +240,6 @@ export const editJobDetails = async (req, res) => {
 
 // FOR LAWYERS
 
-
-export const paymentDetails = async(req, res) => {
-
-    const validate = paymentDetail.validate(req.body, options)
-    if (validate.error) {
-        const message = validate.error.details.map((detail) => detail.message).join(',');
-            return res.status(400).send({
-                status: 'fail',
-                message,
-            })
-      }
-    const lawyerId = req.params.lawyerId
-    const {accountNumber, accountName, bank} =  req.body
-    try {
-        const lawyer = await Lawyer.findById(lawyerId)
-        if(lawyer){
-            lawyer.accountDetails.push(accountNumber, accountName, bank)
-            res.status(200).json(lawyer)
-        }else{
-            res.send(null)
-            console.log("You are not a lawyer")
-        }
-        
-    } catch (error) {
-        res.status(500).json({error : error.message})
-    }
-}
-
- 
-
 export const lawyerAssignedJobs = async (req, res) => {
     const lawyerId = req.params.lawyerId
     try {
