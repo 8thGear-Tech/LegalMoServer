@@ -5,7 +5,8 @@ export const productcreation = Joi.object().keys({
   adminId: Joi.string().required(),
   productPrice: Joi.number().required(),
   productDescription: Joi.string().required(),
-  productImage: Joi.string().required(),
+  productImage: Joi.string(),
+  // productImage: Joi.string().required(),
   productImage_id: Joi.string(),
 });
 

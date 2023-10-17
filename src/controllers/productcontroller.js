@@ -39,7 +39,8 @@ export const create = async (req, res) => {
     !productPrice ||
     !productDescription ||
     !adminId ||
-    !productImage
+    !productUpload
+    // !productImage
   ) {
     console.log("Invalid data passed into request");
     return res.sendStatus(400);
