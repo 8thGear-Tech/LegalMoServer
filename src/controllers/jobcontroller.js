@@ -70,6 +70,8 @@ export const unassigned = async (req, res) => {
     }
 }
 
+
+
 export const removeLawyer = async (req, res) => {
     const { lawyerId, jobId } = req.body;
     try {
