@@ -110,6 +110,24 @@ export const deleteJob = async (req, res) => {
     }
 }
 
+export const completeJob = async (req, res) => {
+    const jobId = req.params.jobId
+    try {
+        const job = await Job.findById(jobId)
+        if(job){
+            job.status = "completed"
+            await job.save()
+            res.status(200).json(job)
+        }else{
+            res.send(null)
+            console.log("Job not found")
+        }
+        
+    } catch (error) {
+        res.status(500).json({error : error.message})
+    }   
+}
+
 export const pendingJob = async (req, res) => {
     try {
         const pendingJob = await Job.find({ status: "pending"})
@@ -140,11 +158,85 @@ export const completedJob = async (req, res) => {
     }
 }
 
+export const viewJobDetails = async (req, res) => {
+    const jobId = req.params.jobId
+    try {
+        const job = await Job.findById(jobId)
+        if(job){
+            res.status(200).json(job)
+        }else{
+            res.send(null)
+            console.log("Job not found")
+        }
+        
+    } catch (error) {
+        res.status(500).json({error : error.message})
+    }
+}
+
+export const editJobDetails = async (req, res) => {
+    const jobId = req.params.jobId
+    const { productId, detail } = req.body
+    try {
+        const job = await Job.findById(jobId)
+        if(job){
+            job.productId = productId
+            job.detail = detail
+            await job.save()
+            res.status(200).json(job)
+        }else{
+            res.send(null)
+            console.log("Job not found")
+        }
+        
+    } catch (error) {
+        res.status(500).json({error : error.message})
+    }
+}
+
 // FOR COMPANY
 
-    
+ export const companyPendingJob = async (req, res) => {
+    const companyId = req.params.companyId
+    try {
+        const company = await Company.findById(companyId)
+        if(company){
+            const companyPendingJob = await Job.find({ companyId: companyId, status: "pending"})
+            if(!companyPendingJob){
+                res.send(null)
+                console.log("No pending job")
+            }
+            res.status(200).json(companyPendingJob)
+        }else{
+            res.send(null)
+            console.log("Company not found")
+        }
+        
+    } catch (error) {
+        res.status(500).json({error : error.message})
+    }   
+ }
 
-
+ export const companyCompletedJob = async (req, res) => {
+    const companyId = req.params.companyId
+    try {
+        const company = await Company.findById(companyId)
+        if(company){
+            const companyCompletedJob = await Job.find({ companyId: companyId, status: "completed"})
+            if(!companyCompletedJob){
+                res.send(null)
+                console.log("No completed job")
+            }
+            res.status(200).json(companyCompletedJob)
+        }else{
+            res.send(null)
+            console.log("Company not found")
+        }
+        
+    } catch (error) {
+        res.status(500).json({error : error.message})
+    }   
+ }
 
 // FOR LAWYERS
 export const viewJob = async (req,res) => {

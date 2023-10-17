@@ -1,5 +1,5 @@
 import express from "express";
-import { assignJob, assigned, unassigned, allJob, removeLawyer, deleteJob, pendingJob, completedJob } from "../controllers/jobcontroller.js";
+import { assignJob, assigned, unassigned, allJob, removeLawyer, deleteJob,completeJob, viewJobDetails, editJobDetails, pendingJob, completedJob, companyCompletedJob, companyPendingJob } from "../controllers/jobcontroller.js";
 
 const router = express.Router();
 
@@ -13,7 +13,12 @@ router.get('/api/unassign', unassigned)
 router.get('/api/alljobs', allJob)
 router.delete('/api/removelawyer', removeLawyer)
 router.delete('/api/deletejob', deleteJob)
-router.get('/api/pendingjob', pendingJob)
-router.get('/api/completedjob', completedJob)
+router.get('/api/pendingjobs', pendingJob)
+router.get('/api/completedjobs', completedJob)
+router.get('/api/viewjobdetails', viewJobDetails)
+router.put('/api/editjobdetails', editJobDetails)
+router.put('/api/completejob', completeJob)
+router.get('/api/company/completedjobs', companyCompletedJob)
+router.get('/api/company/pendingjobs', companyPendingJob)
 
 export default router;
