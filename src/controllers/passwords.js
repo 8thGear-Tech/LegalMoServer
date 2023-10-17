@@ -24,7 +24,7 @@ async function sendResetPasswordEmail(userEmail, token) {
           <p>Your password reset token is:</p>
           <p><strong>${token}</strong></p>
           <p>This token is required to reset your password. Please copy it and input it in the password reset form on our website.</p>
-          <p>This token <b>expires in 5 minutes</b>.</p>
+          <p>This token <b>expires in 10 minutes</b>.</p>
         `,
       });
   
@@ -70,7 +70,7 @@ export const forgotPassword = async (req, res) => {
   
       // Generate a password reset token
       const token = passwordResetToken();
-      const expires = new Date(Date.now() + 300000); // Token expires in 5 minutes
+      const expires = new Date(Date.now() + 600000); // Token expires in 10 minutes
   
       // Find the user and update the token and expiration date in parallel
       const updatedUser = await userModel.findOneAndUpdate(

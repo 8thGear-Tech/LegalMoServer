@@ -1,5 +1,5 @@
 import express from "express";
-import { companySignup, lawyerSignup, adminSignup } from "../controllers/authcontrollers.js";
+import { companySignup, lawyerSignup, adminSignup, logoutUser } from "../controllers/authcontrollers.js";
 import {confirmEmail} from "../utils/email.js"
 import { forgotPassword, resetPassword, resetPasswordToken } from "../controllers/passwords.js";
 import { routeBasedOnUserType } from "../controllers/middleware.js";
@@ -16,6 +16,7 @@ router.get("/useremail/confirm/:token", confirmEmail);
 router.post('/forgot-password/:userType', forgotPassword);
 router.post("/confirm-reset-token", resetPasswordToken);
 router.patch('/reset-password', resetPassword);
+router.post("/logout", logoutUser);
 
 
 export default router;

@@ -91,16 +91,12 @@ export const adminLogin = async (req, res) => {
          // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
               const { _id } = user.id;
               const token = generateToken(_id);
-
-              console.log(token)
               res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 }); 
-
-          return res.status(200).json({ 
-            status: 'success',
-            data: { user },
-          });
+            return res.status(200).json({ 
+              status: 'success',
+              data: { user },
+            });
     }
-
     const { officialEmail, password } = req.body;
 
     // Check if admin exists
@@ -111,7 +107,6 @@ export const adminLogin = async (req, res) => {
         message: 'You are not an admin',
       });
     }
-
         // Check if the password is correct and log in the admin
         const passwordCheck = await bcrypt.compare(password, admin?.password || "");
         if (passwordCheck) {
@@ -134,8 +129,6 @@ export const adminLogin = async (req, res) => {
             data: { admin },
           });
         }
-
-
     return res.status(401).json({  
       status: 'fail',
       message: 'Invalid email/password',
@@ -426,11 +419,18 @@ export const lawyerLogin = async (req, res) => {
     });
   }
 };
+export const logoutUser = async (req, res) => {
+  try {
+    // Clear the JWT token by setting an expired token
+    res.cookie('jwt', 'expired', { httpOnly: true, maxAge: 1 });
 
-
-
-
-
+    // Redirect the user to the login page or any other page you prefer
+    res.status(200).send("user logged out successfully from server");
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
 
 
 
