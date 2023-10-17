@@ -70,8 +70,6 @@ export const unassigned = async (req, res) => {
     }
 }
 
-
-
 export const removeLawyer = async (req, res) => {
     const { lawyerId, jobId } = req.body;
     try {
@@ -93,6 +91,23 @@ export const removeLawyer = async (req, res) => {
     catch(error){
        res.status(500).json({error : error.message})
     }       
+}
+
+export const deleteJob = async (req, res) => {
+    const jobId = req.params.jobId
+    try {
+        const job = await Job.findById(jobId)
+        if(job){
+            await job.remove()
+            res.status(200).json({message: "Job deleted successfully"})
+        }else{
+            res.send(null)
+            console.log("Job not found")
+        }
+        
+    } catch (error) {
+        res.status(500).json({error : error.message})
+    }
 }
 
 
