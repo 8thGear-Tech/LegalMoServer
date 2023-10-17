@@ -27,7 +27,7 @@ export const companyRegister = Joi.object().keys({
     .required(),
   officialEmail: Joi.string().email().trim().lowercase().required(),
   officeAddress: Joi.string().required(),
-  cacRegNo: Joi.string()
+  cac: Joi.string()
     .regex(/^RC-\d{6}$/) // Use the regular expression pattern for CAC numbers
     .message("Invalid CAC registration number format"),
   industry: Joi.string().required(),

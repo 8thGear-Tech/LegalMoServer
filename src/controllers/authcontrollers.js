@@ -214,7 +214,7 @@ export const companySignup = async (req, res) => {
       officialEmail: req.body.officialEmail,
       phoneNumber: req.body.phoneNumber,
       officeAddress: req.body.officeAddress,
-      cacRegNo: req.body.cacRegNo,
+      cac: req.body.cac,
       industry: req.body.industry,
       password: hashedPassword,
     });
