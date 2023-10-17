@@ -5,7 +5,10 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import globalErrorHandler from "./src/utils/errorHandler.js";
-import config from "./src/config/index.js";
+// import config from "./src/config/index.js";
+// import session from "express-session";
+// import passport from "passport";
+
 import authRouter from "./src/routers/auths.js";
 // import { passportSetup } from "./src/config/passport.js";
 import userRouter from "./src/routers/usersrouters.js";
@@ -17,6 +20,9 @@ import cartRouter from "./src/routers/cart.js";
 import jobRouter from "./src/routers/job.js";
 import adminRouter from "./src/routers/admin.js";
 import ratingRouter from "./src/routers/rating.js";
+import passportRouter from "./src/routers/passportRoutes.js";
+// import globalErrorHandler from "./src/utils/errorHandler.js";
+import config from "./src/config/index.js";
 
 dotenv.config({ path: "./configenv.env" });
 // passportSetup("company" || "lawyer" || "admin");

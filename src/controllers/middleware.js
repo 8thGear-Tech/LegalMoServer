@@ -10,7 +10,7 @@ export const authenticateUser = async (req, res, next) => {
     
     if (!token) {
       console.log("No Token");
-      return res.status(401).json({ message: 'Unauthorized' });
+      return res.status(401).json({ message: 'Unidentified user' });
     }
 
     const decoded = jwt.verify(token, jwtsecret);
@@ -83,14 +83,12 @@ export const authenticateUser = async (req, res, next) => {
 export const routeBasedOnUserType = (req, res, next) => {
   const {userType} = req.params;
 
-
   if (!userType || !['company', 'admin', 'lawyer'].includes(userType)) {
     return res.status(400).json({
       status: 'fail',
       message: 'Invalid user type',
     });
   }
-
 
   // Based on the user type, route the request to the appropriate login function
   switch (userType) {

@@ -19,10 +19,17 @@ export const adminRegister = Joi.object().keys({
 });
 
 export const companyRegister = Joi.object().keys({
-  officialEmail: Joi.string().email().trim().lowercase().required(),
-  companyName: Joi.string().required(),
+  name: Joi.string().required(),
   contactName: Joi.string().required(),
+  phoneNumber: Joi.string()
+    .pattern(/^[0-9]{11}$/)
+    .message("Invalid phone number format")
+    .required(),
+  officialEmail: Joi.string().email().trim().lowercase().required(),
   officeAddress: Joi.string().required(),
+  cacRegNo: Joi.string()
+    .regex(/^RC-\d{6}$/) // Use the regular expression pattern for CAC numbers
+    .message("Invalid CAC registration number format"),
   industry: Joi.string().required(),
   cac: Joi.string(),
   password: Joi.string()
@@ -41,8 +48,16 @@ export const companyRegister = Joi.object().keys({
 });
 
 export const lawyerRegister = Joi.object().keys({
-  officialEmail: Joi.string().email().trim().lowercase().required(),
   name: Joi.string().required(),
+  phoneNumber: Joi.string()
+    .pattern(/^[0-9]{11}$/)
+    .message("Invalid phone number format")
+    .required(),
+  officialEmail: Joi.string().email().trim().lowercase().required(),
+  lawFirmName: Joi.string(),
+  lawFirmAddress: Joi.string().required(),
+  scn: Joi.string().required(),
+  cac: Joi.string(),
   password: Joi.string()
     .regex(
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,30}$/
@@ -52,25 +67,8 @@ export const lawyerRegister = Joi.object().keys({
     )
     .required(),
   passwordConfirm: Joi.string().required(),
-  phoneNumber: Joi.string()
-    .pattern(/^[0-9]{11}$/)
-    .message("Invalid phone number format")
-    .required(),
-  lawFirmName: Joi.string(),
-  lawFirmAddress: Joi.string(),
-  scn: Joi.string().required(),
-  cac: Joi.string(),
   areasOfPractise: Joi.array().items(Joi.string()).required(),
 });
-
-export const options = {
-  abortEarly: false,
-  errors: {
-    wrap: {
-      label: "",
-    },
-  },
-};
 
 export const AdminLogin = Joi.object().keys({
   officialEmail: Joi.string().email().trim().lowercase().required(),
@@ -113,7 +111,6 @@ export const ValidateforgotPassword = Joi.object().keys({
 });
 
 export const ValidateResetPassword = Joi.object().keys({
-  officialEmail: Joi.string().email().trim().lowercase().required(),
   password: Joi.string()
     .regex(
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,30}$/
@@ -124,3 +121,12 @@ export const ValidateResetPassword = Joi.object().keys({
     .required(),
   passwordConfirm: Joi.string().required(),
 });
+
+export const options = {
+  abortEarly: false,
+  errors: {
+    wrap: {
+      label: "",
+    },
+  },
+};

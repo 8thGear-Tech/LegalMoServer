@@ -3,8 +3,8 @@ import {
   companySignup,
   lawyerSignup,
   adminSignup,
-  confirmEmail,
 } from "../controllers/authcontrollers.js";
+import { confirmEmail } from "../utils/email.js";
 import {
   forgotPassword,
   resetPassword,
@@ -23,6 +23,6 @@ router.post("/admin/signup", adminSignup);
 router.get("/useremail/confirm/:token", confirmEmail);
 router.post("/forgot-password/:userType", forgotPassword);
 router.post("/confirm-reset-token", resetPasswordToken);
-router.post("/reset-password", resetPassword);
+router.patch("/reset-password", resetPassword);
 
 export default router;

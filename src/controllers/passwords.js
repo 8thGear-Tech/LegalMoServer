@@ -6,7 +6,7 @@ import {
   options,
   ValidateforgotPassword,
 } from "../utils/validator.js";
-import sendEmail from "../utils/email.js";
+import { sendEmail } from "../utils/email.js";
 import bcrypt from "bcrypt";
 
 function passwordResetToken() {
@@ -27,7 +27,7 @@ async function sendResetPasswordEmail(userEmail, token) {
           <p>Your password reset token is:</p>
           <p><strong>${token}</strong></p>
           <p>This token is required to reset your password. Please copy it and input it in the password reset form on our website.</p>
-          <p>This token <b>expires in 1 hours</b>.</p>
+          <p>This token <b>expires in 5 minutes</b>.</p>
         `,
     });
 
@@ -40,7 +40,6 @@ async function sendResetPasswordEmail(userEmail, token) {
     return false;
   }
 }
-
 export const forgotPassword = async (req, res) => {
   try {
     const { officialEmail } = req.body;
@@ -132,13 +131,11 @@ export const resetPasswordToken = async (req, res) => {
     if (!validToken || validUser.passwordToken !== token) {
       return res.status(400).json({ message: "Invalid or expired token" });
     }
-
-    // Include the token in the reset password URL
-    const resetPasswordUrl = `https://legalmo-server.onrender.com/api/reset-password?token=${token}`;
-    // const resetPasswordUrl = `http://localhost:5005/api/reset-password?token=${token}`;
-
+    const userEmail = validUser.officialEmail;
+    // Include the token in the reset password URL query
+    const newPasswordUrl = `http://localhost:5005/api/reset-password?userType=${userType}&userEmail=${userEmail}&token=${token}`;
     res.status(200).json({
-      message: `Token is valid for ${userType}. Follow ${resetPasswordUrl} to reset your password`,
+      message: `Token is valid for ${userType}. Follow ${newPasswordUrl} to create your new password`,
     });
   } catch (error) {
     console.error(error);
@@ -147,39 +144,36 @@ export const resetPasswordToken = async (req, res) => {
 };
 export const resetPassword = async (req, res) => {
   try {
-    const { token } = req.query;
-    const { officialEmail, password, passwordConfirm } = req.body;
+    const { token, userType } = req.query;
+    const officialEmail = req.query.userEmail;
 
-    const userModels = [Admin, Company, Lawyer];
-    let user = null;
-
-    const validate = ValidateResetPassword.validate(req.body, options);
-    if (validate.error) {
-      const message = validate.error.details
-        .map((detail) => detail.message)
-        .join(",");
-      return res.status(400).json({
-        status: "fail",
-        message,
-      });
+    // Check if the userType is valid (e.g., admin, lawyer, company)
+    if (
+      userType !== "admin" &&
+      userType !== "lawyer" &&
+      userType !== "company"
+    ) {
+      return res.status(400).json({ message: "Invalid user type" });
     }
 
-    const passwordCheck = passwordMatch(password, passwordConfirm);
-    if (!passwordCheck) {
-      return res.status(400).json({
-        status: "fail",
-        message: "Passwords do not match",
-      });
+    // Depending on the user type, choose the appropriate user model
+    let userModel;
+    switch (userType) {
+      case "admin":
+        userModel = Admin;
+        break;
+      case "lawyer":
+        userModel = Lawyer;
+        break;
+      case "company":
+        userModel = Company;
+        break;
+      default:
+        return res.status(400).json({ message: "Invalid user type" });
     }
 
     // Find the user based on the officialEmail
-    for (const userModel of userModels) {
-      user = await userModel.findOne({ officialEmail });
-
-      if (user) {
-        break;
-      }
-    }
+    const user = await userModel.findOne({ officialEmail });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -196,6 +190,16 @@ export const resetPassword = async (req, res) => {
     }
 
     // Update the user's password
+    const { password, passwordConfirm } = req.body;
+    const passwordCheck = passwordMatch(password, passwordConfirm);
+
+    if (!passwordCheck) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Passwords do not match",
+      });
+    }
+
     const hashPassword = await bcrypt.hash(password, 10);
     user.password = hashPassword;
 
