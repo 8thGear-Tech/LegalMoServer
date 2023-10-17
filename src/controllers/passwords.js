@@ -133,7 +133,7 @@ export const resetPasswordToken = async (req, res) => {
     }
     const userEmail = validUser.officialEmail;
     // Include the token in the reset password URL query
-    const newPasswordUrl = `http://localhost:5005/api/reset-password?userType=${userType}&userEmail=${userEmail}&token=${token}`;
+    const newPasswordUrl = `https://legalmo-server.onrender.com/api/reset-password?userType=${userType}&userEmail=${userEmail}&token=${token}`;
     res.status(200).json({
       message: `Token is valid for ${userType}. Follow ${newPasswordUrl} to create your new password`,
     });
