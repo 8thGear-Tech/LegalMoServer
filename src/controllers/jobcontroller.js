@@ -239,24 +239,10 @@ export const editJobDetails = async (req, res) => {
  }
 
 // FOR LAWYERS
-export const viewJob = async (req,res) => {
 
-    const lawyerId = req.params.lawyerId
-    try {
-        const lawyerJobs = await Job.find({assignedTo: lawyerId})
-        if(lawyerJobs){
-            res.status(200).json(lawyerJobs)
-        }else{
-            res.send(null)
-            console.log("No job assigned to you")
-        }
-        
-    } catch (error) {
-        res.status(500).json({error : error.message})
-    }
-}
 
 export const paymentDetails = async(req, res) => {
+
     const validate = paymentDetail.validate(req.body, options)
     if (validate.error) {
         const message = validate.error.details.map((detail) => detail.message).join(',');
@@ -283,3 +269,67 @@ export const paymentDetails = async(req, res) => {
 }
 
  
+
+export const lawyerAssignedJobs = async (req, res) => {
+    const lawyerId = req.params.lawyerId
+    try {
+        const lawyer = await Lawyer.findById(lawyerId)
+        if(lawyer){
+            const lawyerAssignedJob = await Job.find({ assignedTo: lawyerId})
+            if(!lawyerAssignedJob){
+                res.send(null)
+                console.log("No assigned job")
+            }
+            res.status(200).json(lawyerAssignedJob)
+        }
+        else{
+            res.send(null)
+            console.log("You are not a lawyer")
+        }
+    } catch (error) {
+        res.status(500).json({error : error.message})
+    }
+}
+
+export const lawyerPendingJobs = async (req, res) => {
+    const lawyerId = req.params.lawyerId
+    try {
+        const lawyer = await Lawyer.findById(lawyerId)
+        if(lawyer){
+            const lawyerPendingJob = await Job.find({ assignedTo: lawyerId, status: "pending"})
+            if(!lawyerPendingJob){
+                res.send(null)
+                console.log("No pending job")
+            }
+            res.status(200).json(lawyerPendingJob)
+        }   
+        else{
+            res.send(null)
+            console.log("You are not a lawyer")
+        }    
+    } catch (error) {
+        res.status(500).json({error : error.message})
+    }
+
+}
+
+export const lawyerCompletedJobs = async (req, res) => {
+    const lawyerId = req.params.lawyerId
+    try {
+        const lawyer = await Lawyer.findById(lawyerId)
+        if(lawyer){
+            const lawyerCompletedJob = await Job.find({ assignedTo: lawyerId, status: "completed"})
+            if(!lawyerCompletedJob){
+                res.send(null)
+                console.log("No completed job")
+            }
+            res.status(200).json(lawyerCompletedJob)
+        }
+        else{
+            res.send(null)
+            console.log("You are not a lawyer")
+        }
+    } catch (error) {
+        res.status(500).json({error : error.message})
+    }
+}
