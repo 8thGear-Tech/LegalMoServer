@@ -110,6 +110,40 @@ export const deleteJob = async (req, res) => {
     }
 }
 
+export const pendingJob = async (req, res) => {
+    try {
+        const pendingJob = await Job.find({ status: "pending"})
+        if(pendingJob){
+            res.status(200).json(pendingJob)
+        }else{
+            res.send(null)
+            console.log("No pending job")
+        }
+        
+    } catch (error) {
+        res.status(500).json({error : error.message})
+    }
+}
+
+export const completedJob = async (req, res) => {
+    try {
+        const completedJob = await Job.find({ status: "completed"})
+        if(completedJob){
+            res.status(200).json(completedJob)
+        }else{
+            res.send(null)
+            console.log("No completed job")
+        }
+        
+    } catch (error) {
+        res.status(500).json({error : error.message})
+    }
+}
+
+// FOR COMPANY
+
+    
+
 
 
 // FOR LAWYERS
