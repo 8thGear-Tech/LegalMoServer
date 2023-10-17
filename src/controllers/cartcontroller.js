@@ -144,16 +144,32 @@ export const deleteCart = async (req, res) => {
         //  * @param {Array} products - The array of products to search through.
         //  * @param {string} objectIdToFind - The ID of the product to find.
         //  * @returns {number} - The index of the product in the array, or -1 if not found.
-         
-        const productIndex = products.findIndex((product)=> {
+        let productIndex = -1;
+         products.forEach((product, i) => {
+            console.log(i)
             console.log(product.productId)
             console.log(typeof(product.productId))
-            ObjectId.is(product.productId, objectIdToFind)
-        })
+            if (ObjectId.is(product.productId, objectIdToFind)) {
+                console.log("found")
+                console.log(i)
+                productIndex = i
+                return;
+            }
+           
+        });
+
+
+        // const productIndex = products.findIndex((product)=> {
+        //     console.log(product.productId)
+        //     console.log(typeof(product.productId))
+        //     ObjectId.is(product.productId, objectIdToFind)
+        // })
+        
         console.log(productIndex)
 
         if(productIndex > -1){
             let product = cart.products[productIndex]
+            console.log(product)
             cart.bill -= product.quantity * product.price
             if(cart.bill < 0){
                 cart.bill = 0
@@ -163,6 +179,7 @@ export const deleteCart = async (req, res) => {
                 return acc + curr.quantity * curr.price
             }, 0)
             cart = await cart.save()
+            res.status(200).send(cart)
         }
         else{
             res.status(404).send("Product not found")

@@ -5,6 +5,8 @@ import {Lawyer} from '../models/lawyermodel.js';
 import { paymentDetail, options } from '../utils/productvalidation.js';
  
 // FOR ADMIN
+
+//view al jobs for request products
 export const allJob = async (req, res) => {
     try {
         const jobs = await Job.find()
