@@ -209,7 +209,7 @@ export const companySignup = async (req, res) => {
     // Hash password and create a new company
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const newCompany = new Company({
-      name: req.body.name,
+      companyName: req.body.companyName,
       contactName: req.body.contactName,
       officialEmail: req.body.officialEmail,
       phoneNumber: req.body.phoneNumber,
