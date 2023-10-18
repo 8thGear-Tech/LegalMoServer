@@ -114,6 +114,9 @@ export const getCart = async (req, res) => {
     }
   } catch (error) {
     res.status(500).send("something went wrong");
+    //   }
+    // } catch (error) {
+    //   res.status(500).send("something went wrong");
   }
 };
 
@@ -121,21 +124,46 @@ export const deleteCart = async (req, res) => {
   const { companyId, productId } = req.body;
   console.log(productId);
   try {
-    console.log("Cart findig");
-    const cart = await Cart.find({ companyId: companyId });
-    const products = cart[0].products;
-    const objectIdToFind = new ObjectId(productId);
-    console.log(products, objectIdToFind);
+    console.log("Cart finding");
+    let cart = await Cart.findOne({ companyId });
+    if (!cart) {
+      res.status(404).send("Cart not found");
+      return;
+    }
+    let products = cart.products;
+    console.log(products);
+    const objectIdToFind = new mongoose.Types.ObjectId(productId);
+    console.log(objectIdToFind);
+    console.log(typeof objectIdToFind);
+
+    //  * Finds the index of a product in an array of products based on its ID.
+    //  * @param {Array} products - The array of products to search through.
+    //  * @param {string} objectIdToFind - The ID of the product to find.
+    //  * @returns {number} - The index of the product in the array, or -1 if not found.
+    let productIndex = -1;
+    products.forEach((product, i) => {
+      console.log(i);
+      console.log(product.productId);
+      console.log(typeof product.productId);
+      if (ObjectId.is(product.productId, objectIdToFind)) {
+        console.log("found");
+        console.log(i);
+        productIndex = i;
+        return;
+      }
+    });
+
     // const productIndex = products.findIndex((product)=> {
-    //     console.log( product.productId)
-    //     JSON.stringify(product.productId) == JSON.stringify(objectIdToFind)
+    //     console.log(product.productId)
+    //     console.log(typeof(product.productId))
+    //     ObjectId.is(product.productId, objectIdToFind)
     // })
-    const productIndex = products.findIndex((product) =>
-      product.equals(productId)
-    );
+
     console.log(productIndex);
+
     if (productIndex > -1) {
       let product = cart.products[productIndex];
+      console.log(product);
       cart.bill -= product.quantity * product.price;
       if (cart.bill < 0) {
         cart.bill = 0;
@@ -145,13 +173,19 @@ export const deleteCart = async (req, res) => {
         return acc + curr.quantity * curr.price;
       }, 0);
       cart = await cart.save();
+      res.status(200).send(cart);
     } else {
       res.status(404).send("Product not found");
     }
   } catch (error) {
-    console.log("jdjjdjd");
     console.log(error);
     res.status(500).send("something went wrong");
+    //   }
+    // } catch (error) {
+    //   console.log("jdjjdjd");
+    //   console.log(error);
+    //   res.status(500).send("something went wrong");
+    // }
   }
 };
 

@@ -67,6 +67,10 @@ const lawyerSchema = new Schema({
       ref: "Job",
     },
   ],
+  verified: {
+    type: Boolean,
+    default: false,
+  },
   accountDetails: [
     {
       accountNumber: {

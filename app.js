@@ -23,6 +23,7 @@ import ratingRouter from "./src/routers/rating.js";
 import passportRouter from "./src/routers/passportRoutes.js";
 // import globalErrorHandler from "./src/utils/errorHandler.js";
 import config from "./src/config/index.js";
+import lawyerRouter from "./src/routers/lawyer.js";
 
 dotenv.config({ path: "./configenv.env" });
 // passportSetup("company" || "lawyer" || "admin");
@@ -55,6 +56,7 @@ app.use("/", cartRouter);
 app.use("/", jobRouter);
 app.use("/", adminRouter);
 app.use("/", ratingRouter);
+app.use("/", lawyerRouter);
 
 app.use(
   cors({

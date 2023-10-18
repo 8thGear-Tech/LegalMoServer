@@ -45,3 +45,32 @@ export const lawyerProfile = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const verifyLawyer = async (req, res) => {
+  try {
+    const lawyer = await Lawyer.findByIdAndUpdate(req.params.id, {
+      verified: true,
+    });
+    res.status(200).json({ lawyer });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const verifiedLawyers = async (req, res) => {
+  try {
+    const lawyer = await Lawyer.find({ verified: true });
+    res.status(200).json({ lawyer });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const unverifiedLawyers = async (req, res) => {
+  try {
+    const lawyer = await Lawyer.find({ verified: false });
+    res.status(200).json({ lawyer });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
