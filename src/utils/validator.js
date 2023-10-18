@@ -19,7 +19,7 @@ export const adminRegister = Joi.object().keys({
 });
 
 export const companyRegister = Joi.object().keys({
-  name: Joi.string().required(),
+  companyName: Joi.string().required(),
   contactName: Joi.string().required(),
   phoneNumber: Joi.string()
     .pattern(/^[0-9]{11}$/)
