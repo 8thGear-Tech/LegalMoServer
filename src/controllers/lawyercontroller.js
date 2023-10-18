@@ -8,10 +8,8 @@ import { Job } from "../models/jobmodel.js";
 
 export const addPaymentDetails = async (req, res) => {
   const { accountNumber, accountName, bank } = req.body;
-  const { lawyerId } = req.params;
   try {
-    const lawyer = await Lawyer.findByIdAndUpdate(lawyerId, {
-      // const lawyer = await Lawyer.findByIdAndUpdate(req.user._id, {
+    const lawyer = await Lawyer.findByIdAndUpdate(req.user._id, {
       $push: {
         accountDetails: {
           accountNumber: req.body.accountNumber,
