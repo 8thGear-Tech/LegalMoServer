@@ -4,7 +4,7 @@ import { addPaymentDetails, editPaymentDetails, getPaymentDetails } from "../con
 const router = express.Router();
 
 router.post("/api/add-payment-details", addPaymentDetails);
-router.post("/api/edit-payment-details", editPaymentDetails);
+router.patch("/api/edit-payment-details", editPaymentDetails);
 router.get("/api/get-payment-details", getPaymentDetails);
 
 export default router;

@@ -7,14 +7,14 @@ import { Job } from '../models/jobmodel.js';
 //  * @param {string} req.user._id - The ID of the authenticated user.
  
 export const addPaymentDetails = async (req, res) => {
-    const { accountNumber, accountName, bank } = req.body;
+    const { accountNumber, accountName, bank, lawyerId } = req.body;
     try {
-        const lawyer = await Lawyer.findByIdAndUpdate(req.user._id, {
+        const lawyer = await Lawyer.findByIdAndUpdate(lawyerId, {
         $push: {
             accountDetails: {
-            accountNumber: req.body.accountNumber,
-            accountName: req.body.accountName,
-            bank: req.body.bank,
+            accountNumber: accountNumber,
+            accountName: accountName,
+            bank: bank,
             },
         },
         });
@@ -25,15 +25,15 @@ export const addPaymentDetails = async (req, res) => {
     };
 
 export const editPaymentDetails = async (req, res) => {
-    const { accountNumber, accountName, bank } = req.body;
+    const { accountNumber, accountName, bank, lawyerId } = req.body;
     try {
-        const lawyer = await Lawyer.findByIdAndUpdate(req.user._id, {
+        const lawyer = await Lawyer.findByIdAndUpdate(lawyerId, {
         $set: {
             accountDetails: {
-            accountNumber: req.body.accountNumber,
-            accountName: req.body.accountName,
-            bank: req.body.bank,
-            },
+                accountNumber: accountNumber,
+                accountName: accountName,
+                bank: bank,
+                },
         },
         });
         res.status(200).json({ lawyer });

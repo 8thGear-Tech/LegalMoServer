@@ -30,10 +30,16 @@ export const assignJob = async (req, res) => {
             return res.status(400).json({ error: 'Lawyer already assigned to this task'})
         }
 
-        job.assignedTo.push(lawyerId)
-        job.status = "pending"
-        await job.save()
-        return res.status(201).send(job)
+        if(lawyer.verified == true){
+            job.assignedTo.push(lawyerId)
+            job.status = "pending"
+            await job.save()
+            return res.status(201).send(job)
+        }else {
+            return res.status(400).json({ error: 'Unverified Lawyer'})
+        }
+
+        
     }
     catch(error){
        res.status(500).json({error : error.message})

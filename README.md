@@ -160,3 +160,138 @@
     "companyId" : "sksjhd494940202020brgr",
   }
   ```
+
+
+## JOB ENDPOINTS
+
+
+### 1. ASSIGN LAWYER TO A JOB
+
+- **Endpoint:** `/api/assign`
+- **HTTP Method:** POST
+- **Url**: [https://localhost:5005/api/assign]()
+- **Request Body**: JSON field
+
+- **Example**:
+  ```json
+  {
+    "lawyerId" : "sksjhd494940202020brgr",
+    "jobId": "Contract Drafting and Review"
+  }
+  ```
+
+### 2. GET ALL JOBS
+
+- **Endpoint:** `/api/jobs`
+- **HTTP Method:** GET
+- **Url**: [https://localhost:5005/api/jobs]()
+
+  - on success:
+
+  ```json
+  {
+    
+  }
+  ```
+
+### 3. GET ALL ASSIGNED JOBS
+
+- **Endpoint:** `/api/assign`
+- **HTTP Method:** GET
+- **Url**: [https://localhost:5005/api/assign]()
+
+  - on success:
+
+  ```json
+  {
+    
+  }
+  ```
+
+### 4. GET ALL UNASSIGNED JOBS
+
+- **Endpoint:** `/api/unassign`
+- **HTTP Method:** GET
+- **Url**: [https://localhost:5005/api/unassign]()
+
+  - on success:
+
+  ```json
+  {
+    
+  }
+  ```
+
+### 5. REMOVE A LAWYER FROM A JOB
+
+- **Endpoint:** `/api/removelawyer`
+- **HTTP Method:** DELETE
+- **Url**: [https://localhost:5005/api/removelawyer]()
+- **Request Body**: JSON field
+
+- **Example**:
+  ```json
+  {
+    "lawyerId" : "sksjhd494940202020brgr",
+    "jobId": "Contract Drafting and Review"
+  }
+  ```
+  - on success:
+
+  ```json
+  {
+    {success: true}
+  }
+  ```
+
+### 6. DELETE JOB
+
+- **Endpoint:** `/api/deletejob`
+- **HTTP Method:** DELETE
+- **Url**: [https://localhost:5005/api/deletejob]()
+- **Request Params**: jobId
+
+  - on success:
+
+  ```json
+  {
+    {"message" : "Job deleted successfully"}
+  }
+  ```
+
+### 7. GET ALL PENDING JOBS
+
+- **Endpoint:** `/api/pendingjobs`
+- **HTTP Method:** GET
+- **Url**: [https://localhost:5005/api/pendingjobs]()
+
+  - on success:
+
+  ```json
+  {
+    
+  }
+  ```
+
+### 8. GET ALL COMPLETED JOBS
+
+- **Endpoint:** `/api/completedjobs`
+- **HTTP Method:** GET
+- **Url**: [https://localhost:5005/api/completedjobs]()
+
+  - on success:
+
+  ```json
+  {
+    
+  }
+  ```
+
+### 9. COMPLETE A JOB
+
+- **Endpoint:** `/api/completejob`
+- **HTTP Method:** PUT
+- **Url**: [https://localhost:5005/api/completejob]()
+- **Request params**: url(job id)
+
+
