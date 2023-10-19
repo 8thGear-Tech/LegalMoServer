@@ -167,14 +167,13 @@ export const deleteCart = async (req, res) => {
                 break;
             }
         }
-        
-
 
         // const productIndex = products.findIndex((product)=> {
         //     console.log(product.productId)
         //     console.log(typeof(product.productId))
         //     ObjectId.is(product.productId, objectIdToFind)
         // })
+        
         
         console.log(productIndex)
 
