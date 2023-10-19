@@ -145,18 +145,29 @@ export const deleteCart = async (req, res) => {
         //  * @param {string} objectIdToFind - The ID of the product to find.
         //  * @returns {number} - The index of the product in the array, or -1 if not found.
         let productIndex = -1;
-         products.forEach((product, i) => {
+        // products.forEach((product, i) => {
+        //     console.log(i)
+        //     console.log(product.productId)
+        //     console.log(typeof(product.productId))
+        //     if (ObjectId.is(product.productId, objectIdToFind)) {
+        //         console.log("found")
+        //         console.log(i)
+        //         productIndex = i
+        //         return;
+        //     }
+           
+        // });
+
+        for(i=0; i<products.lenght; i++){
             console.log(i)
-            console.log(product.productId)
-            console.log(typeof(product.productId))
             if (ObjectId.is(product.productId, objectIdToFind)) {
                 console.log("found")
                 console.log(i)
                 productIndex = i
-                return;
+                break;
             }
-           
-        });
+        }
+        
 
 
         // const productIndex = products.findIndex((product)=> {
