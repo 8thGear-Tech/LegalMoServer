@@ -19,6 +19,12 @@ export const allJob = async (req, res) => {
 export const assignJob = async (req, res) => {
   const { lawyerId, jobId } = req.body;
   try {
+    const admin = Admin.findById(req.userId);
+    if (!admin) {
+      return res
+        .status(400)
+        .json({ error: "You are not authorized to assign a job" });
+    }
     const job = await Job.findById(jobId);
     const lawyer = await Lawyer.findById(lawyerId);
     if (!job || !lawyer) {
@@ -31,10 +37,14 @@ export const assignJob = async (req, res) => {
         .json({ error: "Lawyer already assigned to this task" });
     }
 
-    job.assignedTo.push(lawyerId);
-    job.status = "pending";
-    await job.save();
-    return res.status(201).send(job);
+    if (lawyer.verified == true) {
+      job.assignedTo.push(lawyerId);
+      job.status = "pending";
+      await job.save();
+      return res.status(201).send(job);
+    } else {
+      return res.status(400).json({ error: "Unverified Lawyer" });
+    }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -23,28 +23,16 @@ export const create = async (req, res) => {
     });
   }
 
+  //new
   const productUpload = await cloudinary.uploader.upload(req.file.path);
 
   const {
     productName,
     productPrice,
     productDescription,
-    // productImage,
-    adminId,
+    // productImage
   } = req.body;
-  // const adminId = req.user.id
-  // console.log(adminId)
-  if (
-    !productName ||
-    !productPrice ||
-    !productDescription ||
-    !adminId ||
-    !productUpload
-    // !productImage
-  ) {
-    console.log("Invalid data passed into request");
-    return res.sendStatus(400);
-  }
+  const adminId = req.userId;
   const _id = adminId;
   const adminExists = await Admin.findOne({ _id });
   console.log(adminExists);
@@ -55,6 +43,7 @@ export const create = async (req, res) => {
         productPrice,
         productDescription,
         adminId,
+        // productImage,
         productImage: productUpload.secure_url,
         productImage_id: productUpload.public_id,
       });
