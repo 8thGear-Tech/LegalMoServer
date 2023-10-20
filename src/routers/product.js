@@ -26,7 +26,7 @@ const router = express.Router();
 // router.post("/api/create", authToken, create);
 // router.post("/api/create", create);
 // router.post("/api/create", upload.single("productImage"), create);
-router.post("/api/create", authToken, create);
+router.post("/api/create", authToken, upload.single("productImage"), create);
 // router.post("/api/create", create);
 router.get("/api/products", getProducts);
 router.put("/api/update/:id", updateProduct);
