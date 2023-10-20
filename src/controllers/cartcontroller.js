@@ -158,9 +158,9 @@ export const deleteCart = async (req, res) => {
            
         // });
 
-        for(i=0; i<products.lenght; i++){
+        for(let i=0; i<products.lenght; i++){
             console.log(i)
-            if (ObjectId.is(product.productId, objectIdToFind)) {
+            if (ObjectId.is(products[i].productId, objectIdToFind)) {
                 console.log("found")
                 console.log(i)
                 productIndex = i
@@ -173,7 +173,7 @@ export const deleteCart = async (req, res) => {
         //     console.log(typeof(product.productId))
         //     ObjectId.is(product.productId, objectIdToFind)
         // })
-        
+
         
         console.log(productIndex)
 
