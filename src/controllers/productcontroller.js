@@ -6,6 +6,7 @@ import { productcreation, options, productupdate } from '../utils/productvalidat
 
 
 export const create = async (req, res) => {
+    
     const validate = productcreation.validate(req.body, options)
         if (validate.error) {
             const message = validate.error.details.map((detail) => detail.message).join(',');
@@ -14,11 +15,9 @@ export const create = async (req, res) => {
                     message,
                 })
           }
-
     const { productName,  productPrice, productDescription, productImage } = req.body;
      const adminId = req.userId
-     const _id = adminId
-     const adminExists = await Admin.findOne({ _id });
+     const adminExists = await Admin.findById(adminId)
      console.log(adminExists);
      if (adminExists) {
         try {
@@ -65,10 +64,8 @@ export const updateProduct = async (req, res) => {
                     message,
                 })
           }
-    const { productName, productPrice, productDescription, productImage, adminId } = req.body;
-    const _id = adminId
-    const adminExists = await Admin.findOne({ _id });
-
+    const { productName, productPrice, productDescription, productImage } = req.body;
+    const adminExists = await Admin.findById(req.userId)
     if (adminExists) {
         try {
             const updateProduct = await Product.findByIdAndUpdate(req.params.id, 
@@ -89,10 +86,7 @@ export const updateProduct = async (req, res) => {
 }
 
 export const deleteProduct = async (req, res) => {
-    
-    const { adminId } = req.body;
-    const _id = adminId
-    const adminExists = await Admin.findOne({ _id });
+    const adminExists = await Admin.findById(req.userId)
     if (adminExists) {
         try {
             const product = await Product.findByIdAndDelete(req.params.id);

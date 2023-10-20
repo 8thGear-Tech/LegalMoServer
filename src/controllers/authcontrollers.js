@@ -389,3 +389,7 @@ export const confirmEmail = async (req, res) => {
     res.status(400).send('Invalid or expired token.');
   }
 };
+
+
+
+

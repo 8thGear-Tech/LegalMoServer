@@ -8,6 +8,11 @@ import { paymentDetail, options } from '../utils/productvalidation.js';
 
 //view al jobs for request products
 export const allJob = async (req, res) => {
+    const isAdmin = await Admin.findById(req.userId)
+    if(!isAdmin){
+        res.status(404).send({message : "Unauthorized!, You must be an Admin"})
+        return
+    }
     try {
         const jobs = await Job.find()
         return res.status(200).send(jobs)
@@ -17,13 +22,13 @@ export const allJob = async (req, res) => {
 }
 
 export const assignJob = async (req, res) => {
-   
+    const isAdmin = await Admin.findById(req.userId)
+    if(!isAdmin){
+        res.status(404).send({message : "Unauthorized!, You must be an Admin"})
+        return
+    }
     const { lawyerId, jobId } = req.body;
-    try {
-        const admin = Admin.findById(req.userId)  
-        if(!admin){
-            return res.status(400).json({ error: 'You are not authorized to assign a job'})
-        }      
+    try {     
         const job = await Job.findById(jobId)
         const lawyer = await Lawyer.findById(lawyerId)
         if(!job || !lawyer){
@@ -51,6 +56,11 @@ export const assignJob = async (req, res) => {
 }
 
 export const assigned = async (req, res) => {
+    const isAdmin = await Admin.findById(req.userId)
+    if(!isAdmin){
+        res.status(404).send({message : "Unauthorized!, You must be an Admin"})
+        return
+    }
     try {
         const assignedJob = await Job.find({ assignedTo: { $ne: []}})
         if(assignJob){
@@ -66,6 +76,11 @@ export const assigned = async (req, res) => {
 }
 
 export const unassigned = async (req, res) => {
+    const isAdmin = await Admin.findById(req.userId)
+    if(!isAdmin){
+        res.status(404).send({message : "Unauthorized!, You must be an Admin"})
+        return
+    }
     try {
         const unassignedJob = await Job.find({ assignedTo: []})
         if (unassignedJob) {
@@ -81,6 +96,11 @@ export const unassigned = async (req, res) => {
 }
 
 export const removeLawyer = async (req, res) => {
+    const isAdmin = await Admin.findById(req.userId)
+    if(!isAdmin){
+        res.status(404).send({message : "Unauthorized!, You must be an Admin"})
+        return
+    }
     const { lawyerId, jobId } = req.body;
     try {
         const job = await Job.findById(jobId)
@@ -104,6 +124,11 @@ export const removeLawyer = async (req, res) => {
 }
 
 export const deleteJob = async (req, res) => {
+    const isAdmin = await Admin.findById(req.userId)
+    if(!isAdmin){
+        res.status(404).send({message : "Unauthorized!, You must be an Admin"})
+        return
+    }
     const jobId = req.params.jobId
     try {
         const job = await Job.findById(jobId)
@@ -121,6 +146,11 @@ export const deleteJob = async (req, res) => {
 }
 
 export const completeJob = async (req, res) => {
+    const isAdmin = await Admin.findById(req.userId)
+    if(!isAdmin){
+        res.status(404).send({message : "Unauthorized!, You must be an Admin"})
+        return
+    }
     const jobId = req.params.jobId
     try {
         const job = await Job.findById(jobId)
@@ -139,6 +169,11 @@ export const completeJob = async (req, res) => {
 }
 
 export const pendingJob = async (req, res) => {
+    const isAdmin = await Admin.findById(req.userId)
+    if(!isAdmin){
+        res.status(404).send({message : "Unauthorized!, You must be an Admin"})
+        return
+    }
     try {
         const pendingJob = await Job.find({ status: "pending"})
         if(pendingJob){
@@ -154,6 +189,11 @@ export const pendingJob = async (req, res) => {
 }
 
 export const completedJob = async (req, res) => {
+    const isAdmin = await Admin.findById(req.userId)
+    if(!isAdmin){
+        res.status(404).send({message : "Unauthorized!, You must be an Admin"})
+        return
+    }
     try {
         const completedJob = await Job.find({ status: "completed"})
         if(completedJob){

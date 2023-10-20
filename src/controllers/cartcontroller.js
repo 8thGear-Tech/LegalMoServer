@@ -1,11 +1,17 @@
 import {Product} from '../models/productmodel.js';
 import {Cart} from '../models/cartmodel.js'
+import { Company } from '../models/companymodel.js';
 import { addCart,options } from '../utils/cartvalidation.js';
 import { Job } from '../models/jobmodel.js';
 import mongoose from 'mongoose';
 import { ObjectId } from 'mongodb';
 
 export const addToCart = async (req, res) => {
+    const companyExists = await Company.findById(req.userId)
+    if(!companyExists){
+        res.status(404).send({message : "Unauthorized!, You must be a company"})
+        return
+    }
     const validate = addCart.validate(req.body, options)
         if (validate.error) {
             const message = validate.error.details.map((detail) => detail.message).join(',');
@@ -15,7 +21,8 @@ export const addToCart = async (req, res) => {
                 })
           }
           console.log(req.body)
-    const { companyId, productId, quantity, detail } = req.body;
+    const companyId = req.userId
+    const { productId, quantity, detail } = req.body;
     if(!quantity){
         let quantity = 1
     }
@@ -106,11 +113,12 @@ export const getAllCart = async (req, res) => {
 }
 
 export const getCart = async (req, res) => {
-    // const companyId  = req.body.companyId;
-    const params = req.params.id
-    console.log(req.params.id)
-    const cart = await Cart.find({companyId: params})
-    // const cart = await Cart.findById(req.params.id);
+    const companyExists = await Company.findById(req.userId)
+    if(!companyExists){
+        res.status(404).send({message : "Unauthorized!, You must be a company"})
+        return
+    }
+    const cart = await Cart.find({companyId: req.userId})
     try {
        if(cart){
         res.status(200).send(cart)
@@ -125,8 +133,13 @@ export const getCart = async (req, res) => {
 }
 
 export const deleteCart = async (req, res) => {
-    const {companyId, productId}  = req.body;
-    console.log(productId)
+    const companyExists = await Company.findById(req.userId)
+    if(!companyExists){
+        res.status(404).send({message : "Unauthorized!, You must be a company"})
+        return
+    }
+    const productId  = req.params.id;
+    const companyId = req.userId
     try {
         console.log("Cart finding")
         let cart = await Cart.findOne({companyId})
@@ -201,8 +214,12 @@ export const deleteCart = async (req, res) => {
 }
 
 export const clearCart = async (req, res) => {
-    const { companyId } = req.body;
-
+    const companyExists = await Company.findById(req.userId)
+    if(!companyExists){
+        res.status(404).send({message : "Unauthorized!, You must be a company"})
+        return
+    }
+    const companyId  = req.userId;
     try {
         await Cart.deleteMany({companyId})
         res.status(200).json({message: 'Cart cleared successfully'})
@@ -213,10 +230,10 @@ export const clearCart = async (req, res) => {
 }
 
 export const checkout = async (req, res) => {
-    const { companyId } = req.body;  
+    const companyId  = req.userId;
+
     const cart = await Cart.findOne({companyId})
     console.log(cart.products)
-    
     try {
         if(cart.products){
             cart.products.forEach(job => {
