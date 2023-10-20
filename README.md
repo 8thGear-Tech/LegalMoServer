@@ -255,7 +255,7 @@ Please make sure to create a password that adheres to these rules to help ensure
     "companyId": "sksjhd494940202020brgr"
   }
   ```
-<<<<<<< HEAD
+  <<<<<<< HEAD
   - You are allowed to use special characters like `@`,`$`,`!`,`%`,`*`,`?`, and `&` in your password.
 
 5. **Has a length between 8 and 30 characters.**
@@ -293,12 +293,9 @@ The response to these will be a JSON object with the following information:
 The response to these will be a JSON object with the following information:
 
 - status (string): The status of the request (success or failure).
-- message (string): A message indicating the success or failure of the password reset process.
-=======
-
+- # message (string): A message indicating the success or failure of the password reset process.
 
 ## JOB ENDPOINTS
-
 
 ### 1. ASSIGN LAWYER TO A JOB
 
@@ -310,7 +307,7 @@ The response to these will be a JSON object with the following information:
 - **Example**:
   ```json
   {
-    "lawyerId" : "sksjhd494940202020brgr",
+    "lawyerId": "sksjhd494940202020brgr",
     "jobId": "Contract Drafting and Review"
   }
   ```
@@ -324,9 +321,7 @@ The response to these will be a JSON object with the following information:
   - on success:
 
   ```json
-  {
-    
-  }
+  {}
   ```
 
 ### 3. GET ALL ASSIGNED JOBS
@@ -338,9 +333,7 @@ The response to these will be a JSON object with the following information:
   - on success:
 
   ```json
-  {
-    
-  }
+  {}
   ```
 
 ### 4. GET ALL UNASSIGNED JOBS
@@ -352,9 +345,7 @@ The response to these will be a JSON object with the following information:
   - on success:
 
   ```json
-  {
-    
-  }
+  {}
   ```
 
 ### 5. REMOVE A LAWYER FROM A JOB
@@ -365,12 +356,14 @@ The response to these will be a JSON object with the following information:
 - **Request Body**: JSON field
 
 - **Example**:
+
   ```json
   {
-    "lawyerId" : "sksjhd494940202020brgr",
+    "lawyerId": "sksjhd494940202020brgr",
     "jobId": "Contract Drafting and Review"
   }
   ```
+
   - on success:
 
   ```json
@@ -403,9 +396,7 @@ The response to these will be a JSON object with the following information:
   - on success:
 
   ```json
-  {
-    
-  }
+  {}
   ```
 
 ### 8. GET ALL COMPLETED JOBS
@@ -417,9 +408,7 @@ The response to these will be a JSON object with the following information:
   - on success:
 
   ```json
-  {
-    
-  }
+  {}
   ```
 
 ### 9. COMPLETE A JOB
@@ -429,5 +418,4 @@ The response to these will be a JSON object with the following information:
 - **Url**: [https://localhost:5005/api/completejob]()
 - **Request params**: url(job id)
 
-
->>>>>>> 27b7a3e15d49ec4507b40577e418b4ca9318f9a4
+> > > > > > > 27b7a3e15d49ec4507b40577e418b4ca9318f9a4

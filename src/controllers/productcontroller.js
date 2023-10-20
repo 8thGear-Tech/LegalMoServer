@@ -24,10 +24,14 @@ export const create = async (req, res) => {
   }
 
   //new
-  // const productUpload = await cloudinary.uploader.upload(req.file.path);
+  const productUpload = await cloudinary.uploader.upload(req.file.path);
 
-  const { productName, productPrice, productDescription, productImage } =
-    req.body;
+  const {
+    productName,
+    productPrice,
+    productDescription,
+    // productImage
+  } = req.body;
   const adminId = req.userId;
   const _id = adminId;
   const adminExists = await Admin.findOne({ _id });
@@ -40,8 +44,8 @@ export const create = async (req, res) => {
         productDescription,
         adminId,
         productImage,
-        // productImage: productUpload.secure_url,
-        // productImage_id: productUpload.public_id,
+        productImage: productUpload.secure_url,
+        productImage_id: productUpload.public_id,
       });
       if (product) {
         return res.status(201).json({
