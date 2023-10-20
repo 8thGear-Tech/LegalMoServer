@@ -1,5 +1,7 @@
 import express from "express";
 import { assignJob, assigned, unassigned, allJob, removeLawyer, deleteJob,completeJob, viewJobDetails, editJobDetails, pendingJob, completedJob, companyCompletedJob, companyPendingJob, lawyerAssignedJobs, lawyerPendingJobs, lawyerCompletedJobs } from "../controllers/jobcontroller.js";
+import { authToken } from "../middleware/AuthToken.js";
+
 
 const router = express.Router();
 
@@ -7,7 +9,7 @@ const router = express.Router();
 // router.post("/api/create", create);
 
 router.get('/api/jobs', allJob)
-router.post('/api/assign', assignJob)
+router.post('/api/assign',authToken, assignJob)
 router.get('/api/assign', assigned)
 router.get('/api/unassign', unassigned)
 router.delete('/api/removelawyer', removeLawyer)

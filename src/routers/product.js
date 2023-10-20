@@ -4,9 +4,8 @@ import { authToken } from "../middleware/AuthToken.js";
 const router = express.Router();
 
 
-// router.post("/api/create",middleware(productSchemas.productcreation), create);
-// router.post("/api/create", authToken, create);
-router.post("/api/create", create);
+router.post("/api/create", authToken, create);
+// router.post("/api/create", create);
 router.get("/api/products", getProducts);
 router.put("/api/update/:id", updateProduct);
 router.delete("/api/delete/:id", deleteProduct);

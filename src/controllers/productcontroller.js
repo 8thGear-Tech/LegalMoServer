@@ -15,13 +15,8 @@ export const create = async (req, res) => {
                 })
           }
 
-    const { productName,  productPrice, productDescription, productImage, adminId } = req.body;
-    // const adminId = req.user.id
-    // console.log(adminId)
-    if (!productName || !productPrice || !productDescription || !adminId || !productImage) {
-      console.log("Invalid data passed into request");
-     return res.sendStatus(400);      
-     }
+    const { productName,  productPrice, productDescription, productImage } = req.body;
+     const adminId = req.userId
      const _id = adminId
      const adminExists = await Admin.findOne({ _id });
      console.log(adminExists);

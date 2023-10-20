@@ -20,6 +20,10 @@ export const assignJob = async (req, res) => {
    
     const { lawyerId, jobId } = req.body;
     try {
+        const admin = Admin.findById(req.userId)  
+        if(!admin){
+            return res.status(400).json({ error: 'You are not authorized to assign a job'})
+        }      
         const job = await Job.findById(jobId)
         const lawyer = await Lawyer.findById(lawyerId)
         if(!job || !lawyer){
