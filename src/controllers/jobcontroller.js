@@ -10,7 +10,7 @@ import { paymentDetail, options } from '../utils/productvalidation.js';
 export const allJob = async (req, res) => {
     const isAdmin = await Admin.findById(req.userId)
     if(!isAdmin){
-        res.status(404).send({message : "Unauthorized!, You must be an Admin"})
+        res.status(401).send({message : "Unauthorized!, You must be an Admin"})
         return
     }
     try {
@@ -24,7 +24,7 @@ export const allJob = async (req, res) => {
 export const assignJob = async (req, res) => {
     const isAdmin = await Admin.findById(req.userId)
     if(!isAdmin){
-        res.status(404).send({message : "Unauthorized!, You must be an Admin"})
+        res.status(401).send({message : "Unauthorized!, You must be an Admin"})
         return
     }
     const { lawyerId, jobId } = req.body;
@@ -58,7 +58,7 @@ export const assignJob = async (req, res) => {
 export const assigned = async (req, res) => {
     const isAdmin = await Admin.findById(req.userId)
     if(!isAdmin){
-        res.status(404).send({message : "Unauthorized!, You must be an Admin"})
+        res.status(401).send({message : "Unauthorized!, You must be an Admin"})
         return
     }
     try {
@@ -78,7 +78,7 @@ export const assigned = async (req, res) => {
 export const unassigned = async (req, res) => {
     const isAdmin = await Admin.findById(req.userId)
     if(!isAdmin){
-        res.status(404).send({message : "Unauthorized!, You must be an Admin"})
+        res.status(401).send({message : "Unauthorized!, You must be an Admin"})
         return
     }
     try {
@@ -98,7 +98,7 @@ export const unassigned = async (req, res) => {
 export const removeLawyer = async (req, res) => {
     const isAdmin = await Admin.findById(req.userId)
     if(!isAdmin){
-        res.status(404).send({message : "Unauthorized!, You must be an Admin"})
+        res.status(401).send({message : "Unauthorized!, You must be an Admin"})
         return
     }
     const { lawyerId, jobId } = req.body;
@@ -126,7 +126,7 @@ export const removeLawyer = async (req, res) => {
 export const deleteJob = async (req, res) => {
     const isAdmin = await Admin.findById(req.userId)
     if(!isAdmin){
-        res.status(404).send({message : "Unauthorized!, You must be an Admin"})
+        res.status(401).send({message : "Unauthorized!, You must be an Admin"})
         return
     }
     const jobId = req.params.jobId
@@ -148,7 +148,7 @@ export const deleteJob = async (req, res) => {
 export const completeJob = async (req, res) => {
     const isAdmin = await Admin.findById(req.userId)
     if(!isAdmin){
-        res.status(404).send({message : "Unauthorized!, You must be an Admin"})
+        res.status(401).send({message : "Unauthorized!, You must be an Admin"})
         return
     }
     const jobId = req.params.jobId
@@ -171,7 +171,7 @@ export const completeJob = async (req, res) => {
 export const pendingJob = async (req, res) => {
     const isAdmin = await Admin.findById(req.userId)
     if(!isAdmin){
-        res.status(404).send({message : "Unauthorized!, You must be an Admin"})
+        res.status(401).send({message : "Unauthorized!, You must be an Admin"})
         return
     }
     try {
@@ -191,7 +191,7 @@ export const pendingJob = async (req, res) => {
 export const completedJob = async (req, res) => {
     const isAdmin = await Admin.findById(req.userId)
     if(!isAdmin){
-        res.status(404).send({message : "Unauthorized!, You must be an Admin"})
+        res.status(401).send({message : "Unauthorized!, You must be an Admin"})
         return
     }
     try {

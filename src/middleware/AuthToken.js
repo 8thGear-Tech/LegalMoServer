@@ -11,7 +11,8 @@ export const authToken = (req, res, next) => {
         const jwtsecret = process.env.JWT_SECRET
         if (!token) {
           // Unauthorized if no token is provided
-          return res.status(401).json({ message: 'Unauthorized' });
+          res.status(401).send({message : "Unauthorized!, You must be signed in"})
+          console.log('Unauthorized')
         }
     
         // Verify the token
