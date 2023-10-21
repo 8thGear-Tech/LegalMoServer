@@ -18,6 +18,7 @@ router.get("/api/company/:id", authToken, companyProfile);
 router.get("/api/lawyer/:id", authToken, lawyerProfile);
 router.get("/api/verifiedlawyers", authToken, verifiedLawyers);
 router.get("/api/unverifiedlawyers", authToken, unverifiedLawyers);
-router.put("/api/verifylawyer/:id", authToken, verifyLawyer);
+router.patch("/api/verifylawyer/:id", authToken, verifyLawyer);
+// router.put("/api/verifylawyer/:id", authToken, verifyLawyer);
 
 export default router;
