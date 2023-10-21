@@ -375,7 +375,7 @@ export const lawyerSignup = async (req, res) => {
       cac: req.body.cac,
       lawFirmAddress: req.body.lawFirmAddress,
       lawFirmName: req.body.lawFirmName,
-      hashedPassword,
+      password: hashedPassword,
     });
 
     await newLawyer.save();
