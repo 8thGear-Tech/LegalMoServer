@@ -7,7 +7,7 @@ import {
   verifiedLawyers,
   unverifiedLawyers,
   verifyLawyer,
-} from "../controllers/admincontroller.js";
+} from "../controllers/adminController.js";
 import { authToken } from "../middleware/AuthToken.js";
 
 const router = express.Router();
