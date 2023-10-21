@@ -312,7 +312,7 @@ export const companyLogin = async (req, res) => {
 
       return res.status(200).json({
         status: "success",
-        data: { company },
+        data: { company, token },
       });
     }
 
@@ -482,7 +482,3 @@ export const lawyerLogin = async (req, res) => {
     });
   }
 };
-
-
-
-
