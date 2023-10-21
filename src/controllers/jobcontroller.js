@@ -178,7 +178,7 @@ export const deleteJob = async (req, res) => {
 //     res.status(500).json({ error: error.message });
 //   }
 // };
-
+//not reviewed
 export const completeJob = async (req, res) => {
   const isAdmin = await Admin.findById(req.userId);
   if (!isAdmin) {
@@ -219,7 +219,7 @@ export const pendingJob = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
+//not reviewed
 export const completedJob = async (req, res) => {
   const isAdmin = await Admin.findById(req.userId);
   if (!isAdmin) {
@@ -238,6 +238,8 @@ export const completedJob = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+//not reviewed
 export const viewJobDetails = async (req, res) => {
   const jobId = req.params.jobId;
   try {
@@ -252,7 +254,7 @@ export const viewJobDetails = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
+//not reviewed
 export const editJobDetails = async (req, res) => {
   const jobId = req.params.jobId;
   const { productId, detail } = req.body;

@@ -395,6 +395,7 @@ export const lawyerSignup = async (req, res) => {
         message: "Confirmation email sent successfully",
         data: {
           lawyer: newLawyer,
+          token,
         },
       });
     } else {
