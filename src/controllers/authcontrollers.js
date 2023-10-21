@@ -412,74 +412,75 @@ export const lawyerSignup = async (req, res) => {
   }
 };
 export const lawyerLogin = async (req, res) => {
-  try {
-    // handle google SignIn
-    if (req.url.startsWith("/auth/google/redirect/lawyer?code=")) {
-      // return res.send(`You have Signed in with Google`);
-      const user = req.user;
-      // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
-      const { _id } = user.id;
-      const token = generateToken(_id);
+  // try {
+  //   // handle google SignIn
+  //   if (req.url.startsWith("/auth/google/redirect/lawyer?code=")) {
+  //     // return res.send(`You have Signed in with Google`);
+  //     const user = req.user;
+  //     // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
+  //     const { _id } = user.id;
+  //     const token = generateToken(_id);
 
-      console.log(token);
-      res.cookie("jwt", token, {
-        httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24 * 30,
-      });
+  //     console.log(token);
+  //     res.cookie("jwt", token, {
+  //       httpOnly: true,
+  //       maxAge: 1000 * 60 * 60 * 24 * 30,
+  //     });
 
-      return res.status(200).json({
-        status: "success",
-        data: { user },
-      });
-    }
+  //     return res.status(200).json({
+  //       status: "success",
+  //       data: { user },
+  //     });
+  //   }
 
-    const { officialEmail, password } = req.body;
+  const { officialEmail, password } = req.body;
 
-    // Check if lawyer exists
-    const lawyer = await Lawyer.findOne({ officialEmail });
+  // Check if lawyer exists
+  const lawyer = await Lawyer.findOne({ officialEmail });
 
-    if (!lawyer) {
-      return res.status(401).json({
-        status: "fail",
-        message: "You are not a registered lawyer here",
-      });
-    }
-
-    // Check if password is correct and log in lawyer
-    const passwordCheck = await bcrypt.compare(password, lawyer.password || "");
-
-    if (passwordCheck) {
-      // Check if the lawyer's email is confirmed
-      if (!lawyer.isEmailConfirmed) {
-        return res.status(403).json({
-          status: "fail",
-          message: "Please confirm your email address to log in.",
-        });
-      }
-
-      // Generate token and set cookie with token to be sent to the client and kept for 30 days
-      const { _id } = lawyer;
-      const token = generateToken(_id);
-      // console.log(token)
-      res.cookie("jwt", token, {
-        httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24 * 7,
-      });
-
-      return res.status(200).json({
-        status: "success",
-        data: { lawyer, token },
-      });
-    }
-
+  if (!lawyer) {
     return res.status(401).json({
       status: "fail",
-      message: "Invalid email/password",
-    });
-  } catch (error) {
-    return res.status(500).json({
-      status: "fail",
-      message: "Internal server error",
+      message: "You are not a registered lawyer here",
     });
   }
+
+  // Check if password is correct and log in lawyer
+  const passwordCheck = await bcrypt.compare(password, lawyer.password || "");
+
+  if (passwordCheck) {
+    // Check if the lawyer's email is confirmed
+    if (!lawyer.isEmailConfirmed) {
+      return res.status(403).json({
+        status: "fail",
+        message: "Please confirm your email address to log in.",
+      });
+    }
+
+    // Generate token and set cookie with token to be sent to the client and kept for 30 days
+    const { _id } = lawyer;
+    const token = generateToken(_id);
+    // console.log(token)
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    });
+
+    return res.status(200).json({
+      status: "success",
+      data: { lawyer, token },
+    });
+  }
+
+  return res.status(401).json({
+    status: "fail",
+    message: "Invalid email/password",
+  });
+  // }
+  // catch (error) {
+  //   return res.status(500).json({
+  //     status: "fail",
+  //     message: "Internal server error",
+  //   });
+  // }
 };
