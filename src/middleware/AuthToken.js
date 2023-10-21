@@ -19,7 +19,6 @@ export const authToken = (req, res, next) => {
     console.log(decoded);
     // Set user data in the request object for use in route handlers
     req.userId = decoded.id;
-    req.params.lawyerId = decoded.id;
     // Proceed to the next middleware or route handler
     next();
   } catch (error) {
