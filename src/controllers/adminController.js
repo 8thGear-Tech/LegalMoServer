@@ -1,25 +1,26 @@
 import { Company } from "../models/companymodel.js";
 import { Lawyer } from "../models/lawyermodel.js";
 
-// export const companys = async (req, res) => {
-//   try {
-//     const company = await Company.find();
-//     res.status(200).json({ company });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
-
 export const companys = async (req, res) => {
+  const isAdmin = await Admin.findById(req.userId);
+  if (!isAdmin) {
+    res.status(401).send({ message: "Unauthorized!, You must be an Admin" });
+    return;
+  }
   try {
-    const companies = await Company.find({}, "companyName cac industry");
-    res.status(200).json({ companies });
+    const company = await Company.find();
+    res.status(200).json({ company });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
 export const lawyers = async (req, res) => {
+  const isAdmin = await Admin.findById(req.userId);
+  if (!isAdmin) {
+    res.status(401).send({ message: "Unauthorized!, You must be an Admin" });
+    return;
+  }
   try {
     const lawyer = await Lawyer.find();
     res.status(200).json({ lawyer });
@@ -47,6 +48,11 @@ export const lawyerProfile = async (req, res) => {
 };
 
 export const verifyLawyer = async (req, res) => {
+  const isAdmin = await Admin.findById(req.userId);
+  if (!isAdmin) {
+    res.status(401).send({ message: "Unauthorized!, You must be an Admin" });
+    return;
+  }
   try {
     const lawyer = await Lawyer.findByIdAndUpdate(req.params.id, {
       verified: true,
@@ -58,6 +64,11 @@ export const verifyLawyer = async (req, res) => {
 };
 
 export const verifiedLawyers = async (req, res) => {
+  const isAdmin = await Admin.findById(req.userId);
+  if (!isAdmin) {
+    res.status(401).send({ message: "Unauthorized!, You must be an Admin" });
+    return;
+  }
   try {
     const lawyer = await Lawyer.find({ verified: true });
     res.status(200).json({ lawyer });
@@ -67,6 +78,11 @@ export const verifiedLawyers = async (req, res) => {
 };
 
 export const unverifiedLawyers = async (req, res) => {
+  const isAdmin = await Admin.findById(req.userId);
+  if (!isAdmin) {
+    res.status(401).send({ message: "Unauthorized!, You must be an Admin" });
+    return;
+  }
   try {
     const lawyer = await Lawyer.find({ verified: false });
     res.status(200).json({ lawyer });

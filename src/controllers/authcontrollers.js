@@ -482,3 +482,7 @@ export const lawyerLogin = async (req, res) => {
     });
   }
 };
+
+
+
+

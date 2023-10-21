@@ -83,16 +83,9 @@ export const updateProduct = async (req, res) => {
       message,
     });
   }
-  const {
-    productName,
-    productPrice,
-    productDescription,
-    productImage,
-    adminId,
-  } = req.body;
-  const _id = adminId;
-  const adminExists = await Admin.findOne({ _id });
-
+  const { productName, productPrice, productDescription, productImage } =
+    req.body;
+  const adminExists = await Admin.findById(req.userId);
   if (adminExists) {
     try {
       const updateProduct = await Product.findByIdAndUpdate(
@@ -116,9 +109,7 @@ export const updateProduct = async (req, res) => {
 };
 
 export const deleteProduct = async (req, res) => {
-  const { adminId } = req.body;
-  const _id = adminId;
-  const adminExists = await Admin.findOne({ _id });
+  const adminExists = await Admin.findById(req.userId);
   if (adminExists) {
     try {
       const product = await Product.findByIdAndDelete(req.params.id);
@@ -132,7 +123,6 @@ export const deleteProduct = async (req, res) => {
     throw new Error("You are not authorized to delete this product");
   }
 };
-
 export const singleProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
