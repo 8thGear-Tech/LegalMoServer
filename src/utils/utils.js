@@ -26,8 +26,10 @@ export const passwordMatch = (password, passwordConfirm) => {
 // Function to send confirmation email
 export async function sendConfirmationEmail(userEmail, token) {
   try {
-    const confirmationUrl = `http://localhost:5005/api/useremail/confirm/${token}`;
-    const currentUrl = "http://localhost:5005/";
+    const confirmationUrl = `https://legalmo-server.onrender.com/api/useremail/confirm/${token}`;
+    const currentUrl = "https://legalmo-server.onrender.com/";
+    // const confirmationUrl = `http://localhost:5005/api/useremail/confirm/${token}`;
+    // const currentUrl = "http://localhost:5005/";
 
     await sendEmail({
       email: userEmail,
