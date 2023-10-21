@@ -1,5 +1,6 @@
 import { Company } from "../models/companymodel.js";
 import { Lawyer } from "../models/lawyermodel.js";
+import { Admin } from "../models/adminmodel.js";
 
 export const companys = async (req, res) => {
   const isAdmin = await Admin.findById(req.userId);
