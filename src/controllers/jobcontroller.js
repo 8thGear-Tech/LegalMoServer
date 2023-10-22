@@ -2,8 +2,7 @@ import { Admin } from '../models/adminmodel.js';
 import { Company } from '../models/companymodel.js';
 import { Job } from '../models/jobmodel.js';
 import {Lawyer} from '../models/lawyermodel.js';
-import { paymentDetail, options } from '../utils/productvalidation.js';
- 
+import sendEmail from '../utils/email.js'; 
 // FOR ADMIN
 
 //view al jobs for request products
@@ -19,6 +18,22 @@ export const allJob = async (req, res) => {
     } catch (error) {
         res.status(500).json({error : error.message})
     }
+}
+
+export const singleJob = async (req, res) => {
+    const jobId = req.params.jobId
+    try {
+        const job = await Job.findById(jobId)
+        if(job){
+            res.status(200).json(job)   
+        }
+        else{
+            res.send(null)
+            console.log("Job not found")
+        }
+    }catch(error){
+        res.status(500).json({error : error.message})
+     } 
 }
 
 export const assignJob = async (req, res) => {
@@ -225,9 +240,9 @@ export const viewJobDetails = async (req, res) => {
 }
 
 export const editJobDetails = async (req, res) => {
-    const isAdmin = await Admin.findById(req.userId)
-    if(!isAdmin){
-        res.status(401).send({message : "Unauthorized!, You must be an Admin"})
+    const lawyerExists = await Lawyer.findById(req.userId)
+    if(lawyerExists){
+        res.status(401).send({message : "Unauthorized!, You must be a company or Admin"})
         return
     }
     const jobId = req.params.jobId
@@ -342,6 +357,37 @@ export const lawyerCompletedJobs = async (req, res) => {
                 console.log("No pending job")
             }
             res.status(200).json(lawyerCompletedJob)
+    } catch (error) {
+        res.status(500).json({error : error.message})
+    }
+}
+
+export const requestMoreJobDetails = async(req, res) =>  {
+    const lawyerExists = await Lawyer.findById(req.userId)
+    if(!lawyerExists){
+        res.status(401).send({message : "Unauthorized!, You must be a lawyer"})
+        return
+    }
+    const jobId = req.params.jobId
+    const { detail } = req.body
+    try {
+        const job = await Job.findById(jobId)
+        if(job){
+            const companyId = job.companyId
+            const company = Company.findById(companyId)
+            const companyMail = company.officialEmail
+            const jobUrl = `http://api/job/:${jobId}`; //user/verify
+            await sendEmail({
+              email: companyMail,
+              subject: 'Request for more details',
+              message: `Kindly updated the description of this product you bought: ${jobUrl}`,
+              html: `<p>The lawyer working on the product you bought need some information on it </b> </p><p> ${detail} </b>.</p> <p>Click <a href=${jobUrl}> to update the description of this product you bought</p>`
+            });
+        }else{
+            res.send(null)
+            console.log("Job not found")
+        }
+        
     } catch (error) {
         res.status(500).json({error : error.message})
     }
