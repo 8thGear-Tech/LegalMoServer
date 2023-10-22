@@ -17,9 +17,9 @@ export const productupdate = Joi.object().keys({
 })
 
 export const paymentDetail = Joi.object().keys({ 
-  accountNumber: Joi.number(),
-   accountName: Joi.string(),
-   bank: Joi.string(),
+  accountNumber: Joi.string().pattern(/^[0-9]{10}$/).required(),
+  accountName: Joi.string().required(),
+  bank: Joi.string().required(),
 })
 
 

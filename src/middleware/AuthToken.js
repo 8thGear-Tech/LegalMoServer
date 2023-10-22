@@ -4,17 +4,15 @@ import dotenv from "dotenv";
 dotenv.config({ path: "./configenv.env" });
 
 export const authToken = (req, res, next) => {
+    if(!req.headers.authorization){
+      res.status(401).send({message : "Unauthorized!, You must be signed in"})
+      return
+    }
     try {
        
         // Get the token from the request cookies
         const token = req.headers.authorization.split(' ')[1];
         const jwtsecret = process.env.JWT_SECRET
-        if (!token) {
-          // Unauthorized if no token is provided
-          res.status(401).send({message : "Unauthorized!, You must be signed in"})
-          console.log('Unauthorized')
-        }
-    
         // Verify the token
         const decoded = jwt.verify(token, jwtsecret);
         console.log(decoded)

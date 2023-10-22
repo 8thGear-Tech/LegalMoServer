@@ -8,7 +8,6 @@ import { productcreation, options, productupdate } from '../utils/productvalidat
 
 
 export const create = async (req, res) => {
-    
     const validate = productcreation.validate(req.body, options)
         if (validate.error) {
             const message = validate.error.details.map((detail) => detail.message).join(',');

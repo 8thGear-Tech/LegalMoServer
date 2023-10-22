@@ -225,12 +225,16 @@ export const viewJobDetails = async (req, res) => {
 }
 
 export const editJobDetails = async (req, res) => {
+    const isAdmin = await Admin.findById(req.userId)
+    if(!isAdmin){
+        res.status(401).send({message : "Unauthorized!, You must be an Admin"})
+        return
+    }
     const jobId = req.params.jobId
-    const { productId, detail } = req.body
+    const { detail } = req.body
     try {
         const job = await Job.findById(jobId)
         if(job){
-            job.productId = productId
             job.detail = detail
             await job.save()
             res.status(200).json(job)
@@ -247,42 +251,38 @@ export const editJobDetails = async (req, res) => {
 // FOR COMPANY
 
  export const companyPendingJob = async (req, res) => {
-    const companyId = req.params.companyId
+    const companyExists = await Company.findById(req.userId)
+    if(!companyExists){
+        res.status(401).send({message : "Unauthorized!, You must be a company"})
+        return
+    }
     try {
-        const company = await Company.findById(companyId)
-        if(company){
-            const companyPendingJob = await Job.find({ companyId: companyId, status: "pending"})
-            if(!companyPendingJob){
-                res.send(null)
+       
+            const companyPendingJob = await Job.find({ companyId: req.userId, status: "pending"})
+            if(!companyPendingJob || companyPendingJob.lenght === undefined){
+                res.status(404).send({message : "No pending job"})
                 console.log("No pending job")
             }
+            
             res.status(200).json(companyPendingJob)
-        }else{
-            res.send(null)
-            console.log("Company not found")
-        }
-        
     } catch (error) {
         res.status(500).json({error : error.message})
     }   
  }
 
  export const companyCompletedJob = async (req, res) => {
-    const companyId = req.params.companyId
+    const companyExists = await Company.findById(req.userId)
+    if(!companyExists){
+        res.status(401).send({message : "Unauthorized!, You must be a company"})
+        return
+    }
     try {
-        const company = await Company.findById(companyId)
-        if(company){
-            const companyCompletedJob = await Job.find({ companyId: companyId, status: "completed"})
-            if(!companyCompletedJob){
-                res.send(null)
+            const companyCompletedJob = await Job.find({ companyId: req.userId, status: "completed"})
+            if(!companyCompletedJob || companyCompletedJob.lenght === undefined){
+                res.status(404).send({message : "No completed job"})
                 console.log("No completed job")
             }
             res.status(200).json(companyCompletedJob)
-        }else{
-            res.send(null)
-            console.log("Company not found")
-        }
-        
     } catch (error) {
         res.status(500).json({error : error.message})
     }   
@@ -291,42 +291,37 @@ export const editJobDetails = async (req, res) => {
 // FOR LAWYERS
 
 export const lawyerAssignedJobs = async (req, res) => {
-    const lawyerId = req.params.lawyerId
+    const lawyerExists = await Lawyer.findById(req.userId)
+    if(!lawyerExists){
+        res.status(401).send({message : "Unauthorized!, You must be a lawyer"})
+        return
+    }
     try {
-        const lawyer = await Lawyer.findById(lawyerId)
-        if(lawyer){
-            const lawyerAssignedJob = await Job.find({ assignedTo: lawyerId})
-            if(!lawyerAssignedJob){
-                res.send(null)
+            const lawyerAssignedJob = await Job.find({ assignedTo: req.userId})
+            if(!lawyerAssignedJob || lawyerAssignedJob.lenght === undefined){
+                res.status(404).send({message : "No assigned job"})
                 console.log("No assigned job")
             }
             res.status(200).json(lawyerAssignedJob)
-        }
-        else{
-            res.send(null)
-            console.log("You are not a lawyer")
-        }
     } catch (error) {
         res.status(500).json({error : error.message})
     }
 }
 
 export const lawyerPendingJobs = async (req, res) => {
-    const lawyerId = req.params.lawyerId
+    const lawyerExists = await Lawyer.findById(req.userId)
+    if(!lawyerExists){
+        res.status(401).send({message : "Unauthorized!, You must be a lawyer"})
+        return
+    }
     try {
-        const lawyer = await Lawyer.findById(lawyerId)
-        if(lawyer){
-            const lawyerPendingJob = await Job.find({ assignedTo: lawyerId, status: "pending"})
-            if(!lawyerPendingJob){
-                res.send(null)
+            const lawyerPendingJob = await Job.find({ assignedTo: req.userId, status: "pending"})
+            if(!lawyerPendingJob || lawyerPendingJob.lenght === undefined){
+                res.status(404).send({message : "No pending job"})
                 console.log("No pending job")
             }
             res.status(200).json(lawyerPendingJob)
-        }   
-        else{
-            res.send(null)
-            console.log("You are not a lawyer")
-        }    
+          
     } catch (error) {
         res.status(500).json({error : error.message})
     }
@@ -334,21 +329,19 @@ export const lawyerPendingJobs = async (req, res) => {
 }
 
 export const lawyerCompletedJobs = async (req, res) => {
-    const lawyerId = req.params.lawyerId
+    const lawyerExists = await Lawyer.findById(req.userId)
+    if(!lawyerExists){
+        res.status(401).send({message : "Unauthorized!, You must be a lawyer"})
+        return
+    }
     try {
-        const lawyer = await Lawyer.findById(lawyerId)
-        if(lawyer){
-            const lawyerCompletedJob = await Job.find({ assignedTo: lawyerId, status: "completed"})
-            if(!lawyerCompletedJob){
-                res.send(null)
-                console.log("No completed job")
+        
+            const lawyerCompletedJob = await Job.find({ assignedTo: req.userId, status: "completed"})
+            if(!lawyerCompletedJob || lawyerCompletedJob.lenght === undefined){
+                res.status(404).send({message : "No pending job"})
+                console.log("No pending job")
             }
             res.status(200).json(lawyerCompletedJob)
-        }
-        else{
-            res.send(null)
-            console.log("You are not a lawyer")
-        }
     } catch (error) {
         res.status(500).json({error : error.message})
     }
