@@ -35,13 +35,14 @@ router.delete("/api/deletejob", authToken, deleteJob);
 router.get("/api/pendingjobs", authToken, pendingJob);
 
 router.get("/api/completedjobs", authToken, completedJob);
-//not reviewed
+//not reviewed/error
 router.put("/api/completejob", authToken, completeJob);
 router.get("/api/viewjobdetails", authToken, viewJobDetails);
 router.put("/api/editjobdetails/:jobId", authToken, editJobDetails);
 // internal server error
 router.get("/api/company/completedjobs", authToken, companyCompletedJob);
 router.get("/api/company/pendingjobs", authToken, companyPendingJob);
+
 router.get("/api/lawyer/assignedjobs", authToken, lawyerAssignedJobs);
 router.get("/api/lawyer/pendingjobs", authToken, lawyerPendingJobs);
 router.get("/api/lawyer/completedjobs", authToken, lawyerCompletedJobs);
