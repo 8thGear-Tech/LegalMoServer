@@ -272,18 +272,20 @@ export const editJobDetails = async (req, res) => {
         return
     }
     try {
-       
-            const companyPendingJob = await Job.find({ companyId: req.userId, status: "pending"})
+         const companyPendingJob = await Job.find({ companyId: req.userId, status: "pending"})
             if(!companyPendingJob || companyPendingJob.lenght === undefined){
                 res.status(404).send({message : "No pending job"})
                 console.log("No pending job")
+                return
             }
+        
             
             res.status(200).json(companyPendingJob)
     } catch (error) {
         res.status(500).json({error : error.message})
     }   
  }
+
 
  export const companyCompletedJob = async (req, res) => {
     const companyExists = await Company.findById(req.userId)
@@ -296,6 +298,7 @@ export const editJobDetails = async (req, res) => {
             if(!companyCompletedJob || companyCompletedJob.lenght === undefined){
                 res.status(404).send({message : "No completed job"})
                 console.log("No completed job")
+                return
             }
             res.status(200).json(companyCompletedJob)
     } catch (error) {
@@ -316,6 +319,7 @@ export const lawyerAssignedJobs = async (req, res) => {
             if(!lawyerAssignedJob || lawyerAssignedJob.lenght === undefined){
                 res.status(404).send({message : "No assigned job"})
                 console.log("No assigned job")
+                return
             }
             res.status(200).json(lawyerAssignedJob)
     } catch (error) {
@@ -334,6 +338,7 @@ export const lawyerPendingJobs = async (req, res) => {
             if(!lawyerPendingJob || lawyerPendingJob.lenght === undefined){
                 res.status(404).send({message : "No pending job"})
                 console.log("No pending job")
+                return
             }
             res.status(200).json(lawyerPendingJob)
           
@@ -355,6 +360,7 @@ export const lawyerCompletedJobs = async (req, res) => {
             if(!lawyerCompletedJob || lawyerCompletedJob.lenght === undefined){
                 res.status(404).send({message : "No pending job"})
                 console.log("No pending job")
+                return
             }
             res.status(200).json(lawyerCompletedJob)
     } catch (error) {
@@ -386,6 +392,7 @@ export const requestMoreJobDetails = async(req, res) =>  {
         }else{
             res.send(null)
             console.log("Job not found")
+            return
         }
         
     } catch (error) {
