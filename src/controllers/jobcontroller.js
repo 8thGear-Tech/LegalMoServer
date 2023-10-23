@@ -313,7 +313,7 @@ export const companyPendingJob = async (req, res) => {
       companyId: req.userId,
       status: "pending",
     });
-    if (!companyPendingJob || companyPendingJob.lenght === undefined) {
+    if (!companyPendingJob || companyPendingJob.length === undefined) {
       res.status(404).send({ message: "No pending job" });
       console.log("No pending job");
     }
@@ -335,7 +335,7 @@ export const companyCompletedJob = async (req, res) => {
       companyId: req.userId,
       status: "completed",
     });
-    if (!companyCompletedJob || companyCompletedJob.lenght === undefined) {
+    if (!companyCompletedJob || companyCompletedJob.length === undefined) {
       res.status(404).send({ message: "No completed job" });
       console.log("No completed job");
     }
@@ -355,7 +355,7 @@ export const lawyerAssignedJobs = async (req, res) => {
   }
   try {
     const lawyerAssignedJob = await Job.find({ assignedTo: req.userId });
-    if (!lawyerAssignedJob || lawyerAssignedJob.lenght === undefined) {
+    if (!lawyerAssignedJob || lawyerAssignedJob.length === undefined) {
       res.status(404).send({ message: "No assigned job" });
       console.log("No assigned job");
     }
@@ -376,7 +376,7 @@ export const lawyerPendingJobs = async (req, res) => {
       assignedTo: req.userId,
       status: "pending",
     });
-    if (!lawyerPendingJob || lawyerPendingJob.lenght === undefined) {
+    if (!lawyerPendingJob || lawyerPendingJob.length === undefined) {
       res.status(404).send({ message: "No pending job" });
       console.log("No pending job");
     }
@@ -397,7 +397,7 @@ export const lawyerCompletedJobs = async (req, res) => {
       assignedTo: req.userId,
       status: "completed",
     });
-    if (!lawyerCompletedJob || lawyerCompletedJob.lenght === undefined) {
+    if (!lawyerCompletedJob || lawyerCompletedJob.length === undefined) {
       res.status(404).send({ message: "No pending job" });
       console.log("No pending job");
     }
