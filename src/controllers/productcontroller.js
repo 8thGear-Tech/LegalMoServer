@@ -34,7 +34,8 @@ export const create = async (req, res) => {
   } = req.body;
   const adminId = req.userId;
   // const _id = adminId;
-  const adminExists = await Admin.findOne({ _id });
+  // const adminExists = await Admin.findOne({ _id });
+  const adminExists = await Admin.findById(adminId);
   console.log(adminExists);
   if (adminExists) {
     try {
