@@ -325,8 +325,7 @@ export const companyCompletedJob = async (req, res) => {
 // FOR LAWYERS
 
 export const lawyerAssignedJobs = async (req, res) => {
-  const lawyerId = req.userId;
-  // const lawyerId = req.params.lawyerId;
+  const lawyerId = req.params.lawyerId;
   try {
     const lawyer = await Lawyer.findById(lawyerId);
     if (lawyer) {

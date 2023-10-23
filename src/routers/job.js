@@ -30,6 +30,7 @@ router.get("/api/unassign", authToken, unassigned);
 router.delete("/api/removelawyer", authToken, removeLawyer);
 router.delete("/api/deletejob", authToken, deleteJob);
 router.get("/api/pendingjobs", authToken, pendingJob);
+//not reviewed
 router.get("/api/completedjobs", authToken, completedJob);
 router.put("/api/completejob", authToken, completeJob);
 router.get("/api/viewjobdetails", authToken, viewJobDetails);
