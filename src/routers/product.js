@@ -22,15 +22,9 @@ const upload = multer({ storage: storage });
 
 const router = express.Router();
 
-// router.post("/api/create",middleware(productSchemas.productcreation), create);
-// router.post("/api/create", authToken, create);
-// router.post("/api/create", create);
-// router.post("/api/create", upload.single("productImage"), create);
 router.post("/api/create", authToken, upload.single("productImage"), create);
-// router.post("/api/create", create);
-//not reviewed
-router.get("/api/products", authToken, getProducts);
-router.patch("/api/update/:id", authToken, updateProduct);
+router.get("/api/products", getProducts);
+router.put("/api/update/:id", authToken, updateProduct);
 router.delete("/api/delete/:id", authToken, deleteProduct);
-router.get("/api/product/:id", authToken, singleProduct);
+router.get("/api/product/:id", singleProduct);
 export default router;

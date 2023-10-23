@@ -313,9 +313,10 @@ export const companyPendingJob = async (req, res) => {
       companyId: req.userId,
       status: "pending",
     });
-    if (!companyPendingJob || companyPendingJob.length === undefined) {
+    if (!companyPendingJob || companyPendingJob.lenght === undefined) {
       res.status(404).send({ message: "No pending job" });
       console.log("No pending job");
+      return;
     }
 
     res.status(200).json(companyPendingJob);
@@ -335,9 +336,10 @@ export const companyCompletedJob = async (req, res) => {
       companyId: req.userId,
       status: "completed",
     });
-    if (!companyCompletedJob || companyCompletedJob.length === undefined) {
+    if (!companyCompletedJob || companyCompletedJob.lenght === undefined) {
       res.status(404).send({ message: "No completed job" });
       console.log("No completed job");
+      return;
     }
     res.status(200).json(companyCompletedJob);
   } catch (error) {
@@ -355,9 +357,10 @@ export const lawyerAssignedJobs = async (req, res) => {
   }
   try {
     const lawyerAssignedJob = await Job.find({ assignedTo: req.userId });
-    if (!lawyerAssignedJob || lawyerAssignedJob.length === undefined) {
+    if (!lawyerAssignedJob || lawyerAssignedJob.lenght === undefined) {
       res.status(404).send({ message: "No assigned job" });
       console.log("No assigned job");
+      return;
     }
     res.status(200).json(lawyerAssignedJob);
   } catch (error) {
@@ -376,9 +379,10 @@ export const lawyerPendingJobs = async (req, res) => {
       assignedTo: req.userId,
       status: "pending",
     });
-    if (!lawyerPendingJob || lawyerPendingJob.length === undefined) {
+    if (!lawyerPendingJob || lawyerPendingJob.lenght === undefined) {
       res.status(404).send({ message: "No pending job" });
       console.log("No pending job");
+      return;
     }
     res.status(200).json(lawyerPendingJob);
   } catch (error) {
@@ -397,9 +401,10 @@ export const lawyerCompletedJobs = async (req, res) => {
       assignedTo: req.userId,
       status: "completed",
     });
-    if (!lawyerCompletedJob || lawyerCompletedJob.length === undefined) {
+    if (!lawyerCompletedJob || lawyerCompletedJob.lenght === undefined) {
       res.status(404).send({ message: "No pending job" });
       console.log("No pending job");
+      return;
     }
     res.status(200).json(lawyerCompletedJob);
   } catch (error) {
@@ -425,12 +430,13 @@ export const requestMoreJobDetails = async (req, res) => {
       await sendEmail({
         email: companyMail,
         subject: "Request for more details",
-        message: `Kindly updated the description of this product you bought: ${jobUrl}`,
+        message: `Kindly update the description of this product you bought: ${jobUrl}`,
         html: `<p>The lawyer working on the product you bought need some information on it </b> </p><p> ${detail} </b>.</p> <p>Click <a href=${jobUrl}> to update the description of this product you bought</p>`,
       });
     } else {
       res.send(null);
       console.log("Job not found");
+      return;
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
