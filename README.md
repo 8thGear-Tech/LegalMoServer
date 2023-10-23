@@ -103,12 +103,16 @@ Please make sure to create a password that adheres to these rules to help ensure
 - **Endpoint:** `/api/create`
 - **HTTP Method:** POST
 - **Url**: [https://localhost:5005/api/create]()
+- **Auhorization:** `User Bearer token`
 - **Request Body**: JSON field
 
 - **Example**:
   ```json
   {
+  <<<<<<< HEAD
     "adminId": "sksjhd494940202020brgr",
+  =======
+  >>>>>>> ed63706ebd99dc43b11afb1a4a2c897a2a7c15fd
     "productName": "Contract Drafting and Review",
     "productPrice": 50000000,
     "productDescription": "contact between two B2B",
@@ -121,6 +125,7 @@ Please make sure to create a password that adheres to these rules to help ensure
 - **Endpoint:** `/api/products`
 - **HTTP Method:** GET
 - **Url**: [https://localhost:5005/api/products]()
+- **Auhorization:** `User Bearer token`
 
   - on success:
 
@@ -136,13 +141,13 @@ Please make sure to create a password that adheres to these rules to help ensure
 - **Endpoint**: `/{userId}`
 - **HTTP Method:** PUT
 - **Url**: [https://localhost:5005/api/products]()
+- **Auhorization:** `User Bearer token`
 - **Request Body**: JSON field
 
   - **Example**:
 
 ```json
 {
-  "adminId": "sksjhd494940202020brgr",
   "productName": "Updated Contract Drafting and Review",
   "productPrice": 93420000,
   "productDescription": "updated contact between two B2B",
@@ -155,6 +160,7 @@ Please make sure to create a password that adheres to these rules to help ensure
 - **Endpoint:** `/api/product/:id`
 - **HTTP Method:** GET
 - **Url**: [https://localhost:5005/api/product/:id]()
+- **Auhorization:** `User Bearer token`
 
   - on success:
 
@@ -170,6 +176,7 @@ Please make sure to create a password that adheres to these rules to help ensure
 - **Endpoint:** `/api/delete/:id`
 - **HTTP Method:** DELETE
 - **Url**: [https://localhost:5005/api/delete/:id]()
+- **Auhorization:** `User Bearer token`
 
   - on success:
 
@@ -186,12 +193,12 @@ Please make sure to create a password that adheres to these rules to help ensure
 - **Endpoint:** `/api/cart`
 - **HTTP Method:** POST
 - **Url**: [https://localhost:5005/api/cart]()
+- **Auhorization:** `User Bearer token`
 - **Request Body**: JSON field
 
 - **Example**:
   ```json
   {
-    "companyId": "sksjhd494940202020brgr",
     "productId": "23894848422840",
     "quantity": 1,
     "detail": "contact between two B2B"
@@ -203,6 +210,7 @@ Please make sure to create a password that adheres to these rules to help ensure
 - **Endpoint:** `/api/cart/:id`
 - **HTTP Method:** GET
 - **Url**: [https://localhost:5005/api/cart/:id]()
+- **Auhorization:** `User Bearer token`
 
   - on success:
 
@@ -217,16 +225,8 @@ Please make sure to create a password that adheres to these rules to help ensure
 
 - **Endpoint:** `/api/cart`
 - **HTTP Method:** DELETE
-- **Url**: [https://localhost:5005/api/cart]()
-- **Request Body**: JSON field
-
-- **Example**:
-  ```json
-  {
-    "companyId": "sksjhd494940202020brgr",
-    "productId": "23894848422840"
-  }
-  ```
+- **Url**: [https://localhost:5005/api/cart/:productId]()
+- **Auhorization:** `User Bearer token`
 
 ### 4. CLEAR CART
 

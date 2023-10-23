@@ -242,17 +242,7 @@ export const checkout = async (req, res) => {
           });
       });
       await Cart.deleteMany({ companyId });
-      return res.status(201).json("Added to cart successfully");
-
-      // cart.products.map(async (job) => {
-      //     console.log(job)
-      //     const newJob = await Job.create({
-      //         companyId : cart.companyId,
-      //         productId: job.productId,
-      //         detail:job.detail
-      //     });
-      //     return res.status(201).send(newJob)
-      // })
+      return res.status(201).json("Checkout successful");
     } else {
       res.status(400).send("Nothing in your cart");
     }

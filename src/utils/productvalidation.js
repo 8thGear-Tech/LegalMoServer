@@ -17,10 +17,12 @@ export const productupdate = Joi.object().keys({
   productImage: Joi.string(),
 });
 
-export const paymentDetailss = Joi.object().keys({
-  accountNumber: Joi.number(),
-  accountName: Joi.string(),
-  bank: Joi.string(),
+export const paymentDetail = Joi.object().keys({
+  accountNumber: Joi.string()
+    .pattern(/^[0-9]{10}$/)
+    .required(),
+  accountName: Joi.string().required(),
+  bank: Joi.string().required(),
 });
 
 export const options = {

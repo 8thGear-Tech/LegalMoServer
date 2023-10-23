@@ -1,7 +1,14 @@
 import { Rating } from "../models/ratingmodel.js";
+import { Company } from "../models/companymodel.js";
 
 export const addRating = async (req, res) => {
-  const { companyId, productId, review, status } = req.body;
+  const companyExists = await Company.findById(req.userId);
+  if (!companyExists) {
+    res.status(404).send({ message: "Unauthorized!, You must be a company" });
+    return;
+  }
+  const companyId = req.userId;
+  const { productId, review, status } = req.body;
   const rating = new Rating({
     companyId,
     productId,
@@ -26,9 +33,8 @@ export const getRatings = async (req, res) => {
 };
 
 export const getRating = async (req, res) => {
-  const { id } = req.params;
   try {
-    const rating = await Rating.findById(id);
+    const rating = await Rating.findById(req.params.id);
     res.status(200).json(rating);
   } catch (error) {
     res.status(404).json({ message: error.message });
@@ -36,21 +42,38 @@ export const getRating = async (req, res) => {
 };
 
 export const updateRating = async (req, res) => {
-  const { id } = req.params;
-  const { companyId, productId, review, status } = req.body;
-  if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(404).send(`No rating with id: ${id}`);
-  const updatedRating = { companyId, productId, review, status, _id: id };
-  await Rating.findByIdAndUpdate(id, updatedRating, { new: true });
-  res.json(updatedRating);
+  const companyExists = await Company.findById(req.userId);
+  if (!companyExists) {
+    res.status(404).send({ message: "Unauthorized!, You must be a company" });
+    return;
+  }
+  try {
+    const companyId = req.userId;
+    const { id } = req.params;
+    const { productId, review, status } = req.body;
+    // if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No rating with id: ${id}`);
+    const updatedRating = { companyId, productId, review, status, _id: id };
+    await Rating.findByIdAndUpdate(id, updatedRating, { new: true });
+    res.status(200).json(updatedRating);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
 };
 
 export const deleteRating = async (req, res) => {
-  const { id } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(404).send(`No rating with id: ${id}`);
-  await Rating.findByIdAndRemove(id);
-  res.json({ message: "Rating deleted successfully." });
+  const companyExists = await Company.findById(req.userId);
+  if (!companyExists) {
+    res.status(404).send({ message: "Unauthorized!, You must be a company" });
+    return;
+  }
+  try {
+    const { id } = req.params;
+    // if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No rating with id: ${id}`);
+    await Rating.findByIdAndRemove(id);
+    res.status(200).json({ message: "Rating deleted successfully." });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
 };
 
 export const getRatingsByCompany = async (req, res) => {

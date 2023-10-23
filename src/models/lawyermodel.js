@@ -71,10 +71,11 @@ const lawyerSchema = new Schema({
     type: Boolean,
     default: false,
   },
+
   accountDetails: [
     {
       accountNumber: {
-        type: Number,
+        type: String,
         required: true,
       },
       accountName: {
