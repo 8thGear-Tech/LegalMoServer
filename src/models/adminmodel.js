@@ -28,12 +28,14 @@ const adminSchema = new Schema({
     type: String,
     required: false,
   },
-  companies: {
-    type: [String],
-  },
-  lawyers: {
-    type: [String],
-  },
+  companies: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Company', // Reference to the Company model
+}],
+  lawyers: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Lawyer', // Reference to the Lawyer model
+}],
    jobs: {
     type: [String],
   },

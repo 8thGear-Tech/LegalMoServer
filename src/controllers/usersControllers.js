@@ -54,13 +54,39 @@ export const getAllCompanies = async (req, res) => {
 export const getOneAdmin = async (req, res) => {
   const { userId } = req.params
   try {
-    const admin = await Admin.findOne({ _id: userId})
-  
+    const admin = await Admin.findOne({ _id: userId })
+      .populate('companies') // Populate the companies field
+      .populate('lawyers')   // Populate the lawyers field
+      .exec();
+    
+      console.log(admin);
+
     if (!admin) {
       return res.status(404).json({ error: 'Admin not found' });
     }
-    res.status(200).json(admin);
+
+    // // Extract all companies and lawyers from the admin document
+    // const companies = admin.companies.map(company => ({
+    //   id: company._id,
+    //   name: company.name,
+    //   email: company.email,
+    //   phoneNumber: company.phoneNumber,
+    // }));
+    // const lawyers = admin.lawyers.map(lawyer => ({
+    //   id: lawyer._id,
+    //   name: lawyer.name,
+    //   email: lawyer.email,
+    //   phoneNumber: lawyer.phoneNumber,
+    // }));
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        admin: admin.toObject(),
+      },
+    });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }

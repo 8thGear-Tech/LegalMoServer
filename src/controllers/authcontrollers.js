@@ -5,6 +5,9 @@ import { adminRegister, companyRegister, lawyerRegister, options } from '../util
 import bcrypt from 'bcrypt'
 import dotenv from "dotenv";
 import { generateToken, emailConfirmationToken, passwordMatch, sendConfirmationEmail } from '../utils/utils.js';
+import { sendEmail } from '../utils/email.js';
+import useragent from 'express-useragent';
+import geoip from 'geoip-lite';
 
 dotenv.config ({ path: "./configenv.env" });
 
@@ -65,6 +68,7 @@ export const adminSignup = async (req, res) => {
           message: 'Confirmation email sent successfully',
           data: {
             admin: newAdmin,
+
           },
         });
       } else {
@@ -118,17 +122,45 @@ export const adminLogin = async (req, res) => {
                 message: 'Please confirm your email address to log in.',
               });
             }
-              // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
-              const { _id } = admin;
-              const token = generateToken(_id);
 
-              console.log(token)
-              res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 }); 
+            // Get user agent and IP information
+              const device = useragent.parse(req.headers["user-agent"]);
+              const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+              const location = geoip.lookup(ip);
 
-          return res.status(200).json({ 
-            status: 'success',
-            data: { admin },
-          });
+              // Check if user's device or location has changed
+              const previousDevice = admin.device || "";
+              const previousLocation = admin.location || "";
+
+              if (previousDevice !== device.source || previousLocation !== location) {
+                // Send email notification about login attempt from different device, IP, or location
+                await sendEmail({
+                  email: admin.officialEmail,
+                  subject: "New Login Notification",
+                  html: `<p>A new login was detected for your account.</p>
+                    <p>Device: ${device.source}</p>
+                    <p>Location: ${location}</p>`,
+                });
+              }
+
+            // Update user information with current device and location details
+            admin.device = device.source;
+            admin.location = location
+                ? `${location.country}, ${location.city}`
+                : "Unknown";;
+            await admin.save();
+
+            console.log(location)
+
+            // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
+            const { _id } = admin;
+            const token = generateToken(_id);
+            res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 }); 
+
+            return res.status(200).json({ 
+              status: 'success',
+              data: { admin },
+            });
         }
     return res.status(401).json({  
       status: 'fail',

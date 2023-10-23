@@ -1,5 +1,5 @@
 import  {Schema, model} from 'mongoose';
-//import { validateEmail, validatePassword } from '../utils/validation';
+
 
 const lawyerSchema = new Schema({
    name: {
