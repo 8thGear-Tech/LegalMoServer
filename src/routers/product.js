@@ -26,5 +26,9 @@ router.post("/api/create", authToken, upload.single("productImage"), create);
 router.get("/api/products", getProducts);
 router.put("/api/update/:id", authToken, updateProduct);
 router.delete("/api/delete/:id", authToken, deleteProduct);
+
+// {
+//     "message": "Unidentified user"
+// }
 router.get("/api/product/:id", singleProduct);
 export default router;
