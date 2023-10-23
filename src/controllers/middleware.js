@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { adminLogin, companyLogin, lawyerLogin } from './authcontrollers.js';
-import { getOneAdmin, getOneCompany, getOneLawyer } from './usersControllers.js';
+import { getOneAdmin, getOneCompany, getOneLawyer, adminProfileUpdate, companyProfileUpdate, lawyerProfileUpdate } from './usersControllers.js';
 
 const jwtsecret = process.env.JWT_SECRET;
 export const authenticateUser = async (req, res, next) => {
@@ -25,7 +25,6 @@ export const authenticateUser = async (req, res, next) => {
     res.status(401).json({ message: 'You are not authorized' });
   }
 };
-
 export const isAdminUser = (req, res, next) => {
   const {userType} = req.query;
   // Check if the user is an admin based on their userType
@@ -37,7 +36,6 @@ export const isAdminUser = (req, res, next) => {
     res.status(403).json({ message: 'Access denied. Admin permissions required.' });
   }
 };
-
 export const routeBasedOnUserType = (req, res, next) => {
   const {userType} = req.params;
 
@@ -63,7 +61,6 @@ export const routeBasedOnUserType = (req, res, next) => {
       });
   }
 };
-
 export const profileBasedOnUserType = (req, res, next) => {
   const {userType} = req.params;
 
@@ -73,7 +70,6 @@ export const profileBasedOnUserType = (req, res, next) => {
       message: 'Invalid user type',
     });
   }
-
   // Based on the user type, route the request to the appropriate login function
   switch (userType) {
     case 'company':
@@ -89,5 +85,28 @@ export const profileBasedOnUserType = (req, res, next) => {
       });
   }
 };
+export const updateProfileBasedOnUser = async (req, res, next) => {
+  
+  const { userType } = req.params; 
 
- 
+  if (!userType || !['company', 'admin', 'lawyer'].includes(userType)) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Invalid user type',
+    });
+  }
+    // Based on the user type, route the request to the appropriate update function
+switch (userType) {
+  case 'admin':
+    return adminProfileUpdate(req, res, next);
+  case 'company':
+    return companyProfileUpdate(req, res, next);
+  case 'lawyer':
+    return lawyerProfileUpdate(req, res, next);
+  default:
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Invalid user type',
+    });
+}   
+} 

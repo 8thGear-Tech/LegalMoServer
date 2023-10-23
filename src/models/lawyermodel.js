@@ -4,7 +4,7 @@ import  {Schema, model} from 'mongoose';
 const lawyerSchema = new Schema({
    name: {
     type: String,
-    required: [true, 'Please provide a name'],
+    // required: [true, 'Please provide a name'],
   },
   phoneNumber: {
     type: String,
@@ -12,7 +12,7 @@ const lawyerSchema = new Schema({
   },
   officialEmail: {
     type: String,
-    required: [true, 'Please provide a valid email address'],
+    // required: [true, 'Please provide a valid email address'],
     lowercase: true,
     unique: true,
   },

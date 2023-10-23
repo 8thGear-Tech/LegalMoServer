@@ -48,6 +48,7 @@ export const adminSignup = async (req, res) => {
 
       // Save new admin to the database and generate a token for admin
       await newAdmin.save();
+
       const { _id } = newAdmin;
       const userType = 'admin';
       const token = emailConfirmationToken(_id, userType);
@@ -423,11 +424,9 @@ export const logoutUser = async (req, res) => {
   try {
     // Clear the JWT token by setting an expired token
     res.cookie('jwt', 'expired', { httpOnly: true, maxAge: 1 });
-
     // Redirect the user to the login page or any other page you prefer
     res.status(200).send("user logged out successfully from server");
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }

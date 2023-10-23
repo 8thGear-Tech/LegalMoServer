@@ -81,6 +81,28 @@ export const ValidateResetPassword = Joi.object().keys({
   passwordConfirm: Joi.string().required(),
 });
 
+export const validateLawyerProfileUpdate = Joi.object().keys({
+  officialEmail: Joi.string().email().trim().lowercase(),
+  scn: Joi.string(),
+  phoneNumber: Joi.string().pattern(/^[0-9]{11}$/).message('Invalid phone number format'),
+  yourBio: Joi.string(),
+  yearOfCall: Joi.string().pattern(/^[0-9]{4}$/).message('Invalid year format'),
+  alternativeEmailAddress: Joi.string().email().trim().lowercase(),
+});
+
+export const validateAdminProfileUpdate = Joi.object().keys({
+  officialEmail: Joi.string().email().trim().lowercase(),
+});
+
+export const validateCompanyProfileUpdate = Joi.object().keys({
+  officialEmail: Joi.string().email().trim().lowercase(),
+  website: Joi.string(),
+  yourBio: Joi.string(),
+  phoneNumber: Joi.string().pattern(/^[0-9]{11}$/).message('Invalid phone number format'),
+  officeAddress: Joi.string(),
+  alternativeEmailAddress: Joi.string().email().trim().lowercase(),
+});
+
 export const options = {
   abortEarly: false,
   errors: {

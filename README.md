@@ -41,10 +41,9 @@ The response to these will be a JSON object with the following information:
  - data (object): The details of the created account (name, officialEmail, phoneNumber etc).
 
  ## Account confirmation email
-**The link sent to the user for confirmation send a GET request to /api/useremail/confirm/:token endpoint, which confirms the account in the db and a returns a message indicating the account confirmation.**
+**The link sent to the user for confirmation sends a GET request to /api/useremail/confirm/:token endpoint, which confirms the account in the db and a returns a message indicating the account confirmation.**
 
 ## Signing into an account
-
 Only a confirmed account is allowed to signin. 
 Signing in an account is role based because there is only one endpoint to all signin.
 
@@ -96,3 +95,7 @@ Also, the token sent earlier will be included in the request query.
 The response to these will be a JSON object with the following information:
  - status (string): The status of the request (success or failure).
  - message (string):  A message indicating the success or failure of the password reset process.
+
+ ## Update profile
+**To update a user's profile, you make a PATCH request to the /api/updateprofile/:userType?_id endpoint. The userType attcahed as a parameter explicitly includes one of the following depending on who is signining in; admin, company or lawyer. The request body should contain the information the user wants to update**
+

@@ -4,7 +4,7 @@ import  {Schema, model} from 'mongoose';
 const companySchema = new Schema({
   name: {
     type: String,
-    required: [true, 'Please provide a Company Name'],
+    // required: [true, 'Please provide a Company Name'],
   },
   contactName: {
     type: String,
@@ -12,7 +12,7 @@ const companySchema = new Schema({
   },
   officialEmail: {
     type: String,
-    required: [true, 'Please provide a valid email address'],
+    // required: [true, 'Please provide a valid email address'],
     lowercase: true,
     unique: true,
   },

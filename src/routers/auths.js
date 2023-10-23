@@ -18,5 +18,4 @@ router.post("/confirm-reset-token", resetPasswordToken);
 router.patch('/reset-password', resetPassword);
 router.post("/logout", logoutUser);
 
-
 export default router;
