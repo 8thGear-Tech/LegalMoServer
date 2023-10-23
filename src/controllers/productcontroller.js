@@ -33,7 +33,7 @@ export const create = async (req, res) => {
     // productImage
   } = req.body;
   const adminId = req.userId;
-  const _id = adminId;
+  // const _id = adminId;
   const adminExists = await Admin.findOne({ _id });
   console.log(adminExists);
   if (adminExists) {
@@ -43,7 +43,7 @@ export const create = async (req, res) => {
         productPrice,
         productDescription,
         adminId,
-        productImage,
+        // productImage,
         productImage: productUpload.secure_url,
         productImage_id: productUpload.public_id,
       });
