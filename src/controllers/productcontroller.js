@@ -46,7 +46,7 @@ export const create = async (req, res) => {
         adminId,
         // productImage,
         productImage: productUpload.secure_url,
-        productImage_id: productUpload.public_id,
+        // productImage_id: productUpload.public_id,
       });
       if (product) {
         return res.status(201).json({
