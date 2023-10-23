@@ -5,9 +5,9 @@ const router = express.Router();
 
 
 router.post("/api/create", authToken, create);
-router.get("/api/products", authToken, getProducts);
+router.get("/api/products",  getProducts);
 router.put("/api/update/:id",authToken, updateProduct);
 router.delete("/api/delete/:id",authToken, deleteProduct);
-router.get("/api/product/:id",authToken, singleProduct);
+router.get("/api/product/:id", singleProduct);
 export default router;
 
