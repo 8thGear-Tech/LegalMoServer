@@ -29,7 +29,7 @@ const router = express.Router();
 router.post("/api/create", authToken, upload.single("productImage"), create);
 // router.post("/api/create", create);
 router.get("/api/products", authToken, getProducts);
-router.put("/api/update/:id", authToken, updateProduct);
+router.patch("/api/update/:id", authToken, updateProduct);
 router.delete("/api/delete/:id", authToken, deleteProduct);
 router.get("/api/product/:id", authToken, singleProduct);
 export default router;
