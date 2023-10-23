@@ -36,8 +36,8 @@ router.get("/api/pendingjobs", authToken, pendingJob);
 
 router.get("/api/completedjobs", authToken, completedJob);
 //not reviewed/error
-router.put("/api/completejob:jobId", authToken, completeJob);
-router.get("/api/viewjobdetails:jobId", authToken, viewJobDetails);
+router.put("/api/completejob/:jobId", authToken, completeJob);
+router.get("/api/viewjobdetails/:jobId", authToken, viewJobDetails);
 router.put("/api/editjobdetails/:jobId", authToken, editJobDetails);
 // internal server error
 router.get("/api/company/completedjobs", authToken, companyCompletedJob);
