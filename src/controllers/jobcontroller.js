@@ -65,6 +65,11 @@ export const assignJob = async (req, res) => {
       job.assignedTo.push(lawyerId);
       job.status = "pending";
       await job.save();
+      //new
+      // Update the lawyer's job field
+      lawyer.job.push(jobId);
+      await lawyer.save();
+      //new up
       return res.status(201).send(job);
     } else {
       return res.status(400).json({ error: "Unverified Lawyer" });
@@ -348,37 +353,15 @@ export const companyCompletedJob = async (req, res) => {
 };
 
 // FOR LAWYERS
-export const pendingggggJob = async (req, res) => {
-  const isAdmin = await Admin.findById(req.userId);
-  if (!isAdmin) {
-    res.status(401).send({ message: "Unauthorized!, You must be an Admin" });
-    return;
-  }
-  try {
-    const pendingJob = await Job.find({ status: "pending" });
-    if (pendingJob) {
-      res.status(200).json(pendingJob);
-    } else {
-      res.send(null);
-      console.log("No pending job");
-    }
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+
 export const lawyerAssignedJobs = async (req, res) => {
   const lawyerExists = await Lawyer.findById(req.userId);
   if (!lawyerExists) {
     res.status(401).send({ message: "Unauthorized!, You must be a lawyer" });
     return;
   }
-  // const assignedJob = await Job.find({ assignedTo: { $ne: [] } });
   try {
-    const lawyerAssignedJob = await Job.find({
-      assignedTo: { $ne: [] },
-      // assignedTo: { $in: [req.userId] },
-    });
-    // const lawyerAssignedJob = await Job.find({ assignedTo: req.userId });
+    const lawyerAssignedJob = await Job.find({ assignedTo: req.userId });
     if (!lawyerAssignedJob || lawyerAssignedJob.length === undefined) {
       res.status(404).send({ message: "No assigned job" });
       console.log("No assigned job");
