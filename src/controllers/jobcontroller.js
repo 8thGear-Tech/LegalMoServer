@@ -356,7 +356,10 @@ export const lawyerAssignedJobs = async (req, res) => {
     return;
   }
   try {
-    const lawyerAssignedJob = await Job.find({ assignedTo: req.userId });
+    const lawyerAssignedJob = await Job.find({
+      assignedTo: { $in: [req.userId] },
+    });
+    // const lawyerAssignedJob = await Job.find({ assignedTo: req.userId });
     if (!lawyerAssignedJob || lawyerAssignedJob.length === undefined) {
       res.status(404).send({ message: "No assigned job" });
       console.log("No assigned job");

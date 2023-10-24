@@ -48,6 +48,9 @@ router.get("/api/company/pendingjobs", authToken, companyPendingJob);
 router.get("/api/lawyer/assignedjobs", authToken, lawyerAssignedJobs);
 router.get("/api/lawyer/pendingjobs", authToken, lawyerPendingJobs);
 router.get("/api/lawyer/completedjobs", authToken, lawyerCompletedJobs);
+// {
+//     "error": "No recipients defined"
+// }
 router.post(
   "/api/requestmorejobdetails/:jobId",
   authToken,
