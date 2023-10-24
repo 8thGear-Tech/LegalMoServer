@@ -34,7 +34,7 @@ export const getRatings = async (req, res) => {
 
 export const getRating = async (req, res) => {
   try {
-    const rating = await Rating.findById(req.params.id);
+    const rating = await Rating.findById(req.params._id);
     res.status(200).json(rating);
   } catch (error) {
     res.status(404).json({ message: error.message });
