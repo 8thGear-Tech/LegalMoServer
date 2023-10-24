@@ -348,16 +348,35 @@ export const companyCompletedJob = async (req, res) => {
 };
 
 // FOR LAWYERS
-
+export const pendingggggJob = async (req, res) => {
+  const isAdmin = await Admin.findById(req.userId);
+  if (!isAdmin) {
+    res.status(401).send({ message: "Unauthorized!, You must be an Admin" });
+    return;
+  }
+  try {
+    const pendingJob = await Job.find({ status: "pending" });
+    if (pendingJob) {
+      res.status(200).json(pendingJob);
+    } else {
+      res.send(null);
+      console.log("No pending job");
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 export const lawyerAssignedJobs = async (req, res) => {
   const lawyerExists = await Lawyer.findById(req.userId);
   if (!lawyerExists) {
     res.status(401).send({ message: "Unauthorized!, You must be a lawyer" });
     return;
   }
+  // const assignedJob = await Job.find({ assignedTo: { $ne: [] } });
   try {
     const lawyerAssignedJob = await Job.find({
-      assignedTo: { $in: [req.userId] },
+      assignedTo: { $ne: [] },
+      // assignedTo: { $in: [req.userId] },
     });
     // const lawyerAssignedJob = await Job.find({ assignedTo: req.userId });
     if (!lawyerAssignedJob || lawyerAssignedJob.length === undefined) {
