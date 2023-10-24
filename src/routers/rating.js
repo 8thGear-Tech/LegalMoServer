@@ -9,12 +9,13 @@ import {
   getRatingsByProduct,
   getRatingsByStatus,
 } from "../controllers/ratingcontroller.js";
-import { authToken, noop } from "../middleware/AuthToken.js";
+import { authToken } from "../middleware/AuthToken.js";
 const router = express.Router();
 
 router.post("/api/rating", authToken, addRating);
 router.get("/api/rating", getRatings);
-router.get("/api/rating/:id", noop, getRating);
+//no token defined
+router.get("/api/rating/:id", getRating);
 router.patch("/api/rating/:id", authToken, updateRating);
 router.delete("/api/rating/:id", authToken, deleteRating);
 router.get("/api/rating/company/:companyId", getRatingsByCompany);
