@@ -265,18 +265,34 @@ export const completedJob = async (req, res) => {
 };
 
 //not reviewed
+// export const viewJobDetails = async (req, res) => {
+//   const jobId = req.params.jobId;
+//   try {
+//     const job = await Job.findById(jobId);
+//     if (job) {
+//       res.status(200).json(job);
+//     } else {
+//       res.send(null);
+//       console.log("Job not found");
+//     }
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// };
 export const viewJobDetails = async (req, res) => {
   const jobId = req.params.jobId;
+
   try {
     const job = await Job.findById(jobId);
-    if (job) {
-      res.status(200).json(job);
-    } else {
-      res.send(null);
+    if (!job) {
       console.log("Job not found");
+      return res.status(404).send("Job not found");
     }
+
+    res.status(200).json(job);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.log("Error getting job details", error.message);
+    return res.status(500).json({ error: error.message });
   }
 };
 //not reviewed
