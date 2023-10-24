@@ -25,6 +25,11 @@ dotenv.config({ path: "./configenv.env" });
 //     res.status(401).json({ message: error });
 //   }
 // };
+
+export const noop = (req, res, next) => {
+  next();
+};
+
 export const authToken = (req, res, next) => {
   if (!req.headers.authorization) {
     res.status(401).send({ message: "Unauthorized!, You must be signed in" });

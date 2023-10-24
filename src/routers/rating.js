@@ -9,12 +9,8 @@ import {
   getRatingsByProduct,
   getRatingsByStatus,
 } from "../controllers/ratingcontroller.js";
-import { authToken } from "../middleware/AuthToken.js";
+import { authToken, noop } from "../middleware/AuthToken.js";
 const router = express.Router();
-
-const noop = (req, res, next) => {
-  next();
-};
 
 router.post("/api/rating", authToken, addRating);
 router.get("/api/rating", getRatings);
