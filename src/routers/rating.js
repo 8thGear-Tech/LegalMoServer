@@ -12,9 +12,13 @@ import {
 import { authToken } from "../middleware/AuthToken.js";
 const router = express.Router();
 
+const noop = (req, res, next) => {
+  next();
+};
+
 router.post("/api/rating", authToken, addRating);
 router.get("/api/rating", getRatings);
-router.get("/api/rating/:id", getRating);
+router.get("/api/rating/:id", noop, getRating);
 router.patch("/api/rating/:id", authToken, updateRating);
 router.delete("/api/rating/:id", authToken, deleteRating);
 router.get("/api/rating/company/:companyId", getRatingsByCompany);
