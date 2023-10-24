@@ -418,7 +418,8 @@ export const requestMoreJobDetails = async (req, res) => {
     res.status(401).send({ message: "Unauthorized!, You must be a lawyer" });
     return;
   }
-  const jobId = req.params.jobId;
+  const jobId = req.params;
+  // const jobId = req.params.jobId;
   const { detail } = req.body;
   try {
     const job = await Job.findById(jobId);
