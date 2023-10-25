@@ -26,6 +26,10 @@ export const addRating = async (req, res) => {
 export const getRatings = async (req, res) => {
     try {
         const ratings = await Rating.find();
+        if(!ratings || ratings.length === undefined){
+            res.status(200).json({message : "nO RATING"});
+            return
+        }
         res.status(200).json(ratings);
     } catch (error) {
         res.status(404).json({ message: error.message });

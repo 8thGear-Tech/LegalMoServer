@@ -63,15 +63,12 @@ const lawyerSchema = new Schema({
   accountDetails: [{
       accountNumber : {
         type: String,
-        required: true
       },
       accountName: {
         type: String,
-        required: true
       },
       bank: {
         type: String,
-        required: true
       },
   }],
 });
