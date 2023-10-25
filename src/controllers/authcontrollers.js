@@ -397,6 +397,7 @@ export const lawyerSignup = async (req, res) => {
         data: {
           lawyer: newLawyer,
           token,
+          userType: newLawyer.userType,
         },
       });
     } else {
