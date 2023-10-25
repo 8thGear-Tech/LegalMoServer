@@ -38,6 +38,7 @@ router.get("/api/completedjobs", authToken, completedJob);
 
 router.put("/api/completejob/:jobId", authToken, completeJob);
 //not reviewed/error
+// invalid user type
 router.get("/api/viewjobdetails/:jobId", authToken, viewJobDetails);
 //done
 router.put("/api/editjobdetails/:jobId", authToken, editJobDetails);

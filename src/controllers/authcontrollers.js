@@ -469,7 +469,7 @@ export const lawyerLogin = async (req, res) => {
 
     return res.status(200).json({
       status: "success",
-      data: { lawyer, token },
+      data: { lawyer, token: jwt },
     });
   }
 
