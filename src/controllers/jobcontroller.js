@@ -227,8 +227,9 @@ export const viewJobDetails = async (req, res) => {
     const jobId = req.params.jobId
     try {
         const job = await Job.findById(jobId)
+        const jobDetails = job.detail
         if(job){
-            res.status(200).json(job)
+            res.status(200).json(jobDetails)
         }else{
             res.send(null)
             console.log("Job not found")
