@@ -379,8 +379,11 @@ export const requestMoreJobDetails = async(req, res) =>  {
     try {
         const job = await Job.findById(jobId)
         if(job){
-            const companyId = job.companyId
-            const company = Company.findById(companyId)
+            // const companyId = job.companyId.toHexString()
+            // console.log(companyId)
+            // const company = Company.findById(companyId)
+            const company = await Company.findById(job.companyId.toHexString());
+            console.log(company)
             const companyMail = company.officialEmail
             const jobUrl = `http://api/job/:${jobId}`; //user/verify
             await sendEmail({
@@ -389,6 +392,8 @@ export const requestMoreJobDetails = async(req, res) =>  {
               message: `Kindly updated the description of this product you bought: ${jobUrl}`,
               html: `<p>The lawyer working on the product you bought need some information on it </b> </p><p> ${detail} </b>.</p> <p>Click <a href=${jobUrl}> to update the description of this product you bought</p>`
             });
+            res.send({message : "Mail sent"})
+            return
         }else{
             res.send(null)
             console.log("Job not found")
