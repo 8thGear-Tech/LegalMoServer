@@ -24,7 +24,7 @@ export async function sendConfirmationEmail(userEmail, token) {
    try {
      const confirmationUrl = `http://localhost:5005/api/useremail/confirm/${token}`;
      const currentUrl = "http://localhost:5005/"; 
- 
+  
      await sendEmail({
        email: userEmail,
        subject: 'Verify Email Address',
@@ -40,7 +40,6 @@ export async function sendConfirmationEmail(userEmail, token) {
      return true;
    } catch (error) {
      console.error('Email sending error:', error);
- 
      // Return false to indicate that there was an error sending the email
      return false;
    }
@@ -51,9 +50,8 @@ export async function sendConfirmationEmail(userEmail, token) {
 //     const confirmationUrl = `http://localhost:5005/api/useremail/confirm/${token}`;
 //     const currentUrl = "http://localhost:5005/"; 
 
-//     const emailBody = `Your account was just logged in from a new device or location. Device: ${currentLogin.device}, Location: ${currentLogin.location}, Timestamp: ${currentLogin.timestamp}`;
+//     const emailBody = `Your account was just logged in from a new device or location. Device: ${currentLogin.   device}, Location: ${currentLogin.location}, Timestamp: ${currentLogin.timestamp}`;
 //     sendEmail(admin.officialEmail, 'New Login Detected', emailBody);
-
 
 //     await sendEmail({
 //       email: userEmail,

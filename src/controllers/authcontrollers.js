@@ -42,24 +42,24 @@ export const adminSignup = async (req, res) => {
 
       // Hash password and create new admin
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      const { _id } = newAdmin;
+      const userType = 'admin';
+      const token = emailConfirmationToken(_id, userType);
       const newAdmin = new Admin({
         name: req.body.name,
         officialEmail: req.body.officialEmail,
         phoneNumber: req.body.phoneNumber,
         password: hashedPassword,
+        token: token, // Add the token field to the newAdmin object
       });
 
-      // Save new admin to the database and generate a token for admin
+      // Save new admin to the database
       await newAdmin.save();
-
-      const { _id } = newAdmin;
-      const userType = 'admin';
-      const token = emailConfirmationToken(_id, userType);
 
       // Send the Confirmation Email to Admin
       const emailSent = await sendConfirmationEmail(
-       newAdmin.officialEmail, 
-       token,
+        newAdmin.officialEmail, 
+        token,
       );
 
       if (emailSent) {
@@ -68,7 +68,6 @@ export const adminSignup = async (req, res) => {
           message: 'Confirmation email sent successfully',
           data: {
             admin: newAdmin,
-
           },
         });
       } else {
@@ -101,17 +100,18 @@ export const adminLogin = async (req, res) => {
               status: 'success',
               data: { user },
             });
-    }
-    const { officialEmail, password } = req.body;
+        }
+        
+          const { officialEmail, password } = req.body;
 
-    // Check if admin exists
-    const admin = await Admin.findOne({ officialEmail });
-    if (!admin) {
-      return res.status(404).json({  
-        status: 'fail',
-        message: 'You are not an admin',
-      });
-    }
+          // Check if admin exists
+          const admin = await Admin.findOne({ officialEmail });
+          if (!admin) {
+            return res.status(404).json({  
+              status: 'fail',
+              message: 'You are not an admin',
+            });
+          }
         // Check if the password is correct and log in the admin
         const passwordCheck = await bcrypt.compare(password, admin?.password || "");
         if (passwordCheck) {
@@ -151,7 +151,6 @@ export const adminLogin = async (req, res) => {
             await admin.save();
 
             console.log(location)
-
             // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
             const { _id } = admin;
             const token = generateToken(_id);

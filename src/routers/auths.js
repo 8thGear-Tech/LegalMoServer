@@ -8,7 +8,6 @@ const router = express.Router();
 
 // Use a route parameter to set the userType based on the route
 router.post('/login/:userType', routeBasedOnUserType);
-
 router.post("/company/signup", companySignup);
 router.post("/lawyer/signup", lawyerSignup);
 router.post("/admin/signup", adminSignup);

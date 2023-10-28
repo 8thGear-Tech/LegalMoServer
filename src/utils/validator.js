@@ -9,7 +9,6 @@ export const adminRegister = Joi.object().keys({
     .required(),
   passwordConfirm: Joi.string().required(),
   phoneNumber: Joi.string().pattern(/^[0-9]{11}$/).message('Invalid phone number format').required(),
-
 });
 
 export const companyRegister = Joi.object().keys({
