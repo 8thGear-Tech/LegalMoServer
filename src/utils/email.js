@@ -5,7 +5,6 @@ import { Company } from '../models/companymodel.js';
 import { Lawyer } from '../models/lawyermodel.js';
 import { Admin } from '../models/adminmodel.js';
 
-
 dotenv.config ({ path: "./configenv.env" });
 
 // Generates a JSON Web Token (JWT) for a user.
@@ -76,6 +75,7 @@ export const confirmEmail = async (req, res) => {
   
       // Mark the user's email as confirmed
       user.isEmailConfirmed = true;
+      user.signupToken = token
       await user.save();
   
       // Optionally, you can redirect the user to a login page or show a confirmation success message.

@@ -3,7 +3,7 @@ import {Lawyer} from '../models/lawyermodel.js';
 import {Admin } from '../models/adminmodel.js';
 import { ValidateResetPassword, options, ValidateforgotPassword } from '../utils/validator.js';
 import { sendEmail } from '../utils/email.js';
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 
 function passwordResetToken() {
     const min = 100000; // Minimum 6-digit number

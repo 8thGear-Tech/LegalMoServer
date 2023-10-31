@@ -61,6 +61,82 @@ export const routeBasedOnUserType = (req, res, next) => {
       });
   }
 };
+
+export const usersLogin = async (req, res, next) => {
+  try {
+    // Handle Google SignIn
+    if (req.url.startsWith("/auth/google/redirect/company?code=") || req.url.startsWith("/auth/google/redirect/lawyer?code=") || req.url.startsWith("/auth/google/redirect/admin?code=")) {
+      const user = req.user
+      // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
+           const { _id } = user.id;
+           const token = generateToken(_id);
+           res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 }); 
+      return res.status(200).json({
+        status: 'success',
+        data: { user },
+      });
+    }
+
+    const { officialEmail, password } = req.body;
+
+    if (!officialEmail || !password) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Please provide officialEmail and password.',
+      });
+    }
+
+    // Attempt to log in for each user type
+    const userTypes = ['admin', 'company', 'lawyer'];
+    for (const userType of userTypes) {
+      const loginFunction = getLoginFunctionByUserType(userType);
+
+      if (loginFunction) {
+        const loginResult = await loginFunction(officialEmail, password);
+
+        if (loginResult.success) {
+          // If login was successful, return a success response
+          // Set the token in the response headers
+          res.setHeader('Authorization', `Bearer ${loginResult.data.token}`);
+          return res.status(200).json({
+            status: 'success',
+            data: loginResult.data,
+          });
+        } else {
+          return res.status(loginResult.status).json({
+            status: 'fail',
+            message: loginResult.message,
+          });
+        } 
+      }
+    }
+
+    // If none of the user types match, return an error response
+    return res.status(401).json({
+      status: 'fail',
+      message: 'Invalid email/password',
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      status: 'fail',
+      message: error.message,
+    });
+  }
+};
+const getLoginFunctionByUserType = (userType) => {
+  switch (userType) {
+    case 'company':
+      return companyLogin;
+    case 'admin':
+      return adminLogin;
+    case 'lawyer':
+      return lawyerLogin;
+    default:
+      return null;
+  }
+}
+
 export const profileBasedOnUserType = (req, res, next) => {
   const {userType} = req.params;
 

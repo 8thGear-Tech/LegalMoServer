@@ -44,9 +44,6 @@ const adminSchema = new Schema({
   },
   resetPasswordExpires: {
     type:  Date
-  },
-  signupToken: {
-    type: String
   }
 });
 

@@ -2,7 +2,8 @@ import { Company } from '../models/companymodel.js';
 import { Lawyer } from '../models/lawyermodel.js';
 import { Admin } from '../models/adminmodel.js';
 import { adminRegister, companyRegister, lawyerRegister, options } from '../utils/validator.js';
-import bcrypt from 'bcrypt'
+// import { getOneAdmin, getOneCompany, getOneLawyer } from './usersControllers.js';
+import bcrypt from 'bcryptjs'
 import dotenv from "dotenv";
 import { generateToken, emailConfirmationToken, passwordMatch, sendConfirmationEmail } from '../utils/utils.js';
 import { sendEmail } from '../utils/email.js';
@@ -42,19 +43,20 @@ export const adminSignup = async (req, res) => {
 
       // Hash password and create new admin
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      const { _id } = newAdmin;
-      const userType = 'admin';
-      const token = emailConfirmationToken(_id, userType);
+  
       const newAdmin = new Admin({
         name: req.body.name,
         officialEmail: req.body.officialEmail,
         phoneNumber: req.body.phoneNumber,
         password: hashedPassword,
-        token: token, // Add the token field to the newAdmin object
       });
 
       // Save new admin to the database
       await newAdmin.save();
+      const { _id } = newAdmin;
+      const userType = 'admin';
+      const token = emailConfirmationToken(_id, userType);
+
 
       // Send the Confirmation Email to Admin
       const emailSent = await sendConfirmationEmail(
@@ -86,7 +88,7 @@ export const adminSignup = async (req, res) => {
     });
   }
 };
-export const adminLogin = async (req, res) => {
+export const adminLogin = async (officialEmail, password) => {
   try {
     // handle google SignIn
     if (req.url.startsWith("/auth/google/redirect/admin?code=")) {
@@ -246,72 +248,79 @@ export const companySignup = async (req, res) => {
     });
   }
 };
-export const companyLogin = async (req, res) => {
+// export const companyLogin = async (officialEmail, password) => {
+
+//     // const { officialEmail, password } = req.body;
+
+//     // Check if company exists
+//     const company = await Company.findOne({ officialEmail });
+//     if (!company) {
+//       return { status: 401, success: false,  message: 'You are not a registered company here', }
+//     }
+//      // Return { success: false } if unsuccessful
+//   // Return { success: true, data: companyData } if successful
+  
+//       // Check if password is correct and then if the email is verified. Proceed to login company if both conditions are met
+//       const passwordCheck = await bcrypt.compare(password, company?.password || "");
+//       if (passwordCheck) {
+//         // Check if the company's email is confirmed
+//           if (!company.isEmailConfirmed) {
+//             return { status: 403, success: false, message: 'Please confirm your email address to log in.' } 
+//           }
+
+//            // Generate token and set cookie with token to be sent to the client and kept for 30 days
+//             const { _id } = company;
+//             const token = generateToken(_id);
+//             res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 });
+//             console.log(token)
+
+//         return { status: 200, success: true, data: { company } }
+//       }
+  
+//     // return res.status(401).json({ 
+//     //   status: 'fail',
+//     //   message: 'Invalid email/password',
+//     // });
+
+//   // } catch (error) {
+//   //   res.status(500).json({ 
+//   //     status: 'fail',
+//   //     message: 'Internal server error',
+//   //   });
+//   // }
+// };
+export const companyLogin = async (officialEmail, password, res) => {
   try {
-
-      // handle google SignIn
-      if (req.url.startsWith("/auth/google/redirect/company?code=")) {
-        // return res.send(`You have Signed in with Google`);
-        const user = req.user
-           // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
-                const { _id } = user.id;
-                const token = generateToken(_id);
-  
-                console.log(token)
-                res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 }); 
-  
-            return res.status(200).json({ 
-              status: 'success',
-              data: { user },
-            });
-      }
-
-    const { officialEmail, password } = req.body;
-
     // Check if company exists
     const company = await Company.findOne({ officialEmail });
+
     if (!company) {
-      return res.status(404).json({  // 404 Not Found status code indicates that the company doesn't exist.
-        status: 'fail',
-        message: 'You are not a registered company here',
-      });
+      return { status: 401, success: false, message: 'You are not a registered company here' };
     }
 
-      // Check if password is correct and then if the email is verified. Proceed to login company if both conditions are met
-      const passwordCheck = await bcrypt.compare(password, company?.password || "");
-      if (passwordCheck) {
-        // Check if the company's email is confirmed
-          if (!company.isEmailConfirmed) {
-            return res.status(400).json({ 
-              status: 'fail',
-              message: 'Please confirm your email address to log in.',
-            });
-          }
+    // Check if password is correct and then if the email is verified. Proceed to log in the company if both conditions are met
+    const passwordCheck = await bcrypt.compare(password, company?.password || '');
 
-           // Generate token and set cookie with token to be sent to the client and kept for 30 days
-            const { _id } = company;
-            const token = generateToken(_id);
-            res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 });
-            console.log(token)
-
-        return res.status(200).json({ 
-          status: 'success',
-          data: { company },
-        });
+    if (passwordCheck) {
+      // Check if the company's email is confirmed
+      if (!company.isEmailConfirmed) {
+        return { status: 403, success: false, message: 'Please confirm your email address to log in.' };
       }
-  
-    return res.status(401).json({ 
-      status: 'fail',
-      message: 'Invalid email/password',
-    });
 
+      // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
+      const { _id } = company;
+      const token = generateToken(_id);
+      // You cannot set a cookie here directly as 'res' is not available. Instead, you can return the token.
+      return { status: 200, success: true, data: { company, token } };
+    } else {
+      return { status: 401, success: false, message: 'Invalid email/password' };
+    }
   } catch (error) {
-    res.status(500).json({ 
-      status: 'fail',
-      message: 'Internal server error',
-    });
+    // Handle any errors here
+    return { status: 500, success: false, message: 'Internal server error' };
   }
 };
+
 export const lawyerSignup = async (req, res) => {
   try {
     // Validate lawyer inputs
@@ -462,6 +471,91 @@ export const logoutUser = async (req, res) => {
   }
 }
 
+export const getAdmin = async (query) => {
+  return await Admin.findOne(query);
+};
+
+export const getCompany = async (query) => {
+  return await Company.findOne(query);
+};
+
+export const getLawyer = async (query) => {
+  return await Lawyer.findOne(query);
+};
+
+export const usersLogin = async (req, res) => {
+  try {
+    const { officialEmail, password } = req.body;
+
+    if (!officialEmail || !password) {
+      return res.status(400).json({  
+        status: 'fail',
+        message: 'Please provide email and password',
+      });
+    }
+
+    // Determine user type
+    const admin = await getAdmin({ officialEmail });
+    const company = await getCompany({ officialEmail });
+    const lawyer = await getLawyer({ officialEmail });
+     
+    let user;
+    let userType;
+
+    if (admin) {
+      user = admin;
+      userType = 'admin';
+    } else if (company) {
+      user = company;
+      userType = 'company';
+    } else if (lawyer) {
+      user = lawyer;
+      userType = 'lawyer';
+    } else {
+      return res.status(400).json({  
+        status: 'fail',
+        message: 'Invalid email',
+      });
+    }
+
+    // Verify password
+    const passwordIsValid = await bcrypt.compare(password, user.password || "");
+
+    if (passwordIsValid) {
+      // Check if the lawyer's email is confirmed
+       if (!user.isEmailConfirmed) {
+         return res.status(403).json({ 
+           status: 'fail',
+           message: 'Please confirm your email address to log in.',
+         });
+       }
+
+       // Generate token and set cookie with token to be sent to the client and kept for 30 days
+       const { _id } = user;
+       const token = generateToken(_id);
+       // console.log(token)
+       res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 });
+
+      // Send response
+      res.status(200).json({  
+        status: 'success',
+        token,
+        userType,
+        data: { user },
+      });
+  } else {
+    return res.status(401).json({ 
+      status: 'fail',
+      message: 'Invalid email/password',
+    });
+  }
+  } catch (error) {
+    res.status(500).json({  
+      status: 'fail',
+      message: error.message,
+    });
+  }
+};
 
 
 
