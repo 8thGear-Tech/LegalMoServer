@@ -44,7 +44,13 @@ const adminSchema = new Schema({
   },
   resetPasswordExpires: {
     type:  Date
-  }
+  },
+  lastDevice: {
+    type: String
+  },
+  lastIp: {
+    type: String
+  },
 });
 
 export const Admin = model('Admin', adminSchema);

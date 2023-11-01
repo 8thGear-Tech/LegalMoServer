@@ -1,7 +1,7 @@
 import express from "express";
 import passport from "passport";
 import { passportSetup } from "../config/passport.js";
-import {routeBasedOnUserType} from "../controllers/middleware.js";
+import { usersLogin } from "../controllers/authcontrollers.js";
 
 const router = express.Router();
 
@@ -23,7 +23,7 @@ router.get('/auth/google/:userType',
 
 router.get('/auth/google/redirect/:userType',
   passport.authenticate('google', { failureRedirect: '/' }),
-  routeBasedOnUserType
+  usersLogin
 );
 
 export default router;

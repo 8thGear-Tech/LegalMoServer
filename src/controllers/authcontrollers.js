@@ -7,8 +7,9 @@ import bcrypt from 'bcryptjs'
 import dotenv from "dotenv";
 import { generateToken, emailConfirmationToken, passwordMatch, sendConfirmationEmail } from '../utils/utils.js';
 import { sendEmail } from '../utils/email.js';
-import useragent from 'express-useragent';
+import useragent from 'useragent';
 import geoip from 'geoip-lite';
+import axios from 'axios';
 
 dotenv.config ({ path: "./configenv.env" });
 
@@ -248,7 +249,6 @@ export const companySignup = async (req, res) => {
     });
   }
 };
-// export const companyLogin = async (officialEmail, password) => {
 
 //     // const { officialEmail, password } = req.body;
 
@@ -485,6 +485,49 @@ export const getLawyer = async (query) => {
 
 export const usersLogin = async (req, res) => {
   try {
+    // Handle Google SignIn
+    if (req.url.startsWith("/auth/google/redirect/company?code=") || req.url.startsWith("/auth/google/redirect/lawyer?code=") || req.url.startsWith("/auth/google/redirect/admin?code=")) {
+      const user = req.user
+      // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
+           const { _id } = user.id;
+           const token = generateToken(_id);
+           res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 }); 
+
+            // Check if the user is logging in from a new device
+            const agent = useragent.parse(req.headers['user-agent']);
+            const osName = agent.os.family;
+            const deviceVendor = agent.family;
+            const deviceModel = agent.major;
+            const device = `${osName} ${deviceVendor} ${deviceModel}`;
+            const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '8.8.8.8';
+            
+             // Get the device's location
+            const response = await axios.get(`http://ip-api.com/json/${ip}`);
+            const location = response.data;
+
+            console.log("location is", location);
+            
+            if (user.lastDevice !== device || user.lastIp !== ip) {
+              // Send email to the user
+              await sendEmail({
+               email: user.officialEmail,
+               subject: "New Login Notification",
+               html: `<p>A new login was detected for your account.</p>
+                 <p>Device: ${device}</p>
+                 `,
+             });
+              // Update the user's last device and IP
+              user.lastDevice = device;
+              user.lastLocation = location;
+              await user.save();
+            }
+
+            return res.status(200).json({
+              status: 'success',
+              data: { user },
+            });
+    }
+
     const { officialEmail, password } = req.body;
 
     if (!officialEmail || !password) {
@@ -502,12 +545,12 @@ export const usersLogin = async (req, res) => {
     let user;
     let userType;
 
-    if (admin) {
-      user = admin;
-      userType = 'admin';
-    } else if (company) {
+    if (company) {
       user = company;
       userType = 'company';
+    } else if (admin) {
+      user = admin;
+      userType = 'admin';
     } else if (lawyer) {
       user = lawyer;
       userType = 'lawyer';
@@ -522,13 +565,45 @@ export const usersLogin = async (req, res) => {
     const passwordIsValid = await bcrypt.compare(password, user.password || "");
 
     if (passwordIsValid) {
-      // Check if the lawyer's email is confirmed
+      // Check if the user's email is confirmed
        if (!user.isEmailConfirmed) {
          return res.status(403).json({ 
            status: 'fail',
            message: 'Please confirm your email address to log in.',
          });
        }
+
+           // Check if the user is logging in from a new device
+           const agent = useragent.parse(req.headers['user-agent']);
+           const osName = agent.os.family;
+           const deviceVendor = agent.family;
+           const deviceModel = agent.major;
+           const device = `${osName} ${deviceVendor} ${deviceModel}`;
+           const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '8.8.8.8';
+     
+           console.log("device is", device)
+
+            // Get the device's location
+            const response = await axios.get(`http://ip-api.com/json/${ip}`);
+            const location = response.data;
+
+            console.log("location is", location);
+     
+           if (user.lastDevice !== device || user.lastIp !== ip) {
+             // Send email to the user
+             await sendEmail({
+              email: user.officialEmail,
+              subject: "New Login Notification",
+              html: `<p>A new login was detected for your account.</p>
+                <p>Device: ${device}</p>
+                `,
+            });
+     
+             // Update the user's last device and IP
+             user.lastDevice = device;
+             user.lastLocation = location;
+             await user.save();
+           }
 
        // Generate token and set cookie with token to be sent to the client and kept for 30 days
        const { _id } = user;

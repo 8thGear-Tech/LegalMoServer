@@ -64,18 +64,7 @@ export const routeBasedOnUserType = (req, res, next) => {
 
 export const usersLogin = async (req, res, next) => {
   try {
-    // Handle Google SignIn
-    if (req.url.startsWith("/auth/google/redirect/company?code=") || req.url.startsWith("/auth/google/redirect/lawyer?code=") || req.url.startsWith("/auth/google/redirect/admin?code=")) {
-      const user = req.user
-      // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
-           const { _id } = user.id;
-           const token = generateToken(_id);
-           res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 }); 
-      return res.status(200).json({
-        status: 'success',
-        data: { user },
-      });
-    }
+    
 
     const { officialEmail, password } = req.body;
 
