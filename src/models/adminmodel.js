@@ -48,7 +48,7 @@ const adminSchema = new Schema({
   lastDevice: {
     type: String
   },
-  lastIp: {
+  lastLocation: {
     type: String
   },
 });

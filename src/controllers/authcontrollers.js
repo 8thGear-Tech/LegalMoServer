@@ -499,7 +499,7 @@ export const usersLogin = async (req, res) => {
             const deviceVendor = agent.family;
             const deviceModel = agent.major;
             const device = `${osName} ${deviceVendor} ${deviceModel}`;
-            const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '8.8.8.8';
+            const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
             
              // Get the device's location
             const response = await axios.get(`http://ip-api.com/json/${ip}`);
@@ -579,7 +579,7 @@ export const usersLogin = async (req, res) => {
            const deviceVendor = agent.family;
            const deviceModel = agent.major;
            const device = `${osName} ${deviceVendor} ${deviceModel}`;
-           const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '8.8.8.8';
+           const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
      
            console.log("device is", device)
 

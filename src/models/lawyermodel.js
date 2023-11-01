@@ -59,7 +59,13 @@ const lawyerSchema = new Schema({
   },
   resetPasswordExpires: {
      type: Date,
-  }
+  },
+  lastDevice: {
+    type: String
+  },
+  lastLocation: {
+    type: String
+  },
 });
 
 export const Lawyer = model('Lawyer', lawyerSchema);
