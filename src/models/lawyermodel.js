@@ -88,6 +88,12 @@ const lawyerSchema = new Schema({
       },
     },
   ],
+  lastDevice: {
+    type: String,
+  },
+  lastLocation: {
+    type: String,
+  },
 });
 
 export const Lawyer = model("Lawyer", lawyerSchema);

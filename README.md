@@ -47,11 +47,19 @@ The response to these will be a JSON object with the following information:
 
 ## Account confirmation email
 
+<<<<<<< HEAD
 **The link sent to the user for confirmation send a GET request to /api/useremail/confirm/:token endpoint, which confirms the account in the db and a returns a message indicating the account confirmation.**
 
 ## Signing into an account
 
 Only a confirmed account is allowed to signin.
+=======
+ ## Account confirmation email
+**The link sent to the user for confirmation sends a GET request to /api/useremail/confirm/:token endpoint, which confirms the account in the db and a returns a message indicating the account confirmation.**
+
+## Signing into an account
+Only a confirmed account is allowed to signin. 
+>>>>>>> 423e17e8cf5475ce7f0dbbdb07eab00c80a55525
 Signing in an account is role based because there is only one endpoint to all signin.
 
 **To signin into an account, you can make a POST request to the /api/login/:userType endpoint. The userType attcahed as a parameter explicitly includes one of the following depending on who is signining in; admin, company or lawyer.**
@@ -291,6 +299,7 @@ The response to these will be a JSON object with the following information:
   Also, the token sent earlier will be included in the request query.
 
 The response to these will be a JSON object with the following information:
+<<<<<<< HEAD
 
 - status (string): The status of the request (success or failure).
 - # message (string): A message indicating the success or failure of the password reset process.
@@ -419,3 +428,11 @@ The response to these will be a JSON object with the following information:
 - **Request params**: url(job id)
 
 > > > > > > > 27b7a3e15d49ec4507b40577e418b4ca9318f9a4
+=======
+ - status (string): The status of the request (success or failure).
+ - message (string):  A message indicating the success or failure of the password reset process.
+
+ ## Update profile
+**To update a user's profile, you make a PATCH request to the /api/updateprofile/:userType?_id endpoint. The userType attcahed as a parameter explicitly includes one of the following depending on who is signining in; admin, company or lawyer. The request body should contain the information the user wants to update**
+
+>>>>>>> 423e17e8cf5475ce7f0dbbdb07eab00c80a55525

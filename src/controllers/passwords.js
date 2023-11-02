@@ -1,13 +1,9 @@
-import { Company } from "../models/companymodel.js";
-import { Lawyer } from "../models/lawyermodel.js";
-import { Admin } from "../models/adminmodel.js";
-import {
-  ValidateResetPassword,
-  options,
-  ValidateforgotPassword,
-} from "../utils/validator.js";
-import { sendEmail } from "../utils/email.js";
-import bcrypt from "bcrypt";
+import {Company} from '../models/companymodel.js';
+import {Lawyer} from '../models/lawyermodel.js';
+import {Admin } from '../models/adminmodel.js';
+import { ValidateResetPassword, options, ValidateforgotPassword } from '../utils/validator.js';
+import { sendEmail } from '../utils/email.js';
+import bcrypt from 'bcryptjs'
 
 function passwordResetToken() {
   const min = 100000; // Minimum 6-digit number
@@ -27,7 +23,7 @@ async function sendResetPasswordEmail(userEmail, token) {
           <p>Your password reset token is:</p>
           <p><strong>${token}</strong></p>
           <p>This token is required to reset your password. Please copy it and input it in the password reset form on our website.</p>
-          <p>This token <b>expires in 5 minutes</b>.</p>
+          <p>This token <b>expires in 10 minutes</b>.</p>
         `,
     });
 
@@ -41,45 +37,42 @@ async function sendResetPasswordEmail(userEmail, token) {
   }
 }
 export const forgotPassword = async (req, res) => {
-  try {
-    const { officialEmail } = req.body;
-    const { userType } = req.params;
-
-    let userModel;
-
-    // Determine the user model based on the userType parameter
-    switch (userType) {
-      case "admin":
-        userModel = Admin;
-        break;
-      case "company":
-        userModel = Company;
-        break;
-      case "lawyer":
-        userModel = Lawyer;
-        break;
-      default:
-        return res.status(400).json({ message: "Invalid user type" });
-    }
-
-    const validate = ValidateforgotPassword.validate(req.body, options);
-    if (validate.error) {
-      const message = validate.error.details
-        .map((detail) => detail.message)
-        .join(",");
-      return res.status(400).json({
-        status: "fail",
-        message,
-      });
-    }
-
-    // Generate a password reset token
-    const token = passwordResetToken();
-    const expires = new Date(Date.now() + 300000); // Token expires in 5 minutes
-
-    // Find the user and update the token and expiration date in parallel
-    const updatedUser = await userModel
-      .findOneAndUpdate(
+    try {
+      const { officialEmail } = req.body;
+      const { userType } = req.params;
+  
+      let userModel;
+  
+      // Determine the user model based on the userType parameter
+      switch (userType) {
+        case 'admin':
+          userModel = Admin;
+          break;
+        case 'company':
+          userModel = Company;
+          break;
+        case 'lawyer':
+          userModel = Lawyer;
+          break;
+        default:
+          return res.status(400).json({ message: 'Invalid user type' });
+      }
+  
+      const validate = ValidateforgotPassword.validate(req.body, options);
+      if (validate.error) {
+        const message = validate.error.details.map((detail) => detail.message).join(',');
+        return res.status(400).json({
+          status: 'fail',
+          message,
+        });
+      }
+  
+      // Generate a password reset token
+      const token = passwordResetToken();
+      const expires = new Date(Date.now() + 600000); // Token expires in 10 minutes
+  
+      // Find the user and update the token and expiration date in parallel
+      const updatedUser = await userModel.findOneAndUpdate(
         { officialEmail },
         { passwordToken: token, resetPasswordExpires: expires },
         { new: true }

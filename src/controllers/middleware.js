@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { adminLogin, companyLogin, lawyerLogin } from './authcontrollers.js';
-import { getOneAdmin, getOneCompany, getOneLawyer } from './usersControllers.js';
+import { getOneAdmin, getOneCompany, getOneLawyer, adminProfileUpdate, companyProfileUpdate, lawyerProfileUpdate } from './usersControllers.js';
 
 const jwtsecret = process.env.JWT_SECRET;
 export const authenticateUser = async (req, res, next) => {
@@ -25,61 +25,17 @@ export const authenticateUser = async (req, res, next) => {
     res.status(401).json({ message: 'You are not authorized' });
   }
 };
-
-// export const authorizeUser = (userTypes) => {
-//     return (req, res, next) => {
-//       if (!userTypes.includes(req.userType)) {
-//         // Forbidden if user is not allowed
-//         return res.status(403).json({ message: 'Forbidden' });
-//       }
-  
-//       // Proceed to the next middleware or route handler
-//       next();
-//     };
-//   }
-
-  //   try {
-  //     const { token } = req.body;
-  //     const { userType } = req.params;
-
-  //      // Determine the user model based on the userType parameter
-  //      switch (userType) {
-  //       case 'admin':
-  //         userModel = Admin;
-  //         break;
-  //       case 'company':
-  //         userModel = Company;
-  //         break;
-  //       case 'lawyer':
-  //         userModel = Lawyer;
-  //         break;
-  //       default:
-  //         return res.status(400).json({ message: 'Invalid user type' });
-  //     }
-      
-  //       const user = await userModel.findOne({ passwordresetToken });
-
-  //       if (!user) {
-  //         return res.status(404).json({ message: `${userType} account not found` });
-  //       }
-  
-  //       if (!token || user.passwordResetToken !== token) {
-  //         // Unauthorized if no token is provided or if it doesn't match what's saved in the database
-  //         return res.status(401).json({ message: 'Unauthorized' });
-  //       }
-  
-  //     // Set user data in the request object for use in route handlers
-  //     req.userId = decoded.id;
-  //     req.userType = decoded.userType;
-  
-  //     next();
-  //   } catch (error) {
-  //     // Invalid or expired token
-  //     res.status(401).json({ message: 'Unauthorized' });
-  //   }
-  // }
-
-  // Create a custom middleware to route requests based on user type
+export const isAdminUser = (req, res, next) => {
+  const {userType} = req.query;
+  // Check if the user is an admin based on their userType
+  if (userType === 'admin') {
+    // User is an admin, allow access to the endpoint
+    next();
+  } else {
+    // User is not an admin, respond with an unauthorized status code
+    res.status(403).json({ message: 'Access denied. Admin permissions required.' });
+  }
+};
 export const routeBasedOnUserType = (req, res, next) => {
   const {userType} = req.params;
 
@@ -106,6 +62,70 @@ export const routeBasedOnUserType = (req, res, next) => {
   }
 };
 
+export const usersLogin = async (req, res, next) => {
+  try {
+    
+
+    const { officialEmail, password } = req.body;
+
+    if (!officialEmail || !password) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Please provide officialEmail and password.',
+      });
+    }
+
+    // Attempt to log in for each user type
+    const userTypes = ['admin', 'company', 'lawyer'];
+    for (const userType of userTypes) {
+      const loginFunction = getLoginFunctionByUserType(userType);
+
+      if (loginFunction) {
+        const loginResult = await loginFunction(officialEmail, password);
+
+        if (loginResult.success) {
+          // If login was successful, return a success response
+          // Set the token in the response headers
+          res.setHeader('Authorization', `Bearer ${loginResult.data.token}`);
+          return res.status(200).json({
+            status: 'success',
+            data: loginResult.data,
+          });
+        } else {
+          return res.status(loginResult.status).json({
+            status: 'fail',
+            message: loginResult.message,
+          });
+        } 
+      }
+    }
+
+    // If none of the user types match, return an error response
+    return res.status(401).json({
+      status: 'fail',
+      message: 'Invalid email/password',
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      status: 'fail',
+      message: error.message,
+    });
+  }
+};
+const getLoginFunctionByUserType = (userType) => {
+  switch (userType) {
+    case 'company':
+      return companyLogin;
+    case 'admin':
+      return adminLogin;
+    case 'lawyer':
+      return lawyerLogin;
+    default:
+      return null;
+  }
+}
+
 export const profileBasedOnUserType = (req, res, next) => {
   const {userType} = req.params;
 
@@ -115,7 +135,6 @@ export const profileBasedOnUserType = (req, res, next) => {
       message: 'Invalid user type',
     });
   }
-
   // Based on the user type, route the request to the appropriate login function
   switch (userType) {
     case 'company':
@@ -131,5 +150,28 @@ export const profileBasedOnUserType = (req, res, next) => {
       });
   }
 };
+export const updateProfileBasedOnUser = async (req, res, next) => {
+  
+  const { userType } = req.params; 
 
- 
+  if (!userType || !['company', 'admin', 'lawyer'].includes(userType)) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Invalid user type',
+    });
+  }
+    // Based on the user type, route the request to the appropriate update function
+switch (userType) {
+  case 'admin':
+    return adminProfileUpdate(req, res, next);
+  case 'company':
+    return companyProfileUpdate(req, res, next);
+  case 'lawyer':
+    return lawyerProfileUpdate(req, res, next);
+  default:
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Invalid user type',
+    });
+}   
+} 

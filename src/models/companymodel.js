@@ -60,6 +60,18 @@ const companySchema = new Schema({
       ref: "Job",
     },
   ],
+  passwordToken: {
+    type: String,
+  },
+  resetPasswordExpires: {
+    type: Date,
+  },
+  lastDevice: {
+    type: String,
+  },
+  lastLocation: {
+    type: String,
+  },
 });
 
 export const Company = model("Company", companySchema);

@@ -4,7 +4,7 @@ import  {Schema, model} from 'mongoose';
 const adminSchema = new Schema({
     name: {
     type: String,
-    required: [true, 'Please provide a Username'],
+    // required: [true, 'Please provide a Username'],
   },
    phoneNumber: {
     type: String,
@@ -12,7 +12,7 @@ const adminSchema = new Schema({
   },
   officialEmail: {
     type: String,
-    required: [true, 'Please provide a valid email address'],
+    // required: [true, 'Please provide a valid email address'],
     lowercase: true,
     unique: true,
   },
@@ -28,12 +28,14 @@ const adminSchema = new Schema({
     type: String,
     required: false,
   },
-  companies: {
-    type: [String],
-  },
-  lawyers: {
-    type: [String],
-  },
+  companies: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Company', // Reference to the Company model
+}],
+  lawyers: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Lawyer', // Reference to the Lawyer model
+}],
    jobs: {
     type: [String],
   },
@@ -42,7 +44,13 @@ const adminSchema = new Schema({
   },
   resetPasswordExpires: {
     type:  Date
-  }
+  },
+  lastDevice: {
+    type: String
+  },
+  lastLocation: {
+    type: String
+  },
 });
 
 export const Admin = model('Admin', adminSchema);
