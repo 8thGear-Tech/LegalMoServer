@@ -3,8 +3,7 @@ import {Cart} from '../models/cartmodel.js'
 import { Company } from '../models/companymodel.js';
 import { addCart,options } from '../utils/cartvalidation.js';
 import { Job } from '../models/jobmodel.js';
-import mongoose from 'mongoose';
-import { ObjectId } from 'mongodb';
+
 
 export const addToCart = async (req, res) => {
     const companyExists = await Company.findById(req.userId)
@@ -120,11 +119,17 @@ export const getCart = async (req, res) => {
     }
     const cart = await Cart.find({companyId: req.userId})
     try {
+        console.log(cart.length)
        if(cart){
-        res.status(200).send(cart)
+        if(cart.length == 0 || cart == null || cart.length == undefined){
+            res.json({message: 'Cart is Empty'})
+            return
+        }else{
+            res.status(200).send(cart)
+        }   
        }
        else{
-        res.send(null)
+        res.json({message: 'Cart is Empty'})
         console.log("Nothing in the cart")
        }
     } catch (error) {
@@ -149,47 +154,12 @@ export const deleteCart = async (req, res) => {
         }
         let products = cart.products
         console.log(products)
-        const objectIdToFind = new mongoose.Types.ObjectId(productId)
-        console.log(objectIdToFind)
-        console.log(typeof(objectIdToFind))
-
-        //  * Finds the index of a product in an array of products based on its ID.
-        //  * @param {Array} products - The array of products to search through.
-        //  * @param {string} objectIdToFind - The ID of the product to find.
-        //  * @returns {number} - The index of the product in the array, or -1 if not found.
-        let productIndex = -1;
-        // products.forEach((product, i) => {
-        //     console.log(i)
-        //     console.log(product.productId)
-        //     console.log(typeof(product.productId))
-        //     if (ObjectId.is(product.productId, objectIdToFind)) {
-        //         console.log("found")
-        //         console.log(i)
-        //         productIndex = i
-        //         return;
-        //     }
-           
-        // });
-
-        for(let i=0; i<products.lenght; i++){
-            console.log(i)
-            if (ObjectId.is(products[i].productId, objectIdToFind)) {
-                console.log("found")
-                console.log(i)
-                productIndex = i
-                break;
-            }
-        }
-
-        // const productIndex = products.findIndex((product)=> {
-        //     console.log(product.productId)
-        //     console.log(typeof(product.productId))
-        //     ObjectId.is(product.productId, objectIdToFind)
-        // })
-
-        
+        const productIndex = products.findIndex((product)=>{
+            console.log(product.productId.toHexString())
+            console.log(productId)
+            return product.productId.toHexString() == productId
+        })
         console.log(productIndex)
-
         if(productIndex > -1){
             let product = cart.products[productIndex]
             console.log(product)
