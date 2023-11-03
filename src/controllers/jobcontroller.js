@@ -281,7 +281,6 @@ export const completedJob = async (req, res) => {
 // };
 export const viewJobDetails = async (req, res) => {
   const jobId = req.params.jobId;
-
   try {
     const job = await Job.findById(jobId);
     if (!job) {
