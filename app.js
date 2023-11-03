@@ -50,7 +50,7 @@ app.use(cors());
 
 app.use("/api", authRouter);
 app.use("/api", userRouter);
-app.use("/", authRouter);
+// app.use("/", authRouter);
 app.use("/", productRouter);
 app.use("/", cartRouter);
 app.use("/", jobRouter);
@@ -82,8 +82,8 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/api", authRouter);
-app.use("/api", userRouter);
+// app.use("/api", authRouter);
+// app.use("/api", userRouter);
 // app.use(passportRouter);
 
 app.use(globalErrorHandler);
