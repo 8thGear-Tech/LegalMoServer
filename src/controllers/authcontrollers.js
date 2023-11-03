@@ -89,92 +89,93 @@ export const adminSignup = async (req, res) => {
     });
   }
 };
-export const adminLogin = async (officialEmail, password) => {
-  try {
-    // handle google SignIn
-    if (req.url.startsWith("/auth/google/redirect/admin?code=")) {
-      // return res.send(`You have Signed in with Google`);
-      const user = req.user
-         // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
-              const { _id } = user.id;
-              const token = generateToken(_id);
-              res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 }); 
-            return res.status(200).json({ 
-              status: 'success',
-              data: { user },
-            });
-        }
+// export const adminLogin = async (officialEmail, password) => {
+//   try {
+//     // handle google SignIn
+//     if (req.url.startsWith("/auth/google/redirect/admin?code=")) {
+//       // return res.send(`You have Signed in with Google`);
+//       const user = req.user
+//          // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
+//               const { _id } = user.id;
+//               const token = generateToken(_id);
+//               res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 }); 
+//             return res.status(200).json({ 
+//               status: 'success',
+//               data: { user },
+//             });
+//         }
         
-          const { officialEmail, password } = req.body;
+//           const { officialEmail, password } = req.body;
 
-          // Check if admin exists
-          const admin = await Admin.findOne({ officialEmail });
-          if (!admin) {
-            return res.status(404).json({  
-              status: 'fail',
-              message: 'You are not an admin',
-            });
-          }
-        // Check if the password is correct and log in the admin
-        const passwordCheck = await bcrypt.compare(password, admin?.password || "");
-        if (passwordCheck) {
-                    // Check if the admin's email is confirmed
-            if (!admin.isEmailConfirmed) {
-              return res.status(400).json({
-                status: 'fail',
-                message: 'Please confirm your email address to log in.',
-              });
-            }
+//           // Check if admin exists
+//           const admin = await Admin.findOne({ officialEmail });
+//           if (!admin) {
+//             return res.status(404).json({  
+//               status: 'fail',
+//               message: 'You are not an admin',
+//             });
+//           }
+//         // Check if the password is correct and log in the admin
+//         const passwordCheck = await bcrypt.compare(password, admin?.password || "");
+        
+//         if (passwordCheck) {
+//                     // Check if the admin's email is confirmed
+//             if (!admin.isEmailConfirmed) {
+//               return res.status(400).json({
+//                 status: 'fail',
+//                 message: 'Please confirm your email address to log in.',
+//               });
+//             }
 
-            // Get user agent and IP information
-              const device = useragent.parse(req.headers["user-agent"]);
-              const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-              const location = geoip.lookup(ip);
+//             // Get user agent and IP information
+//               const device = useragent.parse(req.headers["user-agent"]);
+//               const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+//               const location = geoip.lookup(ip);
 
-              // Check if user's device or location has changed
-              const previousDevice = admin.device || "";
-              const previousLocation = admin.location || "";
+//               // Check if user's device or location has changed
+//               const previousDevice = admin.device || "";
+//               const previousLocation = admin.location || "";
 
-              if (previousDevice !== device.source || previousLocation !== location) {
-                // Send email notification about login attempt from different device, IP, or location
-                await sendEmail({
-                  email: admin.officialEmail,
-                  subject: "New Login Notification",
-                  html: `<p>A new login was detected for your account.</p>
-                    <p>Device: ${device.source}</p>
-                    <p>Location: ${location}</p>`,
-                });
-              }
+//               if (previousDevice !== device.source || previousLocation !== location) {
+//                 // Send email notification about login attempt from different device, IP, or location
+//                 await sendEmail({
+//                   email: admin.officialEmail,
+//                   subject: "New Login Notification",
+//                   html: `<p>A new login was detected for your account.</p>
+//                     <p>Device: ${device.source}</p>
+//                     <p>Location: ${location}</p>`,
+//                 });
+//               }
 
-            // Update user information with current device and location details
-            admin.device = device.source;
-            admin.location = location
-                ? `${location.country}, ${location.city}`
-                : "Unknown";;
-            await admin.save();
+//             // Update user information with current device and location details
+//             admin.device = device.source;
+//             admin.location = location
+//                 ? `${location.country}, ${location.city}`
+//                 : "Unknown";;
+//             await admin.save();
 
-            console.log(location)
-            // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
-            const { _id } = admin;
-            const token = generateToken(_id);
-            res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 }); 
+//             console.log(location)
+            
+//             const { _id } = admin;
+//             const token = generateToken(_id);
+//             res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 }); 
 
-            return res.status(200).json({ 
-              status: 'success',
-              data: { admin },
-            });
-        }
-    return res.status(401).json({  
-      status: 'fail',
-      message: 'Invalid email/password',
-    });
-  } catch (error) {
-    res.status(500).json({  
-      status: 'fail',
-      message: error.message,
-    });
-  }
-};
+//             return res.status(200).json({ 
+//               status: 'success',
+//               data: { admin },
+//             });
+//         }
+//     return res.status(401).json({  
+//       status: 'fail',
+//       message: 'Invalid email/password',
+//     });
+//   } catch (error) {
+//     res.status(500).json({  
+//       status: 'fail',
+//       message: error.message,
+//     });
+//   }
+// };
 export const companySignup = async (req, res) => {
   try {
     // Validate company inputs
@@ -289,37 +290,37 @@ export const companySignup = async (req, res) => {
 //   //   });
 //   // }
 // };
-export const companyLogin = async (officialEmail, password, res) => {
-  try {
-    // Check if company exists
-    const company = await Company.findOne({ officialEmail });
+// export const companyLogin = async (officialEmail, password, res) => {
+//   try {
+//     // Check if company exists
+//     const company = await Company.findOne({ officialEmail });
 
-    if (!company) {
-      return { status: 401, success: false, message: 'You are not a registered company here' };
-    }
+//     if (!company) {
+//       return { status: 401, success: false, message: 'You are not a registered company here' };
+//     }
 
-    // Check if password is correct and then if the email is verified. Proceed to log in the company if both conditions are met
-    const passwordCheck = await bcrypt.compare(password, company?.password || '');
+//     // Check if password is correct and then if the email is verified. Proceed to log in the company if both conditions are met
+//     const passwordCheck = await bcrypt.compare(password, company?.password || '');
 
-    if (passwordCheck) {
-      // Check if the company's email is confirmed
-      if (!company.isEmailConfirmed) {
-        return { status: 403, success: false, message: 'Please confirm your email address to log in.' };
-      }
+//     if (passwordCheck) {
+//       // Check if the company's email is confirmed
+//       if (!company.isEmailConfirmed) {
+//         return { status: 403, success: false, message: 'Please confirm your email address to log in.' };
+//       }
 
-      // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
-      const { _id } = company;
-      const token = generateToken(_id);
-      // You cannot set a cookie here directly as 'res' is not available. Instead, you can return the token.
-      return { status: 200, success: true, data: { company, token } };
-    } else {
-      return { status: 401, success: false, message: 'Invalid email/password' };
-    }
-  } catch (error) {
-    // Handle any errors here
-    return { status: 500, success: false, message: 'Internal server error' };
-  }
-};
+//       // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
+//       const { _id } = company;
+//       const token = generateToken(_id);
+//       // You cannot set a cookie here directly as 'res' is not available. Instead, you can return the token.
+//       return { status: 200, success: true, data: { company, token } };
+//     } else {
+//       return { status: 401, success: false, message: 'Invalid email/password' };
+//     }
+//   } catch (error) {
+//     // Handle any errors here
+//     return { status: 500, success: false, message: 'Internal server error' };
+//   }
+// };
 
 export const lawyerSignup = async (req, res) => {
   try {
@@ -394,91 +395,79 @@ export const lawyerSignup = async (req, res) => {
     });
   }
 };
-export const lawyerLogin = async (req, res) => {
-  try {
-    // handle google SignIn
-    if (req.url.startsWith("/auth/google/redirect/lawyer?code=")) {
-      // return res.send(`You have Signed in with Google`);
-      const user = req.user
-         // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
-              const { _id } = user.id;
-              const token = generateToken(_id);
+// export const lawyerLogin = async (req, res) => {
+//   try {
+//     // handle google SignIn
+//     if (req.url.startsWith("/auth/google/redirect/lawyer?code=")) {
+//       // return res.send(`You have Signed in with Google`);
+//       const user = req.user
+//          // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
+//               const { _id } = user.id;
+//               const token = generateToken(_id);
 
-              console.log(token)
-              res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 }); 
+//               console.log(token)
+//               res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 }); 
 
-          return res.status(200).json({ 
-            status: 'success',
-            data: { user },
-          });
-    }
+//           return res.status(200).json({ 
+//             status: 'success',
+//             data: { user },
+//           });
+//     }
 
-    const { officialEmail, password } = req.body;
+//     const { officialEmail, password } = req.body;
 
-    // Check if lawyer exists
-    const lawyer = await Lawyer.findOne({ officialEmail });
+//     // Check if lawyer exists
+//     const lawyer = await Lawyer.findOne({ officialEmail });
 
-    if (!lawyer) {
-      return res.status(401).json({ 
-        status: 'fail',
-        message: 'You are not a registered lawyer here',
-      });
-    }
+//     if (!lawyer) {
+//       return res.status(401).json({ 
+//         status: 'fail',
+//         message: 'You are not a registered lawyer here',
+//       });
+//     }
 
-      // Check if password is correct and log in lawyer
-      const passwordCheck = await bcrypt.compare(password, lawyer.password || '');
+//       // Check if password is correct and log in lawyer
+//       const passwordCheck = await bcrypt.compare(password, lawyer.password || '');
 
-      if (passwordCheck) {
-           // Check if the lawyer's email is confirmed
-            if (!lawyer.isEmailConfirmed) {
-              return res.status(403).json({ 
-                status: 'fail',
-                message: 'Please confirm your email address to log in.',
-              });
-            }
+//       if (passwordCheck) {
+//            // Check if the lawyer's email is confirmed
+//             if (!lawyer.isEmailConfirmed) {
+//               return res.status(403).json({ 
+//                 status: 'fail',
+//                 message: 'Please confirm your email address to log in.',
+//               });
+//             }
 
-            // Generate token and set cookie with token to be sent to the client and kept for 30 days
-            const { _id } = lawyer;
-            const token = generateToken(_id);
-            // console.log(token)
-            res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 });
+//             // Generate token and set cookie with token to be sent to the client and kept for 30 days
+//             const { _id } = lawyer;
+//             const token = generateToken(_id);
+//             // console.log(token)
+//             res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 });
 
-        return res.status(200).json({ 
-          status: 'success',
-          data: { lawyer },
-        });
-      }
+//         return res.status(200).json({ 
+//           status: 'success',
+//           data: { lawyer },
+//         });
+//       }
 
-    return res.status(401).json({ 
-      status: 'fail',
-      message: 'Invalid email/password',
-    });
-  } catch (error) {
-    return res.status(500).json({ 
-      status: 'fail',
-      message: 'Internal server error',
-    });
-  }
-};
-export const logoutUser = async (req, res) => {
-  try {
-    // Clear the JWT token by setting an expired token
-    res.cookie('jwt', 'expired', { httpOnly: true, maxAge: 1 });
-    // Redirect the user to the login page or any other page you prefer
-    res.status(200).send("user logged out successfully from server");
-  } catch (error) {
-    res.status(500).json({ message: 'Internal server error' });
-  }
-}
+//     return res.status(401).json({ 
+//       status: 'fail',
+//       message: 'Invalid email/password',
+//     });
+//   } catch (error) {
+//     return res.status(500).json({ 
+//       status: 'fail',
+//       message: 'Internal server error',
+//     });
+//   }
+// };
 
 export const getAdmin = async (query) => {
   return await Admin.findOne(query);
 };
-
 export const getCompany = async (query) => {
   return await Company.findOne(query);
 };
-
 export const getLawyer = async (query) => {
   return await Lawyer.findOne(query);
 };
@@ -505,29 +494,51 @@ export const usersLogin = async (req, res) => {
             const response = await axios.get(`http://ip-api.com/json/${ip}`);
             const location = response.data;
 
-            console.log("location is", location);
-            
-            if (user.lastDevice !== device || user.lastIp !== ip) {
-              // Send email to the user
-              await sendEmail({
-               email: user.officialEmail,
-               subject: "New Login Notification",
-               html: `<p>A new login was detected for your account.</p>
-                 <p>Device: ${device}</p>
-                 `,
-             });
-              // Update the user's last device and IP
-              user.lastDevice = device;
-              user.lastLocation = location;
-              await user.save();
-            }
+                // Check if the location was successfully determined
+                if (location.status === 'fail') {
+                  const locationString = 'Unknown';
+                  // console.log('Failed to determine location:', location.message); 
+                  if (user.lastDevice !== device || user.lastLocation !== locationString) {
+                    // Send email to the user
+                    await sendEmail({
+                     email: user.officialEmail,
+                     subject: "New Login Notification",
+                     html: `<p>A new login was detected for your account.</p>
+                       <p>Device: ${device}</p>
+                       <p>Location: ${locationString}</p>`,
+                   });
+                    // Update the user's last device and IP
+                    user.lastDevice = device;
+                    user.lastLocation = locationString;
+                    await user.save();
+                  }
+                } else {
+                  // Convert the location to a string
+                  const locationString = `${location.city}, ${location.country}`;
+                  // console.log("location is", locationString);
+
+                  if (user.lastDevice !== device || user.lastLocation !== locationString) {
+                    // Send email to the user
+                    await sendEmail({
+                     email: user.officialEmail,
+                     subject: "New Login Notification",
+                     html: `<p>A new login was detected for your account.</p>
+                       <p>Device: ${device}</p>
+                       <p>Location: ${locationString}</p>`,
+                   });
+                    // Update the user's last device and IP
+                    user.lastDevice = device;
+                    user.lastLocation = locationString;
+                    await user.save();
+                  }
+                }
 
             return res.status(200).json({
               status: 'success',
               data: { user },
             });
     }
-
+    // Mamual Login
     const { officialEmail, password } = req.body;
 
     if (!officialEmail || !password) {
@@ -561,6 +572,9 @@ export const usersLogin = async (req, res) => {
       });
     }
 
+    if (!user.password) {
+      return res.status(403).send('Invalid login route. Use SSO');
+    }
     // Verify password
     const passwordIsValid = await bcrypt.compare(password, user.password || "");
 
@@ -586,24 +600,45 @@ export const usersLogin = async (req, res) => {
             // Get the device's location
             const response = await axios.get(`http://ip-api.com/json/${ip}`);
             const location = response.data;
-
-            console.log("location is", location);
      
-           if (user.lastDevice !== device || user.lastIp !== ip) {
-             // Send email to the user
-             await sendEmail({
-              email: user.officialEmail,
-              subject: "New Login Notification",
-              html: `<p>A new login was detected for your account.</p>
-                <p>Device: ${device}</p>
-                `,
-            });
-     
-             // Update the user's last device and IP
-             user.lastDevice = device;
-             user.lastLocation = location;
-             await user.save();
-           }
+                  // Check if the location was successfully determined
+                  if (location.status === 'fail') {
+                    const locationString = 'Unknown';
+                    // console.log('Failed to determine location:', location.message); 
+                    if (user.lastDevice !== device || user.lastLocation !== locationString) {
+                      // Send email to the user
+                      await sendEmail({
+                       email: user.officialEmail,
+                       subject: "New Login Notification",
+                       html: `<p>A new login was detected for your account.</p>
+                         <p>Device: ${device}</p>
+                         <p>Location: ${locationString}</p>`,
+                     });
+                      // Update the user's last device and IP
+                      user.lastDevice = device;
+                      user.lastLocation = locationString;
+                      await user.save();
+                    }
+                  } else {
+                    // Convert the location to a string
+                    const locationString = `${location.city}, ${location.country}`;
+                    // console.log("location is", locationString);
+  
+                    if (user.lastDevice !== device || user.lastLocation !== locationString) {
+                      // Send email to the user
+                      await sendEmail({
+                       email: user.officialEmail,
+                       subject: "New Login Notification",
+                       html: `<p>A new login was detected for your account.</p>
+                         <p>Device: ${device}</p>
+                         <p>Location: ${locationString}</p>`,
+                     });
+                      // Update the user's last device and IP
+                      user.lastDevice = device;
+                      user.lastLocation = locationString;
+                      await user.save();
+                    }
+                  }
 
        // Generate token and set cookie with token to be sent to the client and kept for 30 days
        const { _id } = user;
@@ -631,6 +666,17 @@ export const usersLogin = async (req, res) => {
     });
   }
 };
+
+export const logoutUser = async (req, res) => {
+  try {
+    // Clear the JWT token by setting an expired token
+    res.cookie('jwt', 'expired', { httpOnly: true, maxAge: 1 });
+    // Redirect the user to the login page or any other page you prefer
+    res.status(200).send("user logged out successfully from server");
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
 
 
 

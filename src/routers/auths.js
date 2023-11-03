@@ -2,7 +2,7 @@ import express from "express";
 import { companySignup, lawyerSignup, adminSignup, logoutUser,usersLogin } from "../controllers/authcontrollers.js";
 import {confirmEmail} from "../utils/email.js"
 import { forgotPassword, resetPassword, resetPasswordToken } from "../controllers/passwords.js";
-// import { usersLogin } from "../controllers/middleware.js";
+
 
 const router = express.Router();
 

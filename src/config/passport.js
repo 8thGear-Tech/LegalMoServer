@@ -46,6 +46,7 @@ export function passportSetup(userType) {
             googleId: sub,
             avatar: picture,
             fullname: name,
+            isEmailConfirmed: true
           };
           user = new User(content);
 
