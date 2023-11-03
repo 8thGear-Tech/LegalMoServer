@@ -14,7 +14,6 @@ const router = express.Router();
 
 router.post("/api/rating", authToken, addRating);
 router.get("/api/rating", getRatings);
-//no token defined
 router.get("/api/rating/:id", getRating);
 router.patch("/api/rating/:id", authToken, updateRating);
 router.delete("/api/rating/:id", authToken, deleteRating);

@@ -1,9 +1,3 @@
-// import { Admin } from "../models/adminmodel.js";
-// import { Company } from "../models/companymodel.js";
-// import { Job } from "../models/jobmodel.js";
-// import { Lawyer } from "../models/lawyermodel.js";
-// import { paymentDetailss, options } from "../utils/productvalidation.js";
-
 import { Admin } from "../models/adminmodel.js";
 import { Company } from "../models/companymodel.js";
 import { Job } from "../models/jobmodel.js";
@@ -65,11 +59,6 @@ export const assignJob = async (req, res) => {
       job.assignedTo.push(lawyerId);
       job.status = "pending";
       await job.save();
-      //new
-      // Update the lawyer's job field
-      lawyer.job.push(jobId);
-      await lawyer.save();
-      //new up
       return res.status(201).send(job);
     } else {
       return res.status(400).json({ error: "Unverified Lawyer" });
@@ -146,16 +135,6 @@ export const removeLawyer = async (req, res) => {
   }
 };
 
-// FOR LAWYERS
-// export const viewJob = async (req, res) => {
-//   const lawyerId = req.params.lawyerId;
-//   try {
-//     const lawyerJobs = await Job.find({ assignedTo: lawyerId });
-//     if (lawyerJobs) {
-//       res.status(200).json(lawyerJobs);
-//     } else {
-//       res.send(null);
-//       console.log("No job assigned to you");
 export const deleteJob = async (req, res) => {
   const isAdmin = await Admin.findById(req.userId);
   if (!isAdmin) {
@@ -177,33 +156,6 @@ export const deleteJob = async (req, res) => {
   }
 };
 
-// export const paymentDetails = async (req, res) => {
-//   const validate = paymentDetailss.validate(req.body, options);
-//   if (validate.error) {
-//     const message = validate.error.details
-//       .map((detail) => detail.message)
-//       .join(",");
-//     return res.status(400).send({
-//       status: "fail",
-//       message,
-//     });
-//   }
-//   const lawyerId = req.params.lawyerId;
-//   const { accountNumber, accountName, bank } = req.body;
-//   try {
-//     const lawyer = await Lawyer.findById(lawyerId);
-//     if (lawyer) {
-//       lawyer.accountDetails.push(accountNumber, accountName, bank);
-//       res.status(200).json(lawyer);
-//     } else {
-//       res.send(null);
-//       console.log("You are not a lawyer");
-//     }
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
-//not reviewed
 export const completeJob = async (req, res) => {
   const isAdmin = await Admin.findById(req.userId);
   if (!isAdmin) {
@@ -244,7 +196,7 @@ export const pendingJob = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-//not reviewed
+
 export const completedJob = async (req, res) => {
   const isAdmin = await Admin.findById(req.userId);
   if (!isAdmin) {
@@ -264,37 +216,22 @@ export const completedJob = async (req, res) => {
   }
 };
 
-//not reviewed
-// export const viewJobDetails = async (req, res) => {
-//   const jobId = req.params.jobId;
-//   try {
-//     const job = await Job.findById(jobId);
-//     if (job) {
-//       res.status(200).json(job);
-//     } else {
-//       res.send(null);
-//       console.log("Job not found");
-//     }
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
 export const viewJobDetails = async (req, res) => {
   const jobId = req.params.jobId;
   try {
     const job = await Job.findById(jobId);
-    if (!job) {
+    const jobDetails = job.detail;
+    if (job) {
+      res.status(200).json(jobDetails);
+    } else {
+      res.send(null);
       console.log("Job not found");
-      return res.status(404).send("Job not found");
     }
-
-    res.status(200).json(job);
   } catch (error) {
-    console.log("Error getting job details", error.message);
-    return res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
-//not reviewed
+
 export const editJobDetails = async (req, res) => {
   const lawyerExists = await Lawyer.findById(req.userId);
   if (lawyerExists) {
@@ -439,21 +376,25 @@ export const requestMoreJobDetails = async (req, res) => {
     return;
   }
   const jobId = req.params.jobId;
-  // const jobId = req.params.jobId;
   const { detail } = req.body;
   try {
     const job = await Job.findById(jobId);
     if (job) {
-      const companyId = job.companyId;
-      const company = Company.findById(companyId);
+      // const companyId = job.companyId.toHexString()
+      // console.log(companyId)
+      // const company = Company.findById(companyId)
+      const company = await Company.findById(job.companyId.toHexString());
+      console.log(company);
       const companyMail = company.officialEmail;
       const jobUrl = `http://api/job/:${jobId}`; //user/verify
       await sendEmail({
         email: companyMail,
         subject: "Request for more details",
-        message: `Kindly update the description of this product you bought: ${jobUrl}`,
+        message: `Kindly updated the description of this product you bought: ${jobUrl}`,
         html: `<p>The lawyer working on the product you bought need some information on it </b> </p><p> ${detail} </b>.</p> <p>Click <a href=${jobUrl}> to update the description of this product you bought</p>`,
       });
+      res.send({ message: "Mail sent" });
+      return;
     } else {
       res.send(null);
       console.log("Job not found");

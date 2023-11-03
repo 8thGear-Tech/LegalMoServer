@@ -33,25 +33,15 @@ router.get("/api/unassign", authToken, unassigned);
 router.delete("/api/removelawyer", authToken, removeLawyer);
 router.delete("/api/deletejob", authToken, deleteJob);
 router.get("/api/pendingjobs", authToken, pendingJob);
-
 router.get("/api/completedjobs", authToken, completedJob);
-
-router.put("/api/completejob/:jobId", authToken, completeJob);
-//not reviewed/error
-// invalid user type
+router.put("/api/completejob", authToken, completeJob);
 router.get("/api/viewjobdetails/:jobId", authToken, viewJobDetails);
-//done
 router.put("/api/editjobdetails/:jobId", authToken, editJobDetails);
-// internal server error
 router.get("/api/company/completedjobs", authToken, companyCompletedJob);
 router.get("/api/company/pendingjobs", authToken, companyPendingJob);
-
 router.get("/api/lawyer/assignedjobs", authToken, lawyerAssignedJobs);
 router.get("/api/lawyer/pendingjobs", authToken, lawyerPendingJobs);
 router.get("/api/lawyer/completedjobs", authToken, lawyerCompletedJobs);
-// {
-//     "error": "No recipients defined"
-// }
 router.post(
   "/api/requestmorejobdetails/:jobId",
   authToken,
