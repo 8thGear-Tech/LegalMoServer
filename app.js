@@ -60,9 +60,16 @@ app.use("/", lawyerRouter);
 
 app.use(
   cors({
-    origin: "http://localhost:5005",
+    origin: ["http://localhost:5005", "http://localhost:3000"], // Add your second origin here
   })
 );
+
+// app.use(
+//   cors({
+//     ["http://localhost:5005", "http://example.com"],
+//     // origin: "http://localhost:5005",
+//   })
+// );
 
 app.use(
   session({
