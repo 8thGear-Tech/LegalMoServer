@@ -5,6 +5,17 @@ import { ValidateResetPassword, options, ValidateforgotPassword } from '../utils
 import { sendEmail } from '../utils/email.js';
 import bcrypt from 'bcryptjs'
 
+
+export const getAdmin = async (query) => {
+  return await Admin.findOne(query);
+};
+export const getCompany = async (query) => {
+  return await Company.findOne(query);
+};
+export const getLawyer = async (query) => {
+  return await Lawyer.findOne(query);
+};
+
 function passwordResetToken() {
     const min = 100000; // Minimum 6-digit number
     const max = 999999; // Maximum 6-digit number
@@ -37,28 +48,50 @@ async function sendResetPasswordEmail(userEmail, token) {
       return false;
     }
 }
+
 export const forgotPassword = async (req, res) => {
     try {
       const { officialEmail } = req.body;
-      const { userType } = req.params;
+      // const { userType } = req.params;
+      
+      const admin = await getAdmin({ officialEmail });
+      const company = await getCompany({ officialEmail });
+      const lawyer = await getLawyer({ officialEmail });
+       
+      let user;
+      let userType;
   
-      let userModel;
-  
-      // Determine the user model based on the userType parameter
-      switch (userType) {
-        case 'admin':
-          userModel = Admin;
-          break;
-        case 'company':
-          userModel = Company;
-          break;
-        case 'lawyer':
-          userModel = Lawyer;
-          break;
-        default:
-          return res.status(400).json({ message: 'Invalid user type' });
+      if (company) {
+        user = company;
+        userType = 'company';
+      } else if (admin) {
+        user = admin;
+        userType = 'admin';
+      } else if (lawyer) {
+        user = lawyer;
+        userType = 'lawyer';
+      } else {
+        return res.status(400).json({  
+          status: 'fail',
+          message: 'Invalid email',
+        });
       }
-  
+
+      // let userModel;
+      // // Determine '/.the user model based on the userType parameter
+      // switch (userType) {
+      //   case 'admin':
+      //     userModel = Admin;
+      //     break;
+      //   case 'company':
+      //     userModel = Company;
+      //     break;
+      //   case 'lawyer':
+      //     userModel = Lawyer;
+      //     break;
+      //   default:
+      //     return res.status(400).json({ message: 'Invalid user type' });
+      // }
       const validate = ValidateforgotPassword.validate(req.body, options);
       if (validate.error) {
         const message = validate.error.details.map((detail) => detail.message).join(',');
@@ -127,6 +160,7 @@ export const resetPasswordToken = async (req, res) => {
       const userEmail = validUser.officialEmail
       // Include the token in the reset password URL query
       const newPasswordUrl = `http://localhost:5005/api/reset-password?userType=${userType}&userEmail=${userEmail}&token=${token}`;
+      
       res.status(200).json(
         { 
           message: `Token is valid for ${userType}. Follow ${newPasswordUrl} to create your new password` 

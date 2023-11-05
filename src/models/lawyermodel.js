@@ -66,6 +66,10 @@ const lawyerSchema = new Schema({
   lastLocation: {
     type: String
   },
+  userType: {
+    type: String,
+    default: 'lawyer',
+  },
 });
 
 export const Lawyer = model('Lawyer', lawyerSchema);

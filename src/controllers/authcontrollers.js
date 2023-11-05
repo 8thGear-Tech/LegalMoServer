@@ -2,13 +2,11 @@ import { Company } from '../models/companymodel.js';
 import { Lawyer } from '../models/lawyermodel.js';
 import { Admin } from '../models/adminmodel.js';
 import { adminRegister, companyRegister, lawyerRegister, options } from '../utils/validator.js';
-// import { getOneAdmin, getOneCompany, getOneLawyer } from './usersControllers.js';
 import bcrypt from 'bcryptjs'
 import dotenv from "dotenv";
 import { generateToken, emailConfirmationToken, passwordMatch, sendConfirmationEmail } from '../utils/utils.js';
 import { sendEmail } from '../utils/email.js';
 import useragent from 'useragent';
-import geoip from 'geoip-lite';
 import axios from 'axios';
 
 dotenv.config ({ path: "./configenv.env" });
@@ -321,7 +319,6 @@ export const companySignup = async (req, res) => {
 //     return { status: 500, success: false, message: 'Internal server error' };
 //   }
 // };
-
 export const lawyerSignup = async (req, res) => {
   try {
     // Validate lawyer inputs
@@ -461,7 +458,6 @@ export const lawyerSignup = async (req, res) => {
 //     });
 //   }
 // };
-
 export const getAdmin = async (query) => {
   return await Admin.findOne(query);
 };
@@ -471,7 +467,6 @@ export const getCompany = async (query) => {
 export const getLawyer = async (query) => {
   return await Lawyer.findOne(query);
 };
-
 export const usersLogin = async (req, res) => {
   try {
     // Handle Google SignIn
@@ -612,7 +607,8 @@ export const usersLogin = async (req, res) => {
                        subject: "New Login Notification",
                        html: `<p>A new login was detected for your account.</p>
                          <p>Device: ${device}</p>
-                         <p>Location: ${locationString}</p>`,
+                         <p>Location: ${locationString}</p>
+                         <p>If you didnt initiate the login or does not recognise the devie please contact support centre</p>`,
                      });
                       // Update the user's last device and IP
                       user.lastDevice = device;
@@ -631,15 +627,15 @@ export const usersLogin = async (req, res) => {
                        subject: "New Login Notification",
                        html: `<p>A new login was detected for your account.</p>
                          <p>Device: ${device}</p>
-                         <p>Location: ${locationString}</p>`,
+                         <p>Location: ${locationString}</p>
+                         <p>If you didnt initiate the login or does not recognise the devie please contact support centre</p>`,
                      });
                       // Update the user's last device and IP
-                      user.lastDevice = device;
-                      user.lastLocation = locationString;
-                      await user.save();
+                        user.lastDevice = device;
+                        user.lastLocation = locationString;
+                        await user.save();
                     }
                   }
-
        // Generate token and set cookie with token to be sent to the client and kept for 30 days
        const { _id } = user;
        const token = generateToken(_id);
@@ -666,7 +662,6 @@ export const usersLogin = async (req, res) => {
     });
   }
 };
-
 export const logoutUser = async (req, res) => {
   try {
     // Clear the JWT token by setting an expired token

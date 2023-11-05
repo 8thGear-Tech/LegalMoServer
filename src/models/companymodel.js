@@ -3,7 +3,6 @@ import  {Schema, model} from 'mongoose';
 const companySchema = new Schema({
   name: {
     type: String,
-    // required: [true, 'Please provide a Company Name'],
   },
   contactName: {
     type: String,
@@ -11,7 +10,6 @@ const companySchema = new Schema({
   },
   officialEmail: {
     type: String,
-    // required: [true, 'Please provide a valid email address'],
     lowercase: true,
     unique: true,
   },
@@ -62,6 +60,10 @@ const companySchema = new Schema({
   },
   lastLocation: {
     type: String,
+  },
+  userType: {
+    type: String,
+    default: 'company',
   },
 });
 
