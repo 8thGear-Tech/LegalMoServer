@@ -129,7 +129,9 @@ export const validateLawyerProfileUpdate = Joi.object().keys({
 });
 
 export const validateAdminProfileUpdate = Joi.object().keys({
-  officialEmail: Joi.string().email().trim().lowercase(),
+  officialEmail: Joi.string().email().trim().lowercase().required(),
+  name: Joi.string().required(),
+  phoneNumber: Joi.string().pattern(/^[0-9]{11}$/).message('Invalid phone number format').required(),
 });
 
 export const validateCompanyProfileUpdate = Joi.object().keys({

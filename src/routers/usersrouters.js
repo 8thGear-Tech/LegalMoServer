@@ -9,6 +9,6 @@ router.get('/:userType/:userId', profileBasedOnUserType);
 router.get("/lawyers", isAdminUser, getAllLawyers);
 router.get("/companies", isAdminUser, getAllCompanies);
 router.get("/admins", isAdminUser, getAllAdmins);
-router.put("/updateprofile/:userType", updateProfileBasedOnUser);
+router.patch("/updateprofile", updateProfileBasedOnUser);
 
 export default router;

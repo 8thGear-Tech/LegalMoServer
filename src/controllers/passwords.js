@@ -56,44 +56,6 @@ export const forgotPassword = async (req, res) => {
     const { officialEmail } = req.body;
     // const { userType } = req.params;
 
-    const admin = await getAdmin({ officialEmail });
-    const company = await getCompany({ officialEmail });
-    const lawyer = await getLawyer({ officialEmail });
-
-    let user;
-    let userType;
-
-    if (company) {
-      user = company;
-      userType = "company";
-    } else if (admin) {
-      user = admin;
-      userType = "admin";
-    } else if (lawyer) {
-      user = lawyer;
-      userType = "lawyer";
-    } else {
-      return res.status(400).json({
-        status: "fail",
-        message: "Invalid email",
-      });
-    }
-
-    // let userModel;
-    // // Determine '/.the user model based on the userType parameter
-    // switch (userType) {
-    //   case 'admin':
-    //     userModel = Admin;
-    //     break;
-    //   case 'company':
-    //     userModel = Company;
-    //     break;
-    //   case 'lawyer':
-    //     userModel = Lawyer;
-    //     break;
-    //   default:
-    //     return res.status(400).json({ message: 'Invalid user type' });
-    // }
     const validate = ValidateforgotPassword.validate(req.body, options);
     if (validate.error) {
       const message = validate.error.details

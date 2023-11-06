@@ -123,16 +123,19 @@ export const adminProfileUpdate = async (req, res) => {
 
     // Update user profile with new information
     admin.name = req.body.name;
-    // user.email = req.body.email;
-
-    // Save updated user to database
-    await admin.save();
+    (admin.officialEmail = req.body.officialEmail),
+      (admin.phoneNumber = req.body.phoneNumber),
+      // Save updated user to database
+      await admin.save();
 
     // Return success response to client
     res.status(200).json({ message: "Profile updated successfully", admin });
   } catch (error) {
     res.status(500).json({ message: "Error updating profile" });
   }
+  // catch (error) {
+  //   res.status(500).json({ message: 'Error updating profile' });
+  // }
 };
 export const companyProfileUpdate = async (req, res) => {
   try {
@@ -210,4 +213,7 @@ export const lawyerProfileUpdate = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Error updating profile" });
   }
+  // catch (error) {
+  //   res.status(500).json({ message: 'Error updating profile' });
+  // }
 };

@@ -16,6 +16,7 @@ import {
   sendConfirmationEmail,
 } from "../utils/utils.js";
 import { sendEmail } from "../utils/email.js";
+import { doesUserExist } from "../utils/utils.js";
 import useragent from "useragent";
 import axios from "axios";
 
@@ -35,14 +36,11 @@ export const adminSignup = async (req, res) => {
     }
 
     // Check if admin exists
-    const existingAdmin = await Admin.findOne({
-      officialEmail: req.body.officialEmail,
-    });
-    if (existingAdmin) {
-      const message = "User with that email already exists";
+    const officialEmail = req.body.officialEmail;
+    if (await doesUserExist(officialEmail)) {
       return res.status(409).json({
         status: "fail",
-        message,
+        message: "User with that email already exists",
       });
     } else {
       // Check if password and passwordConfirm are the same
@@ -205,13 +203,11 @@ export const companySignup = async (req, res) => {
     }
 
     // Check if company exists
-    const existingCompany = await Company.findOne({
-      officialEmail: req.body.officialEmail,
-    });
-    if (existingCompany) {
+    const officialEmail = req.body.officialEmail;
+    if (await doesUserExist(officialEmail)) {
       return res.status(409).json({
         status: "fail",
-        message: "Company with that email already exists",
+        message: "User with that email already exists",
       });
     }
 
@@ -360,13 +356,11 @@ export const lawyerSignup = async (req, res) => {
     }
 
     // Check if lawyer exists
-    const existingLawyer = await Lawyer.findOne({
-      officialEmail: req.body.officialEmail,
-    });
-    if (existingLawyer) {
+    const officialEmail = req.body.officialEmail;
+    if (await doesUserExist(officialEmail)) {
       return res.status(409).json({
         status: "fail",
-        message: "Lawyer with that email already exists",
+        message: "User with that email already exists",
       });
     }
 
@@ -400,7 +394,6 @@ export const lawyerSignup = async (req, res) => {
     const { _id } = newLawyer;
     const userType = "lawyer";
     const token = emailConfirmationToken(_id, userType);
-    // console.log(token, "token expires in" + expiresIn)
 
     // Send the Confirmation Email to Lawyer
     const emailSent = await sendConfirmationEmail(
@@ -516,12 +509,13 @@ export const usersLogin = async (req, res) => {
     ) {
       const user = req.user;
       // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
-      const { _id } = user.id;
-      const token = generateToken(_id);
+      const { _id, userType } = user.id;
+      const token = generateToken(_id, userType);
       res.cookie("jwt", token, {
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 30,
       });
+      req.headers.authorization = `Bearer ${token}`;
 
       // Check if the user is logging in from a new device
       const agent = useragent.parse(req.headers["user-agent"]);
@@ -697,19 +691,20 @@ export const usersLogin = async (req, res) => {
         }
       }
       // Generate token and set cookie with token to be sent to the client and kept for 30 days
-      const { _id } = user;
-      const token = generateToken(_id);
-      // console.log(token)
+      //  console.log(userType)
+      const _id = user.id;
+      console.log(_id);
+      const token = generateToken(_id, userType);
       res.cookie("jwt", token, {
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 7,
       });
+      req.headers.authorization = `Bearer ${token}`;
 
       // Send response
       res.status(200).json({
         status: "success",
         token,
-        userType,
         data: { user },
       });
     } else {
