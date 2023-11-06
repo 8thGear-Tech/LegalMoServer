@@ -27,7 +27,7 @@ export const getAllLawyers = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
-}
+};
 export const getOneCompany = async (req, res) => {
   const { userId } = req.params;
   try {
@@ -40,7 +40,7 @@ export const getOneCompany = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
-}
+};
 export const getAllCompanies = async (req, res) => {
   try {
     const companies = await Company.find();
@@ -50,7 +50,7 @@ export const getAllCompanies = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
-}
+};
 export const getOneAdmin = async (req, res) => {
   const { userId } = req.params
   try {
@@ -89,7 +89,7 @@ export const getOneAdmin = async (req, res) => {
     console.log(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
-}
+};
 export const getAllAdmins = async (req, res) => {
   try {
     const admins = await Admin.find();
@@ -97,11 +97,12 @@ export const getAllAdmins = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
-}
+};
 export const adminProfileUpdate = async (req, res) => {
   try {
-    const _id = req.query
 
+    const _id = req.query
+  
     const validate = validateAdminProfileUpdate.validate(req.body, options);
     if (validate.error) {
       const message = validate.error.details.map((detail) => detail.message).join(',');
@@ -119,7 +120,8 @@ export const adminProfileUpdate = async (req, res) => {
   
     // Update user profile with new information
     admin.name = req.body.name;
-    // user.email = req.body.email;
+    admin.officialEmail = req.body.officialEmail,
+    admin.phoneNumber = req.body.phoneNumber,
   
     // Save updated user to database
     await admin.save();
@@ -131,7 +133,7 @@ export const adminProfileUpdate = async (req, res) => {
     res.status(500).json({ message: 'Error updating profile' });
   }
   
-}
+};
 export const companyProfileUpdate = async (req, res) => {
   try {
     const _id = req.query
@@ -170,7 +172,7 @@ export const companyProfileUpdate = async (req, res) => {
     res.status(500).json({ message: 'Error updating profile' });
   }
   
-}
+};
 export const lawyerProfileUpdate = async (req, res) => {
   try {
     const _id = req.query
@@ -207,4 +209,4 @@ export const lawyerProfileUpdate = async (req, res) => {
   catch (error) {
     res.status(500).json({ message: 'Error updating profile' });
   }
-}
+};

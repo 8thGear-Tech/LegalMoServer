@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import { Company } from '../models/companymodel.js';
 import { Lawyer } from '../models/lawyermodel.js';
 import { Admin } from '../models/adminmodel.js';
+import { sendConfirmationEmail, emailConfirmationToken } from './utils.js';
 
 dotenv.config ({ path: "./configenv.env" });
 
@@ -32,7 +33,6 @@ export const sendEmail = async (options) => {
 export const confirmEmail = async (req, res) => {
     try {
       const { token } = req.params;
-  
       // Verify the token
       const decoded = jwt.verify(token, jwtsecret);
   
@@ -40,14 +40,12 @@ export const confirmEmail = async (req, res) => {
         // Invalid or expired token
         return res.status(400).send('Invalid token or expired token.');
       }
-  
       // Check if the token has expired
       const currentTime = Date.now();
       if (decoded.exp * 1000 < currentTime) {
         // Token has expired
         return res.status(400).send('Token has expired.');
       }
-  
       // Determine the user type from the token payload
       const userType = decoded.userType;
   
@@ -86,3 +84,56 @@ export const confirmEmail = async (req, res) => {
     }
 };
 
+export const resendConfirmationEmail = async (req, res) => {
+  try {
+    const { officialEmail } = req.body;
+
+    // Find the user in the database
+    const user = await Admin.findOne({ officialEmail }) 
+      || await Lawyer.findOne({ officialEmail }) 
+      || await Company.findOne({ officialEmail });
+
+    if (!user) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'User not found',
+      });
+    }
+
+    // Generate a new confirmation token
+    const { _id } = user;
+    const userType = user instanceof Admin ? 'admin' : (user instanceof Lawyer ? 'lawyer' : 'company');
+    const token = emailConfirmationToken(_id, userType);
+
+    // Send the confirmation email
+    if (!user.isEmailConfirmed){
+      const emailSent = await sendConfirmationEmail(officialEmail, token);
+
+      if (emailSent) {
+        res.status(200).json({
+          status: 'success',
+          message: 'Confirmation email sent successfully',
+        });
+        
+      } else {
+        // Handle email sending error
+        res.status(500).json({
+          status: 'failure',
+          message: 'Confirmation email not sent. Visit Contact center for Help',
+        });
+      }
+    }
+    else{
+      res.status(200).json({
+        status: 'success',
+        message: 'Email already confirmed',
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      status: 'fail',
+      message: 'Internal server error',
+      error: error.message,
+    });
+  }
+};

@@ -77,21 +77,6 @@ export const forgotPassword = async (req, res) => {
         });
       }
 
-      // let userModel;
-      // // Determine '/.the user model based on the userType parameter
-      // switch (userType) {
-      //   case 'admin':
-      //     userModel = Admin;
-      //     break;
-      //   case 'company':
-      //     userModel = Company;
-      //     break;
-      //   case 'lawyer':
-      //     userModel = Lawyer;
-      //     break;
-      //   default:
-      //     return res.status(400).json({ message: 'Invalid user type' });
-      // }
       const validate = ValidateforgotPassword.validate(req.body, options);
       if (validate.error) {
         const message = validate.error.details.map((detail) => detail.message).join(',');

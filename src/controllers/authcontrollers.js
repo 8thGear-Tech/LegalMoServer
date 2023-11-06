@@ -6,6 +6,7 @@ import bcrypt from 'bcryptjs'
 import dotenv from "dotenv";
 import { generateToken, emailConfirmationToken, passwordMatch, sendConfirmationEmail } from '../utils/utils.js';
 import { sendEmail } from '../utils/email.js';
+import { doesUserExist } from '../utils/utils.js';
 import useragent from 'useragent';
 import axios from 'axios';
 
@@ -23,14 +24,13 @@ export const adminSignup = async (req, res) => {
     }
 
     // Check if admin exists
-    const existingAdmin = await Admin.findOne({ officialEmail: req.body.officialEmail });
-    if (existingAdmin) {
-      const message = 'User with that email already exists';
-      return res.status(409).json({
-        status: 'fail',
-        message,
-      });
-    } else {
+      const officialEmail = req.body.officialEmail;
+      if (await doesUserExist(officialEmail)) {
+        return res.status(409).json({
+          status: 'fail',
+          message: 'User with that email already exists',
+        });
+      } else {
       // Check if password and passwordConfirm are the same
       const passwordCheck = passwordMatch(req.body.password, req.body.passwordConfirm);
       if (!passwordCheck) {
@@ -187,11 +187,11 @@ export const companySignup = async (req, res) => {
     }
 
     // Check if company exists
-    const existingCompany = await Company.findOne({ officialEmail: req.body.officialEmail });
-    if (existingCompany) {
+    const officialEmail = req.body.officialEmail;
+    if (await doesUserExist(officialEmail)) {
       return res.status(409).json({
         status: 'fail',
-        message: 'Company with that email already exists',
+        message: 'User with that email already exists',
       });
     }
 
@@ -332,11 +332,11 @@ export const lawyerSignup = async (req, res) => {
     }
 
     // Check if lawyer exists
-    const existingLawyer = await Lawyer.findOne({ officialEmail: req.body.officialEmail });
-    if (existingLawyer) {
+    const officialEmail = req.body.officialEmail;
+    if (await doesUserExist(officialEmail)) {
       return res.status(409).json({
         status: 'fail',
-        message: 'Lawyer with that email already exists',
+        message: 'User with that email already exists',
       });
     }
 
@@ -366,7 +366,6 @@ export const lawyerSignup = async (req, res) => {
     const { _id } = newLawyer;
     const userType = 'lawyer';
     const token = emailConfirmationToken(_id, userType);
-    // console.log(token, "token expires in" + expiresIn)
 
     // Send the Confirmation Email to Lawyer
         const emailSent = await sendConfirmationEmail(newLawyer.officialEmail, token);
@@ -473,9 +472,10 @@ export const usersLogin = async (req, res) => {
     if (req.url.startsWith("/auth/google/redirect/company?code=") || req.url.startsWith("/auth/google/redirect/lawyer?code=") || req.url.startsWith("/auth/google/redirect/admin?code=")) {
       const user = req.user
       // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
-           const { _id } = user.id;
-           const token = generateToken(_id);
+           const { _id, userType } = user.id;
+           const token = generateToken(_id, userType);
            res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 }); 
+           req.headers.authorization = `Bearer ${token}`;
 
             // Check if the user is logging in from a new device
             const agent = useragent.parse(req.headers['user-agent']);
@@ -589,8 +589,6 @@ export const usersLogin = async (req, res) => {
            const deviceModel = agent.major;
            const device = `${osName} ${deviceVendor} ${deviceModel}`;
            const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-     
-           console.log("device is", device)
 
             // Get the device's location
             const response = await axios.get(`http://ip-api.com/json/${ip}`);
@@ -637,16 +635,17 @@ export const usersLogin = async (req, res) => {
                     }
                   }
        // Generate token and set cookie with token to be sent to the client and kept for 30 days
-       const { _id } = user;
-       const token = generateToken(_id);
-       // console.log(token)
+      //  console.log(userType)
+       const _id = user.id;
+       console.log(_id)
+       const token = generateToken( _id, userType);
        res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 });
+       req.headers.authorization = `Bearer ${token}`;
 
       // Send response
       res.status(200).json({  
         status: 'success',
         token,
-        userType,
         data: { user },
       });
   } else {

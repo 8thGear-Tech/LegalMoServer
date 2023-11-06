@@ -1,6 +1,6 @@
 import express from "express";
 import { companySignup, lawyerSignup, adminSignup, logoutUser,usersLogin } from "../controllers/authcontrollers.js";
-import {confirmEmail} from "../utils/email.js"
+import {confirmEmail, resendConfirmationEmail} from "../utils/email.js"
 import { forgotPassword, resetPassword, resetPasswordToken } from "../controllers/passwords.js";
 
 
@@ -12,9 +12,10 @@ router.post("/company/signup", companySignup);
 router.post("/lawyer/signup", lawyerSignup);
 router.post("/admin/signup", adminSignup);
 router.get("/useremail/confirm/:token", confirmEmail); 
-router.post('/forgot-password/', forgotPassword);
+router.post('/forgot-password', forgotPassword);
 router.post("/confirm-reset-token", resetPasswordToken);
 router.patch('/reset-password', resetPassword);
 router.post("/logout", logoutUser);
+router.post("/resendcomfirmemail/:token", resendConfirmationEmail);
 
 export default router;
