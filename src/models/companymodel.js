@@ -72,6 +72,10 @@ const companySchema = new Schema({
   lastLocation: {
     type: String,
   },
+  userType: {
+    type: String,
+    default: "company",
+  },
 });
 
 export const Company = model("Company", companySchema);

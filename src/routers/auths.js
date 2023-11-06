@@ -12,7 +12,6 @@ import {
   resetPassword,
   resetPasswordToken,
 } from "../controllers/passwords.js";
-// import { usersLogin } from "../controllers/middleware.js";
 
 const router = express.Router();
 
@@ -22,7 +21,7 @@ router.post("/company/signup", companySignup);
 router.post("/lawyer/signup", lawyerSignup);
 router.post("/admin/signup", adminSignup);
 router.get("/useremail/confirm/:token", confirmEmail);
-router.post("/forgot-password/:userType", forgotPassword);
+router.post("/forgot-password/", forgotPassword);
 router.post("/confirm-reset-token", resetPasswordToken);
 router.patch("/reset-password", resetPassword);
 router.post("/logout", logoutUser);

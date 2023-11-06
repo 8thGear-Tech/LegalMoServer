@@ -51,6 +51,10 @@ const adminSchema = new Schema({
   lastLocation: {
     type: String
   },
+  userType: {
+    type: String,
+    default: 'admin',
+  },
 });
 
 export const Admin = model('Admin', adminSchema);

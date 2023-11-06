@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import { adminLogin, companyLogin, lawyerLogin } from './authcontrollers.js';
 import { getOneAdmin, getOneCompany, getOneLawyer, adminProfileUpdate, companyProfileUpdate, lawyerProfileUpdate } from './usersControllers.js';
 
 const jwtsecret = process.env.JWT_SECRET;
@@ -62,69 +61,69 @@ export const routeBasedOnUserType = (req, res, next) => {
   }
 };
 
-export const usersLogin = async (req, res, next) => {
-  try {
+// export const usersLogin = async (req, res, next) => {
+//   try {
     
 
-    const { officialEmail, password } = req.body;
+//     const { officialEmail, password } = req.body;
 
-    if (!officialEmail || !password) {
-      return res.status(400).json({
-        status: 'fail',
-        message: 'Please provide officialEmail and password.',
-      });
-    }
+//     if (!officialEmail || !password) {
+//       return res.status(400).json({
+//         status: 'fail',
+//         message: 'Please provide officialEmail and password.',
+//       });
+//     }
 
-    // Attempt to log in for each user type
-    const userTypes = ['admin', 'company', 'lawyer'];
-    for (const userType of userTypes) {
-      const loginFunction = getLoginFunctionByUserType(userType);
+//     // Attempt to log in for each user type
+//     const userTypes = ['admin', 'company', 'lawyer'];
+//     for (const userType of userTypes) {
+//       const loginFunction = getLoginFunctionByUserType(userType);
 
-      if (loginFunction) {
-        const loginResult = await loginFunction(officialEmail, password);
+//       if (loginFunction) {
+//         const loginResult = await loginFunction(officialEmail, password);
 
-        if (loginResult.success) {
-          // If login was successful, return a success response
-          // Set the token in the response headers
-          res.setHeader('Authorization', `Bearer ${loginResult.data.token}`);
-          return res.status(200).json({
-            status: 'success',
-            data: loginResult.data,
-          });
-        } else {
-          return res.status(loginResult.status).json({
-            status: 'fail',
-            message: loginResult.message,
-          });
-        } 
-      }
-    }
+//         if (loginResult.success) {
+//           // If login was successful, return a success response
+//           // Set the token in the response headers
+//           res.setHeader('Authorization', `Bearer ${loginResult.data.token}`);
+//           return res.status(200).json({
+//             status: 'success',
+//             data: loginResult.data,
+//           });
+//         } else {
+//           return res.status(loginResult.status).json({
+//             status: 'fail',
+//             message: loginResult.message,
+//           });
+//         } 
+//       }
+//     }
 
-    // If none of the user types match, return an error response
-    return res.status(401).json({
-      status: 'fail',
-      message: 'Invalid email/password',
-    });
+//     // If none of the user types match, return an error response
+//     return res.status(401).json({
+//       status: 'fail',
+//       message: 'Invalid email/password',
+//     });
 
-  } catch (error) {
-    res.status(500).json({
-      status: 'fail',
-      message: error.message,
-    });
-  }
-};
-const getLoginFunctionByUserType = (userType) => {
-  switch (userType) {
-    case 'company':
-      return companyLogin;
-    case 'admin':
-      return adminLogin;
-    case 'lawyer':
-      return lawyerLogin;
-    default:
-      return null;
-  }
-}
+//   } catch (error) {
+//     res.status(500).json({
+//       status: 'fail',
+//       message: error.message,
+//     });
+//   }
+// };
+// const getLoginFunctionByUserType = (userType) => {
+//   switch (userType) {
+//     case 'company':
+//       return companyLogin;
+//     case 'admin':
+//       return adminLogin;
+//     case 'lawyer':
+//       return lawyerLogin;
+//     default:
+//       return null;
+//   }
+// }
 
 export const profileBasedOnUserType = (req, res, next) => {
   const {userType} = req.params;
