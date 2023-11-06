@@ -4,9 +4,6 @@ import {Company} from '../models/companymodel.js'
 import {Lawyer} from '../models/lawyermodel.js'
 import { productcreation, options, productupdate } from '../utils/productvalidation.js';
 
-
-
-
 export const create = async (req, res) => {
     const validate = productcreation.validate(req.body, options)
         if (validate.error) {

@@ -8,7 +8,7 @@ export const addRating = async (req, res) => {
         return
     }
     const companyId = req.userId
-    const { productId, review, status } = req.body;
+    const { productId,reviewTitle, review, status } = req.body;
     const rating = new Rating({
         companyId,
         productId,

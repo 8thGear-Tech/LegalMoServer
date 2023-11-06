@@ -60,6 +60,9 @@ const lawyerSchema = new Schema({
     type : Boolean,
     default : false
   },
+  updateOTP : {
+    type : String,
+  },
   accountDetails: [{
       accountNumber : {
         type: String,
