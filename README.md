@@ -73,7 +73,7 @@ Passwords are expected to adhere to the following conventions:
    - Your password must have a length that falls within the range of 8 to 30 characters.
 
 ## Forgot Password
-**To fill the form for a user that forgets password, you make a POST request to the /api/forgot-password/ endpoint. The userType attcahed as a parameter also explicitly includes one of the following depending on who is signining in; admin, company or lawyer. The request body should contain the following information:**
+**To fill the form for a user that forgets password, you make a POST request to the /api/forgot-password endpoint. The userType attcahed as a parameter also explicitly includes one of the following depending on who is signining in; admin, company or lawyer. The request body should contain the following information:**
   - officialEmail (string): The email of the user.
 
 On doing this, a token is sent alongside the email.
@@ -99,3 +99,5 @@ The response to these will be a JSON object with the following information:
  ## Update profile
 **To update a user's profile, you make a PATCH request to the /api/updateprofile/?_id endpoint.The id of the user should be inckuded in the query. The request body should then contain the information the user wants to update**
 
+## Resend confirmation email
+**If a user failed to confirm their email address on signup, this "/api/resendcomfirmemail" endpoint should be consumed to resend a new confirmation email**
