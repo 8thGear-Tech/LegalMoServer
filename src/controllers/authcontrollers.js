@@ -587,6 +587,7 @@ export const usersLogin = async (req, res) => {
     }
     // Mamual Login
     const { officialEmail, password } = req.body;
+    // console.log("officialEmail:", officialEmail, "password:", password);
 
     if (!officialEmail || !password) {
       return res.status(400).json({
@@ -599,6 +600,7 @@ export const usersLogin = async (req, res) => {
     const admin = await getAdmin({ officialEmail });
     const company = await getCompany({ officialEmail });
     const lawyer = await getLawyer({ officialEmail });
+    // console.log("Lawyer from database:", lawyer);
 
     let user;
     let userType;
