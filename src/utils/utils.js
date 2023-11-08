@@ -35,7 +35,7 @@ export async function sendConfirmationEmail(userEmail, token) {
        html: `
          <p>Verify your email to complete your signup and login into your account</p>
          <p>This link <b>expires in 6 hours</b>.</p>
-         <p>Press <a href="${currentUrl}api/useremail/confirm/${token}">here</a> to proceed.</p>
+         <p>Click <a href="${currentUrl}api/useremail/confirm/${token}">here</a> to proceed.</p>
        `,
      });
  

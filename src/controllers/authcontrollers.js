@@ -604,9 +604,9 @@ export const usersLogin = async (req, res) => {
                        email: user.officialEmail,
                        subject: "New Login Notification",
                        html: `<p>A new login was detected for your account.</p>
-                         <p>Device: ${device}</p>
-                         <p>Location: ${locationString}</p>
-                         <p>If you didnt initiate the login or does not recognise the devie please contact support centre</p>`,
+                         <p><b>Device</b>: ${device}</p>
+                         <p><b>Location</b>: ${locationString}</p>
+                         <p><b>If you did not initiate the login or does not recognise the devie please contact support centre.</b></p>`,
                      });
                       // Update the user's last device and IP
                       user.lastDevice = device;

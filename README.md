@@ -97,7 +97,7 @@ The response to these will be a JSON object with the following information:
  - message (string):  A message indicating the success or failure of the password reset process.
 
  ## Update profile
-**To update a user's profile, you make a PATCH request to the /api/updateprofile/?_id endpoint.The id of the user should be inckuded in the query. The request body should then contain the information the user wants to update**
+**To update a user's profile, you make a PATCH request to the /api/updateprofile/?_id endpoint.The id of the user should be included in the query. The request body should then contain the information the user wants to update**
 
 ## Resend confirmation email
-**If a user failed to confirm their email address on signup, this "/api/resendcomfirmemail" endpoint should be consumed to resend a new confirmation email**
+**If a user failed to confirm their email address on signup, this "/api/resendconfirmemail" endpoint should be consumed to resend a new confirmation email. The email of the user requesting the token should be included in a form that send the requery to the api**
