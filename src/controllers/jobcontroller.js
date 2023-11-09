@@ -31,7 +31,7 @@ export const allJob = async (req, res) => {
 export const singleJob = async (req, res) => {
   const jobId = req.params.id;
   // const jobId = req.params.jobId;
-  if (req.user.userType === "lawyer" || req.user.userType === "admin") {
+  if (!userType || !["admin", "lawyer"].includes(userType)) {
     try {
       const job = await Job.findById(jobId);
       if (job) {
