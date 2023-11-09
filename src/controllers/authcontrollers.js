@@ -638,48 +638,40 @@ export const usersLogin = async (req, res) => {
       const device = `${osName} ${deviceVendor} ${deviceModel}`;
       const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
 
-      console.log("device is", device);
-
-      // Get the device's location
-      const response = await axios.get(`http://ip-api.com/json/${ip}`);
-      const location = response.data;
-
-      // Check if the location was successfully determined
-      if (location.status === "fail") {
-        const locationString = "Unknown";
-        // console.log('Failed to determine location:', location.message);
-        if (
-          user.lastDevice !== device ||
-          user.lastLocation !== locationString
-        ) {
-          // Send email to the user
-          await sendEmail({
-            email: user.officialEmail,
-            subject: "New Login Notification",
-            html: `<p>A new login was detected for your account.</p>
-                         <p>Device: ${device}</p>
-                         <p>Location: ${locationString}</p>
-                         <p>If you didnt initiate the login or does not recognise the devie please contact support centre</p>`,
-          });
-          // Update the user's last device and IP
-          user.lastDevice = device;
-          user.lastLocation = locationString;
-          await user.save();
-        }
-      } else {
-        // Convert the location to a string
-        const locationString = `${location.city}, ${location.country}`;
-        // console.log("location is", locationString);
-
-        if (
-          user.lastDevice !== device ||
-          user.lastLocation !== locationString
-        ) {
-          // Send email to the user
-          await sendEmail({
-            email: user.officialEmail,
-            subject: "New Login Notification",
-            html: `<p>A new login was detected for your account.</p>
+            // Get the device's location
+            const response = await axios.get(`http://ip-api.com/json/${ip}`);
+            const location = response.data;
+     
+                  // Check if the location was successfully determined
+                  if (location.status === 'fail') {
+                    const locationString = 'Unknown';
+                    // console.log('Failed to determine location:', location.message); 
+                    if (user.lastDevice !== device || user.lastLocation !== locationString) {
+                      // Send email to the user
+                      await sendEmail({
+                       email: user.officialEmail,
+                       subject: "New Login Notification",
+                       html: `<p>A new login was detected for your account.</p>
+                         <p><b>Device</b>: ${device}</p>
+                         <p><b>Location</b>: ${locationString}</p>
+                         <p><b>If you did not initiate the login or does not recognise the devie please contact support centre.</b></p>`,
+                     });
+                      // Update the user's last device and IP
+                      user.lastDevice = device;
+                      user.lastLocation = locationString;
+                      await user.save();
+                    }
+                  } else {
+                    // Convert the location to a string
+                    const locationString = `${location.city}, ${location.country}`;
+                    // console.log("location is", locationString);
+  
+                    if (user.lastDevice !== device || user.lastLocation !== locationString) {
+                      // Send email to the user
+                      await sendEmail({
+                       email: user.officialEmail,
+                       subject: "New Login Notification",
+                       html: `<p>A new login was detected for your account.</p>
                          <p>Device: ${device}</p>
                          <p>Location: ${locationString}</p>
                          <p>If you didnt initiate the login or does not recognise the devie please contact support centre</p>`,

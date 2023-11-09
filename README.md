@@ -47,26 +47,16 @@ The response to these will be a JSON object with the following information:
 
 ## Account confirmation email
 
-<<<<<<< HEAD
-**The link sent to the user for confirmation send a GET request to /api/useremail/confirm/:token endpoint, which confirms the account in the db and a returns a message indicating the account confirmation.**
+## Account confirmation email
+
+**The link sent to the user for confirmation sends a GET request to /api/useremail/confirm/:token endpoint, which confirms the account in the db and a returns a message indicating the account confirmation.**
 
 ## Signing into an account
 
 Only a confirmed account is allowed to signin.
-=======
- ## Account confirmation email
-**The link sent to the user for confirmation sends a GET request to /api/useremail/confirm/:token endpoint, which confirms the account in the db and a returns a message indicating the account confirmation.**
-
-## Signing into an account
-Only a confirmed account is allowed to signin. 
->>>>>>> 423e17e8cf5475ce7f0dbbdb07eab00c80a55525
 Signing in an account is role based because there is only one endpoint to all signin.
 
-<<<<<<< HEAD
-**To signin into an account, you can make a POST request to the /api/login/:userType endpoint. The userType attcahed as a parameter explicitly includes one of the following depending on who is signining in; admin, company or lawyer.**
-=======
-**To signin into an account, you can make a POST request to the /api/login endpoint.** 
->>>>>>> a8c92714df19e342a8b93643bf6e93b63fd8b3cc
+**To signin into an account, you can make a POST request to the /api/login endpoint.**
 **The request body should contain the following information:**
 
 - officialEmail (string): The email of the user.
@@ -121,10 +111,6 @@ Please make sure to create a password that adheres to these rules to help ensure
 - **Example**:
   ```json
   {
-  <<<<<<< HEAD
-    "adminId": "sksjhd494940202020brgr",
-  =======
-  >>>>>>> ed63706ebd99dc43b11afb1a4a2c897a2a7c15fd
     "productName": "Contract Drafting and Review",
     "productPrice": 50000000,
     "productDescription": "contact between two B2B",
@@ -274,15 +260,10 @@ Please make sure to create a password that adheres to these rules to help ensure
    - Your password must have a length that falls within the range of 8 to 30 characters.
 
 ## Forgot Password
-<<<<<<< HEAD
 
-**To fill the form for a user that forgets password, you make a POST request to the /api/forgot-password/:userType endpoint. The userType attcahed as a parameter also explicitly includes one of the following depending on who is signining in; admin, company or lawyer. The request body should contain the following information:**
+**To fill the form for a user that forgets password, you make a POST request to the /api/forgot-password endpoint. The userType attcahed as a parameter also explicitly includes one of the following depending on who is signining in; admin, company or lawyer. The request body should contain the following information:**
 
 - officialEmail (string): The email of the user.
-=======
-**To fill the form for a user that forgets password, you make a POST request to the /api/forgot-password endpoint. The userType attcahed as a parameter also explicitly includes one of the following depending on who is signining in; admin, company or lawyer. The request body should contain the following information:**
-  - officialEmail (string): The email of the user.
->>>>>>> a8c92714df19e342a8b93643bf6e93b63fd8b3cc
 
 On doing this, a token is sent alongside the email.
 
@@ -436,17 +417,25 @@ The response to these will be a JSON object with the following information:
 - **Url**: [https://localhost:5005/api/completejob]()
 - **Request params**: url(job id)
 
-> > > > > > > 27b7a3e15d49ec4507b40577e418b4ca9318f9a4
-=======
- - status (string): The status of the request (success or failure).
- - message (string):  A message indicating the success or failure of the password reset process.
+> > > > > > > # 27b7a3e15d49ec4507b40577e418b4ca9318f9a4
 
- ## Update profile
-**To update a user's profile, you make a PATCH request to the /api/updateprofile/?_id endpoint.The id of the user should be inckuded in the query. The request body should then contain the information the user wants to update**
+- status (string): The status of the request (success or failure).
+- message (string): A message indicating the success or failure of the password reset process.
+
+## Update profile
+
+**To update a user's profile, you make a PATCH request to the /api/updateprofile/?\_id endpoint.The id of the user should be included in the query. The request body should then contain the information the user wants to update**
 
 <<<<<<< HEAD
->>>>>>> 423e17e8cf5475ce7f0dbbdb07eab00c80a55525
-=======
+
+> > > > > > > # 423e17e8cf5475ce7f0dbbdb07eab00c80a55525
+
 ## Resend confirmation email
+
+<<<<<<< HEAD
 **If a user failed to confirm their email address on signup, this "/api/resendcomfirmemail" endpoint should be consumed to resend a new confirmation email**
->>>>>>> a8c92714df19e342a8b93643bf6e93b63fd8b3cc
+
+> > > > > > > # a8c92714df19e342a8b93643bf6e93b63fd8b3cc
+> > > > > > >
+> > > > > > > **If a user failed to confirm their email address on signup, this "/api/resendconfirmemail" endpoint should be consumed to resend a new confirmation email. The email of the user requesting the token should be included in a form that send the requery to the api**
+> > > > > > > aa85266a3941b1059dac0c294a1e8a6afda5ff83

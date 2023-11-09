@@ -34,18 +34,17 @@ export const confirmEmail = async (req, res) => {
   try {
     const { token } = req.params;
     // Verify the token
-    const decoded = jwt.verify(token, jwtsecret);
+    let decoded;
+    try {
+      decoded = jwt.verify(token, jwtsecret);
+    } catch (err) {
+      if (err instanceof jwt.TokenExpiredError) {
+        return res.status(400).send("Token has expired.");
+      } else {
+        return res.status(400).send("Invalid token.");
+      }
+    }
 
-    if (!decoded) {
-      // Invalid or expired token
-      return res.status(400).send("Invalid token or expired token.");
-    }
-    // Check if the token has expired
-    const currentTime = Date.now();
-    if (decoded.exp * 1000 < currentTime) {
-      // Token has expired
-      return res.status(400).send("Token has expired.");
-    }
     // Determine the user type from the token payload
     const userType = decoded.userType;
 
@@ -82,7 +81,7 @@ export const confirmEmail = async (req, res) => {
       .send(` ${userType} Email confirmed successfully. You can now log in.`);
   } catch (error) {
     console.error("Email confirmation error:", error);
-    res.status(400).send("Invalid or expired token.");
+    res.status(500).send("Internal server error.");
   }
 };
 
