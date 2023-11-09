@@ -77,7 +77,8 @@ export const forgotPassword = async (req, res) => {
 
     // Iterate over userModelArray and update the user
     for (const userModel of userModels) {
-      const updatedUser = await userModel
+      // const updatedUser = await userModel
+      updatedUser = await userModel
         .findOneAndUpdate(
           { officialEmail },
           { passwordToken: token, resetPasswordExpires: expires },
