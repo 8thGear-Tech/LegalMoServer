@@ -48,15 +48,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 
-app.use("/", authRouter);
-app.use("/", userRouter);
-
-// app.use("/api", authRouter);
-// app.use("/api", userRouter);
+app.use("/api", authRouter);
+app.use("/api", userRouter);
 // app.use("/", authRouter);
 app.use("/", productRouter);
 app.use("/", cartRouter);
-app.use("/", jobRouter);
+app.use("/job", jobRouter);
 app.use("/", adminRouter);
 app.use("/", ratingRouter);
 app.use("/", lawyerRouter);

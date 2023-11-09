@@ -6,7 +6,7 @@ import { usersLogin } from "../controllers/authcontrollers.js";
 
 const router = express.Router();
 
-router.get("/api/auth/google/:userType", (req, res, next) => {
+router.get("/auth/google/:userType", (req, res, next) => {
   // Set the userType based on the route parameter or query parameter
   const userType = req.params.userType;
 
@@ -28,7 +28,7 @@ router.get("/api/auth/google/:userType", (req, res, next) => {
 //   passport.authenticate("google", { failureRedirect: "/" }),
 //   routeBasedOnUserType
 router.get(
-  "/api/auth/google/redirect/:userType",
+  "/auth/google/redirect/:userType",
   passport.authenticate("google", { failureRedirect: "/" }),
   usersLogin
 );
