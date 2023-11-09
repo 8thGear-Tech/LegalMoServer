@@ -27,10 +27,12 @@ function passwordResetToken() {
 const passwordMatch = (password, passwordConfirm) => {
   return password === passwordConfirm;
 };
-async function sendResetPasswordEmail(userEmail, token) {
+async function sendResetPasswordEmail(officialEmail, token) {
+  // async function sendResetPasswordEmail(userEmail, token) {
   try {
     await sendEmail({
-      email: userEmail,
+      // email: userEmail,
+      email: officialEmail,
       subject: "Reset Password",
       message: `Your password reset token is: ${token}`,
       html: `
