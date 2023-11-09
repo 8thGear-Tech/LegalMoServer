@@ -30,6 +30,7 @@ const upload = multer({ storage: storage });
 const router = express.Router();
 
 router.get("/api/products", getProducts);
+router.get("/api/product/:id", singleProduct);
 
 export const authToken = (req, res, next) => {
   if (!req.headers.authorization) {
@@ -60,5 +61,5 @@ router.delete("/api/delete/:id", authToken, deleteProduct);
 // {
 //     "message": "Unidentified user"
 // }
-router.get("/api/product/:id", singleProduct);
+// router.get("/api/product/:id", singleProduct);
 export default router;
