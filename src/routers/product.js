@@ -22,8 +22,8 @@ const upload = multer({ storage: storage });
 
 const router = express.Router();
 
-router.post("/api/create", authToken, upload.single("productImage"), create);
 router.get("/api/products", getProducts);
+router.post("/api/create", authToken, upload.single("productImage"), create);
 router.put("/api/update/:id", authToken, updateProduct);
 router.delete("/api/delete/:id", authToken, deleteProduct);
 
