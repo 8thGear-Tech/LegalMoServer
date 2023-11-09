@@ -52,6 +52,7 @@ async function sendResetPasswordEmail(userEmail, token) {
 }
 
 export const forgotPassword = async (req, res) => {
+  let updatedUser; // Declare updatedUser variable
   try {
     const { officialEmail } = req.body;
     // const { userType } = req.params;
