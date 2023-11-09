@@ -27,12 +27,10 @@ function passwordResetToken() {
 const passwordMatch = (password, passwordConfirm) => {
   return password === passwordConfirm;
 };
-async function sendResetPasswordEmail(officialEmail, token) {
-  // async function sendResetPasswordEmail(userEmail, token) {
+async function sendResetPasswordEmail(userEmail, token) {
   try {
     await sendEmail({
-      // email: userEmail,
-      email: officialEmail,
+      email: userEmail,
       subject: "Reset Password",
       message: `Your password reset token is: ${token}`,
       html: `
@@ -73,6 +71,8 @@ export const forgotPassword = async (req, res) => {
     const token = passwordResetToken();
     const expires = new Date(Date.now() + 600000); // Token expires in 10 minutes
 
+    // Define an array of user models for different types
+    const userModel = [Admin, Company, Lawyer];
     // Find the user and update the token and expiration date in parallel
     const updatedUser = await userModel
       .findOneAndUpdate(
