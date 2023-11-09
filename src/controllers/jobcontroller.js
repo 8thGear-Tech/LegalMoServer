@@ -20,8 +20,17 @@ export const allJob = async (req, res) => {
   }
 };
 
+// export const companyProfile = async (req, res) => {
+//   try {
+//     const company = await Company.findById(req.params.id);
+//     res.status(200).json({ company });
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// };
 export const singleJob = async (req, res) => {
-  const jobId = req.params.jobId;
+  const jobId = req.params.id;
+  // const jobId = req.params.jobId;
   try {
     const job = await Job.findById(jobId);
     if (job) {
