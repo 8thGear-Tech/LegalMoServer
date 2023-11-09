@@ -11,6 +11,9 @@ const ratingSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product", 
   },
+  reviewTitle: {
+    type: String,
+  },
   review: {
     type: String,
   },

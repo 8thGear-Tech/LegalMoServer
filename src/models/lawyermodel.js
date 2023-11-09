@@ -71,7 +71,9 @@ const lawyerSchema = new Schema({
     type: Boolean,
     default: false,
   },
-
+  updateOTP: {
+    type: String,
+  },
   accountDetails: [
     {
       accountNumber: {
@@ -93,7 +95,7 @@ const lawyerSchema = new Schema({
   },
   userType: {
     type: String,
-    default: 'lawyer',
+    default: "lawyer",
   },
 });
 
