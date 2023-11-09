@@ -31,34 +31,18 @@ export const allJob = async (req, res) => {
 export const singleJob = async (req, res) => {
   const jobId = req.params.id;
   // const jobId = req.params.jobId;
-  if (!userType || !["admin", "lawyer"].includes(userType)) {
-    try {
-      const job = await Job.findById(jobId);
-      if (job) {
-        res.status(200).json(job);
-      } else {
-        res.send(null);
-        console.log("Job not found");
-      }
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+  try {
+    const job = await Job.findById(jobId);
+    if (job) {
+      res.status(200).json(job);
+    } else {
+      res.send(null);
+      console.log("Job not found");
     }
-  } else {
-    res.status(403).json({ message: "Unauthorized" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
-//   try {
-//     const job = await Job.findById(jobId);
-//     if (job) {
-//       res.status(200).json(job);
-//     } else {
-//       res.send(null);
-//       console.log("Job not found");
-//     }
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
 
 export const assignJob = async (req, res) => {
   const isAdmin = await Admin.findById(req.userId);

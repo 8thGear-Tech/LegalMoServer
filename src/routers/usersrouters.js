@@ -14,10 +14,10 @@ import {
 const router = express.Router();
 
 // router.use(authenticateUser);
-router.get("/:userType/:userId", authenticateUser, profileBasedOnUserType);
+router.get("/api/:userType/:userId", authenticateUser, profileBasedOnUserType);
 // router.get("/lawyers", authenticateUser, isAdminUser, getAllLawyers);
-router.get("/companies", authenticateUser, isAdminUser, getAllCompanies);
-router.get("/admins", authenticateUser, isAdminUser, getAllAdmins);
-router.patch("/updateprofile", authenticateUser, updateProfileBasedOnUser);
+router.get("/api/companies", authenticateUser, isAdminUser, getAllCompanies);
+router.get("/api/admins", authenticateUser, isAdminUser, getAllAdmins);
+router.patch("/api/updateprofile", authenticateUser, updateProfileBasedOnUser);
 
 export default router;
