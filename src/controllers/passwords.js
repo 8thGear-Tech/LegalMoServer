@@ -72,19 +72,38 @@ export const forgotPassword = async (req, res) => {
     const expires = new Date(Date.now() + 600000); // Token expires in 10 minutes
 
     // Define an array of user models for different types
-    const userModel = [Admin, Company, Lawyer];
-    // Find the user and update the token and expiration date in parallel
-    const updatedUser = await userModel
-      .findOneAndUpdate(
-        { officialEmail },
-        { passwordToken: token, resetPasswordExpires: expires },
-        { new: true }
-      )
-      .exec();
+    const userModels = [Admin, Company, Lawyer];
+
+    // Iterate over userModelArray and update the user
+    for (const userModel of userModels) {
+      const updatedUser = await userModel
+        .findOneAndUpdate(
+          { officialEmail },
+          { passwordToken: token, resetPasswordExpires: expires },
+          { new: true }
+        )
+        .exec();
+
+      if (updatedUser) {
+        break; // If user is found and updated, exit loop
+      }
+    }
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
+    // // Find the user and update the token and expiration date in parallel
+    // const updatedUser = await userModel
+    //   .findOneAndUpdate(
+    //     { officialEmail },
+    //     { passwordToken: token, resetPasswordExpires: expires },
+    //     { new: true }
+    //   )
+    //   .exec();
+
+    // if (!updatedUser) {
+    //   return res.status(404).json({ message: "User not found" });
+    // }
 
     // Send the password reset email
     const sendEmailPromise = sendResetPasswordEmail(officialEmail, token);
