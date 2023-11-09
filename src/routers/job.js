@@ -26,7 +26,8 @@ const router = express.Router();
 // router.post("/api/create", create);
 
 router.get("/api/jobs", authToken, allJob);
-router.get("/api/job/:id", authToken, singleJob);
+//endpoint rename
+router.get("/job-api/job/:id", authToken, singleJob);
 // router.get("/api/company/:id", authToken, companyProfile);
 router.post("/api/assign", authToken, assignJob);
 router.get("/api/assign", authToken, assigned);
@@ -38,11 +39,17 @@ router.get("/api/completedjobs", authToken, completedJob);
 router.put("/api/completejob/:jobId", authToken, completeJob);
 router.get("/api/viewjobdetails/:jobId", authToken, viewJobDetails);
 router.put("/api/editjobdetails/:jobId", authToken, editJobDetails);
-router.get("/api/company/completedjobs", authToken, companyCompletedJob);
-router.get("/api/company/pendingjobs", authToken, companyPendingJob);
-router.get("/api/lawyer/assignedjobs", authToken, lawyerAssignedJobs);
-router.get("/api/lawyer/pendingjobs", authToken, lawyerPendingJobs);
-router.get("/api/lawyer/completedjobs", authToken, lawyerCompletedJobs);
+//endpoint rename
+router.get("/job-api/company/completedjobs", authToken, companyCompletedJob);
+router.get("/job-api/company/pendingjobs", authToken, companyPendingJob);
+router.get("/job-api/lawyer/assignedjobs", authToken, lawyerAssignedJobs);
+router.get("/job-api/lawyer/pendingjobs", authToken, lawyerPendingJobs);
+router.get("/job-api/lawyer/completedjobs", authToken, lawyerCompletedJobs);
+// router.get("/api/company/completedjobs", authToken, companyCompletedJob);
+// router.get("/api/company/pendingjobs", authToken, companyPendingJob);
+// router.get("/api/lawyer/assignedjobs", authToken, lawyerAssignedJobs);
+// router.get("/api/lawyer/pendingjobs", authToken, lawyerPendingJobs);
+// router.get("/api/lawyer/completedjobs", authToken, lawyerCompletedJobs);
 router.post(
   "/api/requestmorejobdetails/:jobId",
   authToken,

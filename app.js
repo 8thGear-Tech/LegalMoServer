@@ -53,7 +53,7 @@ app.use("/api", userRouter);
 // app.use("/", authRouter);
 app.use("/", productRouter);
 app.use("/", cartRouter);
-app.use("/job", jobRouter);
+app.use("/", jobRouter);
 app.use("/", adminRouter);
 app.use("/", ratingRouter);
 app.use("/", lawyerRouter);
