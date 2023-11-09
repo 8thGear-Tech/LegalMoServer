@@ -113,7 +113,7 @@ export const forgotPassword = async (req, res) => {
     // Wait for both promises to resolve
     await Promise.all([sendEmailPromise]);
 
-    res.status(200).json({ message: "Password reset email sent" });
+    res.status(200).json({ message: "Password reset email sent", userType });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
