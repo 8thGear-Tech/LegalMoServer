@@ -4,10 +4,10 @@ import {Admin } from '../models/adminmodel.js';
 import { validateLawyerProfileUpdate, validateAdminProfileUpdate, validateCompanyProfileUpdate, options } from '../utils/validator.js';
 
 export const getOneLawyer = async (req, res) => {
-  const { userId } = req.params;
-
   try {
-    const lawyer = await Lawyer.findOne({ _id: userId }); 
+    const _id = req.query
+
+    const lawyer = await Lawyer.findOne({ _id }); 
 
     if (!lawyer) {
       return res.status(404).json({ error: 'Lawyer not found' });
@@ -29,9 +29,10 @@ export const getAllLawyers = async (req, res) => {
   }
 };
 export const getOneCompany = async (req, res) => {
-  const { userId } = req.params;
   try {
-    const company = await Company.findOne({ _id: userId})
+    const _id = req.query
+
+    const company = await Company.findOne({ _id})
     if (!company) {
       return res.status(404).json({ error: 'Company not found' });
     }
@@ -52,9 +53,10 @@ export const getAllCompanies = async (req, res) => {
   }
 };
 export const getOneAdmin = async (req, res) => {
-  const { userId } = req.params
   try {
-    const admin = await Admin.findOne({ _id: userId })
+    const _id = req.query
+
+    const admin = await Admin.findOne({ _id })
       .populate('companies') // Populate the companies field
       .populate('lawyers')   // Populate the lawyers field
       .exec();
@@ -65,19 +67,19 @@ export const getOneAdmin = async (req, res) => {
       return res.status(404).json({ error: 'Admin not found' });
     }
 
-    // // Extract all companies and lawyers from the admin document
-    // const companies = admin.companies.map(company => ({
-    //   id: company._id,
-    //   name: company.name,
-    //   email: company.email,
-    //   phoneNumber: company.phoneNumber,
-    // }));
-    // const lawyers = admin.lawyers.map(lawyer => ({
-    //   id: lawyer._id,
-    //   name: lawyer.name,
-    //   email: lawyer.email,
-    //   phoneNumber: lawyer.phoneNumber,
-    // }));
+    // Extract all companies and lawyers from the admin document
+    const companies = admin.companies.map(company => ({
+      id: company._id,
+      name: company.name,
+      email: company.email,
+      phoneNumber: company.phoneNumber,
+    }));
+    const lawyers = admin.lawyers.map(lawyer => ({
+      id: lawyer._id,
+      name: lawyer.name,
+      email: lawyer.email,
+      phoneNumber: lawyer.phoneNumber,
+    }));
 
     res.status(200).json({
       status: 'success',
@@ -100,7 +102,6 @@ export const getAllAdmins = async (req, res) => {
 };
 export const adminProfileUpdate = async (req, res) => {
   try {
-
     const _id = req.query
   
     const validate = validateAdminProfileUpdate.validate(req.body, options);

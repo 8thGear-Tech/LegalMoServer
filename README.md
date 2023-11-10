@@ -53,7 +53,7 @@ Signing in an account is role based because there is only one endpoint to all si
  - password (string): The password for the account provided during registration.
 
 ## Sign-in with Google
-**To signin with a google account, you make a GET request to the /auth/google/:userType endpoint. The userType attcahed as a parameter also explicitly includes one of the following depending on who is signining in; admin, company or lawyer.** 
+**To signin with a google account, you make a GET request to the /auth/google/:userType endpoint. The userType attached as a parameter also explicitly includes one of the following depending on who is signining in; admin, company or lawyer.** 
 
 The response to these will be a JSON object with the following information:
  - status (string): The status of the request (success or failure).
@@ -86,6 +86,7 @@ After sending the request, a link to create a new password will be displayed on 
 The response to these will be a JSON object with the following information:
  - status (string): The status of the request (success or failure).
  - message (string): It contains a link that makes a POST request to /api/reset-password?userType=${userType}&userEmail=${userEmail}&token=${token} redirecting the user to the new password page. 
+ 
  ## Create a new password
 **To create a new password, you make a POST request to the /api/reset-password endpoint. The request body should contain the following information:**
   - password (string): A password different from the initil one.
@@ -101,3 +102,6 @@ The response to these will be a JSON object with the following information:
 
 ## Resend confirmation email
 **If a user failed to confirm their email address on signup, this "/api/resendconfirmemail" endpoint should be consumed to resend a new confirmation email. The email of the user requesting the token should be included in a form that send the requery to the api**
+
+ ## view profile
+**To view a user's profile, you make a GET request to the /api/userprofile/?_id endpoint.The id of the user should be included in the query.**

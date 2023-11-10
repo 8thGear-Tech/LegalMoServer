@@ -62,29 +62,44 @@ export const routeBasedOnUserType = (req, res, next) => {
 };
 
 export const profileBasedOnUserType = (req, res, next) => {
-  const {userType} = req.params;
+   // Get the token from the request headers
+   const token = req.headers.authorization.split(' ')[1] || req.cookies.token;
 
-  if (!userType || !['company', 'admin', 'lawyer'].includes(userType)) {
-    return res.status(400).json({
-      status: 'fail',
-      message: 'Invalid user type',
-    });
-  }
-  // Based on the user type, route the request to the appropriate login function
-  switch (userType) {
-    case 'company':
-      return getOneCompany(req, res, next);
-    case 'admin':
-      return getOneAdmin(req, res, next);
-    case 'lawyer':
-      return getOneLawyer(req, res, next);
-    default:
+   try {
+    // Verify and decode the token
+    const decodedToken = jwt.verify(token, jwtsecret);
+    // Get the user type from the decoded token
+    const { userType } = decodedToken;
+
+    // Check if the user type is valid
+    if (!userType || !['company', 'admin', 'lawyer'].includes(userType)) {
       return res.status(400).json({
         status: 'fail',
         message: 'Invalid user type',
       });
-  }
-};
+    }
+    // Based on the user type, route the request to the appropriate login function
+    switch (userType) {
+      case 'company':
+        return getOneCompany(req, res, next);
+      case 'admin':
+        return getOneAdmin(req, res, next);
+      case 'lawyer':
+        return getOneLawyer(req, res, next);
+      default:
+        return res.status(400).json({
+          status: 'fail',
+          message: 'Invalid user type',
+        });
+    }
+   } catch (err) {
+    // If the token  is not valid, return an error
+    return res.status(401).json({
+      status: 'fail',
+      message: 'Invalid token. Failed to verify userType',
+    });
+  };
+}
 
 export const updateProfileBasedOnUser = async (req, res, next) => {
   // Get the token from the request headers
@@ -94,7 +109,7 @@ export const updateProfileBasedOnUser = async (req, res, next) => {
      const decodedToken = jwt.verify(token, jwtsecret);
     // Get the user type from the decoded token
     const { userType } = decodedToken;
-    
+
     // Check if the user type is valid
     if (!userType || !['company', 'admin', 'lawyer'].includes(userType)) {
       return res.status(400).json({
