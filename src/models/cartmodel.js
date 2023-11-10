@@ -4,8 +4,7 @@ import mongoose from 'mongoose';
 const cartSchema = new Schema({
   companyId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Company",
-    // required: true 
+    ref: "Company", 
   },
   products: [{
     productId: {

@@ -1,12 +1,8 @@
 import { Lawyer } from '../models/lawyermodel.js';
-import { Job } from '../models/jobmodel.js';
 import { paymentDetail, options } from '../utils/productvalidation.js';
 import sendEmail from '../utils/email.js';
-//  * Add payment details to a lawyer's account.
-//  * @param {Object} req.body - The request body containing accountNumber, accountName, and bank.
-//  * @param {Object} req.user - The authenticated user object.
-//  * @param {string} req.user._id - The ID of the authenticated user.
- 
+
+
 export const addPaymentDetails = async (req, res) => {
     const lawyerExists = await Lawyer.findById(req.userId)
     if(!lawyerExists){
@@ -113,7 +109,6 @@ export const confirmOTP = async(req, res) => {
         res.status(500).json({ error: error.message });
     }
     }
-
 
 export const getPaymentDetails = async (req, res) => {
     const lawyerExists = await Lawyer.findById(req.userId)

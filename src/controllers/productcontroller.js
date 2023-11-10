@@ -44,7 +44,7 @@ export const create = async (req, res) => {
         throw new Error("Admin doesn't Exist");
      }    
 }
-
+ 
 export const getProducts = async (req, res) => {
    try{
        const products = await Product.find();

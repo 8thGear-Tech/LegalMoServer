@@ -1,5 +1,5 @@
 import express from "express";
-import { assignJob, assigned,singleJob, unassigned, allJob, removeLawyer, deleteJob,completeJob, viewJobDetails, editJobDetails, pendingJob, completedJob, companyCompletedJob, companyPendingJob, lawyerAssignedJobs, lawyerPendingJobs, lawyerCompletedJobs, requestMoreJobDetails } from "../controllers/jobcontroller.js";
+import { assignJob, assigned,singleJob, unassigned, allJob, removeLawyer, deleteJob,completeJob, viewJobDetails, editJobDetails, pendingJob, completedJob, companyCompletedJob, companyPendingJob, lawyerAssignedJobs, lawyerPendingJobs, lawyerCompletedJobs, requestMoreJobDetails, applyForJob } from "../controllers/jobcontroller.js";
 import { authToken } from "../middleware/AuthToken.js";
 
 
@@ -26,6 +26,6 @@ router.get('/api/lawyer/assignedjobs',authToken, lawyerAssignedJobs)
 router.get('/api/lawyer/pendingjobs',authToken, lawyerPendingJobs)
 router.get('/api/lawyer/completedjobs',authToken, lawyerCompletedJobs)
 router.post('/api/requestmorejobdetails/:jobId',authToken, requestMoreJobDetails)
-
+router.post('/api/applyforjob/:jobId', authToken, applyForJob)
 
 export default router;
