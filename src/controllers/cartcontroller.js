@@ -101,7 +101,6 @@ export const addToCart = async (req, res) => {
 }
 
 export const getAllCart = async (req, res) => {
-   
     try{
         const cart = await Cart.find();
         res.status(200).json({cart})
@@ -200,8 +199,12 @@ export const clearCart = async (req, res) => {
 }
 
 export const checkout = async (req, res) => {
+    const companyExists = await Company.findById(req.userId)
+    if(!companyExists){
+        res.status(404).send({message : "Unauthorized!, You must be a company"})
+        return
+    }
     const companyId  = req.userId;
-
     const cart = await Cart.findOne({companyId})
     console.log(cart.products)
     try {
@@ -220,7 +223,6 @@ export const checkout = async (req, res) => {
             })
             await Cart.deleteMany({companyId})
             return res.status(201).json("Checkout successful")
-           
         }
         else{
             res.status(400).send("Nothing in your cart")    

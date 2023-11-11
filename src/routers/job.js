@@ -5,9 +5,6 @@ import { authToken } from "../middleware/AuthToken.js";
 
 const router = express.Router();
 
-
-// router.post("/api/create", create);
-
 router.get('/api/jobs',authToken, allJob)
 router.get('/api/job/:jobId',authToken, singleJob)
 router.post('/api/assign',authToken, assignJob)
