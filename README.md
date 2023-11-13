@@ -63,8 +63,12 @@ Signing in an account is role based because there is only one endpoint to all si
 - password (string): The password for the account provided during registration.
 
 ## Sign-in with Google
+<<<<<<< HEAD
 
 **To signin with a google account, you make a GET request to the /auth/google/:userType endpoint. The userType attcahed as a parameter also explicitly includes one of the following depending on who is signining in; admin, company or lawyer.**
+=======
+**To signin with a google account, you make a GET request to the /auth/google/:userType endpoint. The userType attached as a parameter also explicitly includes one of the following depending on who is signining in; admin, company or lawyer.** 
+>>>>>>> bffe29891abd3df7878bd576891dc8eae36d7bdf
 
 The response to these will be a JSON object with the following information:
 
@@ -276,12 +280,19 @@ On doing this, a token is sent alongside the email.
 After sending the request, a link to create a new password will be displayed on the user's screen.
 
 The response to these will be a JSON object with the following information:
+<<<<<<< HEAD
 
 - status (string): The status of the request (success or failure).
 - message (string): It contains a link that makes a POST request to /api/reset-password?userType=${userType}&userEmail=${userEmail}&token=${token} redirecting the user to the new password page.
 
 ## Create a new password
 
+=======
+ - status (string): The status of the request (success or failure).
+ - message (string): It contains a link that makes a POST request to /api/reset-password?userType=${userType}&userEmail=${userEmail}&token=${token} redirecting the user to the new password page. 
+ 
+ ## Create a new password
+>>>>>>> bffe29891abd3df7878bd576891dc8eae36d7bdf
 **To create a new password, you make a POST request to the /api/reset-password endpoint. The request body should contain the following information:**
 
 - password (string): A password different from the initil one.
@@ -431,6 +442,7 @@ The response to these will be a JSON object with the following information:
 > > > > > > > # 423e17e8cf5475ce7f0dbbdb07eab00c80a55525
 
 ## Resend confirmation email
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 **If a user failed to confirm their email address on signup, this "/api/resendcomfirmemail" endpoint should be consumed to resend a new confirmation email**
@@ -439,3 +451,9 @@ The response to these will be a JSON object with the following information:
 > > > > > > >
 > > > > > > > **If a user failed to confirm their email address on signup, this "/api/resendconfirmemail" endpoint should be consumed to resend a new confirmation email. The email of the user requesting the token should be included in a form that send the requery to the api**
 > > > > > > > aa85266a3941b1059dac0c294a1e8a6afda5ff83
+=======
+**If a user failed to confirm their email address on signup, this "/api/resendconfirmemail" endpoint should be consumed to resend a new confirmation email. The email of the user requesting the token should be included in a form that send the requery to the api**
+
+ ## view profile
+**To view a user's profile, you make a GET request to the /api/userprofile/?_id endpoint.The id of the user should be included in the query.**
+>>>>>>> bffe29891abd3df7878bd576891dc8eae36d7bdf

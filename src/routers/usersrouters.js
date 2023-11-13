@@ -14,7 +14,7 @@ import {
 const router = express.Router();
 
 router.use(authenticateUser);
-router.get("/:userType/:userId", profileBasedOnUserType);
+router.get("/userprofile", profileBasedOnUserType);
 router.get("/lawyers", isAdminUser, getAllLawyers);
 router.get("/companies", isAdminUser, getAllCompanies);
 router.get("/admins", isAdminUser, getAllAdmins);
