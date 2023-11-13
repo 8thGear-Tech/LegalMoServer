@@ -1,6 +1,7 @@
 import { Admin } from "../models/adminmodel.js";
 import { Company } from "../models/companymodel.js";
 import { Lawyer } from "../models/lawyermodel.js";
+import sendEmail from "../utils/email.js";
 
 export const companys = async(req, res) => {
     const isAdmin = await Admin.findById(req.userId)
@@ -66,6 +67,12 @@ export const verifyLawyer = async(req, res) => {
             return
         }
         const lawyer = await Lawyer.findByIdAndUpdate(req.params.id, {verified : true});
+        await sendEmail({
+            email: lawyer.officialEmail,
+            subject: 'You have been verified',
+            message: `You have been verified`,
+            html: `<p>Verification Process completed, you are now a verified lawyer on our platform.</p>`
+        });
         res.status(200).json({lawyer})
     } catch (error) {
         res.status(500).json({error : error.message})
