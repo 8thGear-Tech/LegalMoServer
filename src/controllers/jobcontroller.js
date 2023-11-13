@@ -20,7 +20,6 @@ export const allJob = async (req, res) => {
   }
 };
 
-<p></p>;
 // export const companyProfile = async (req, res) => {
 //   try {
 //     const company = await Company.findById(req.params.id);
