@@ -18,6 +18,7 @@ import {
   lawyerPendingJobs,
   lawyerCompletedJobs,
   requestMoreJobDetails,
+  applyForJob,
 } from "../controllers/jobcontroller.js";
 import { authToken } from "../middleware/AuthToken.js";
 
@@ -56,5 +57,6 @@ router.post(
   authToken,
   requestMoreJobDetails
 );
+router.post("/job-api/applyforjob/:jobId", authToken, applyForJob);
 
 export default router;

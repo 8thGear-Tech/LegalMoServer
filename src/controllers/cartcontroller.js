@@ -191,8 +191,12 @@ export const clearCart = async (req, res) => {
 };
 
 export const checkout = async (req, res) => {
+  const companyExists = await Company.findById(req.userId);
+  if (!companyExists) {
+    res.status(404).send({ message: "Unauthorized!, You must be a company" });
+    return;
+  }
   const companyId = req.userId;
-
   const cart = await Cart.findOne({ companyId });
   console.log(cart.products);
   try {

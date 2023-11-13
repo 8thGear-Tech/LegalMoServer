@@ -7,11 +7,6 @@ import { sendEmail } from "../utils/email.js";
 
 //view al jobs for request products
 export const allJob = async (req, res) => {
-  const isAdmin = await Admin.findById(req.userId);
-  if (!isAdmin) {
-    res.status(401).send({ message: "Unauthorized!, You must be an Admin" });
-    return;
-  }
   try {
     const jobs = await Job.find();
     return res.status(200).send(jobs);
@@ -61,7 +56,7 @@ export const assignJob = async (req, res) => {
     if (job.assignedTo.includes(lawyerId)) {
       return res
         .status(400)
-        .json({ error: "Lawyer already assigned to this task" });
+        .json({ error: "Lawyer already assigned to this job" });
     }
 
     if (lawyer.verified == true) {
@@ -130,9 +125,7 @@ export const removeLawyer = async (req, res) => {
     }
 
     if (!job.assignedTo.includes(lawyerId)) {
-      return res
-        .status(400)
-        .json({ error: "Lawyer not assigned to this task" });
+      return res.status(400).json({ error: "Lawyer not assigned to this job" });
     }
 
     job.assignedTo = job.assignedTo.filter((id) => id.toString() != lawyerId);
@@ -408,6 +401,44 @@ export const requestMoreJobDetails = async (req, res) => {
       res.send(null);
       console.log("Job not found");
       return;
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const applyForJob = async (req, res) => {
+  const lawyer = await Lawyer.findById(req.userId);
+  if (!lawyer) {
+    res.status(401).send({ message: "Unauthorized!, You must be a lawyer" });
+    return;
+  }
+  try {
+    const job = await Job.findById(req.params.jobId);
+    if (!job) {
+      return res.status(400).json({ error: "Job not found" });
+    }
+    if (job.assignedTo.includes(req.userId)) {
+      return res
+        .status(400)
+        .json({ error: "You are already assigned to this job" });
+    }
+
+    if (
+      job.assignedTo.length !== 0 ||
+      job.assignedTo !== null ||
+      job.assignedTo.length !== undefined
+    ) {
+      return res
+        .status(400)
+        .json({ error: "A Lawyer already assigned to this job" });
+    }
+    if (lawyer.verified == true) {
+      job.appliedLawer.push(req.userId);
+      await job.save();
+      return res.status(201).send(job);
+    } else {
+      return res.status(400).json({ error: "Unverified Lawyer" });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });

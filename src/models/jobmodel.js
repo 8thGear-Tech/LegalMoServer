@@ -28,6 +28,10 @@ const jobSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Lawyer",
   }],
+  appliedLawer : [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Lawyer",
+  }],
 },
     {
         timestamps: true
