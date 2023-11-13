@@ -29,7 +29,7 @@ const upload = multer({ storage: storage });
 
 const router = express.Router();
 
-router.get("/api/products", getProducts);
+router.get("/product-api/products", getProducts);
 router.get("/product-api/product/:id", singleProduct);
 
 // export const authToken = (req, res, next) => {
