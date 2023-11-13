@@ -7,11 +7,11 @@ import { sendEmail } from "../utils/email.js";
 
 //view al jobs for request products
 export const allJob = async (req, res) => {
-  const isAdmin = await Admin.findById(req.userId);
-  if (!isAdmin) {
-    res.status(401).send({ message: "Unauthorized!, You must be an Admin" });
-    return;
-  }
+  // const isAdmin = await Admin.findById(req.userId);
+  // if (!isAdmin) {
+  //   res.status(401).send({ message: "Unauthorized!, You must be an Admin" });
+  //   return;
+  // }
   try {
     const jobs = await Job.find();
     return res.status(200).send(jobs);

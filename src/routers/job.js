@@ -25,7 +25,8 @@ const router = express.Router();
 
 // router.post("/api/create", create);
 
-router.get("/api/jobs", authToken, allJob);
+router.get("/api/jobs", allJob);
+// router.get("/api/jobs", authToken, allJob);
 //endpoint rename
 router.get("/job-api/job/:id", authToken, singleJob);
 // router.get("/api/company/:id", authToken, companyProfile);
