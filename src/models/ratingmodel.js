@@ -20,7 +20,7 @@ const ratingSchema = new Schema({
   status: {
     type: Number,
     enum : {
-      values: [1, 2, 3, 4, 5],
+      values: [0, 1, 2, 3, 4, 5],
       message: 'rating not supported'
     },
     default: 1
