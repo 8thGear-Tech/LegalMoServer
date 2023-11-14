@@ -3,6 +3,7 @@ import {Cart} from '../models/cartmodel.js'
 import { Company } from '../models/companymodel.js';
 import { addCart,options } from '../utils/cartvalidation.js';
 import { Job } from '../models/jobmodel.js';
+import sendEmail from '../utils/email.js';
 
 
 export const addToCart = async (req, res) => {
@@ -199,8 +200,8 @@ export const clearCart = async (req, res) => {
 }
 
 export const checkout = async (req, res) => {
-    const companyExists = await Company.findById(req.userId)
-    if(!companyExists){
+    const company = await Company.findById(req.userId)
+    if(!company){
         res.status(404).send({message : "Unauthorized!, You must be a company"})
         return
     }
@@ -222,6 +223,24 @@ export const checkout = async (req, res) => {
                 })
             })
             await Cart.deleteMany({companyId})
+            await sendEmail({
+                email: company.officialEmail,
+                subject: 'Purchase Completed',
+                message: `Purchase Completed`,
+                html: `<p>Hello ${company.companyName}</p> 
+                <p>Thank your for placing an order with LegalMO. We are pleased to confirm the receipt of your order </p>
+                <p>Order details:</p>
+                <p>Item(s):  </p>
+                <p>Total Amount:</p>
+                <p>Estimated Delivery Date:</p>
+                <p>Your order is now being processed and will be completed between 10-14 working days. You will receive a notification once your order has been dropped on your dashboard.</p>
+                <p>We appreciate the trust you have placed in us and aim to provide you with the highest quality of service. If you have any questions or need further assistance, please do not hesitate to contact our customer service team at bukola@legalmo.biz or 08137686118. Thank you for choosing LegalMO. We value your business and look forward to serving you again.</p>
+                <p>Warm regards,</p>
+                <p>LegalMO</p>
+                <p>[Company contact details]</p>
+                <p></p>
+                `
+            });
             return res.status(201).json("Checkout successful")
         }
         else{
