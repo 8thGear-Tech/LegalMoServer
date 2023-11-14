@@ -43,6 +43,10 @@ const lawyerSchema = new Schema({
   },
   areasOfPractise: {
     type: [String],
+    enum : {
+      values: ['Maritime', 'International Trade and Investment', 'Tax Practise', 'Aviation and Space', 'Sports', 'Entertainment', 'Technology'],
+      message: '{VALUE} is not supported'
+    },
     required: false,
   },
   yourBio: {

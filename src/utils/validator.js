@@ -41,7 +41,7 @@ export const lawyerRegister = Joi.object().keys({
           .message('Password must contain at least one uppercase letter, one lowercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length.')
           .required(),
   passwordConfirm: Joi.string().required(),
-  areasOfPractise: Joi.array().items(Joi.string()).required(),
+  areasOfPractise: Joi.array().items(Joi.string().valid('Maritime', 'International Trade and Investment', 'Tax Practise', 'Aviation and Space', 'Sports', 'Entertainment', 'Technology')).required(),
 });
 
 export const AdminLogin = Joi.object().keys({
@@ -87,6 +87,7 @@ export const validateLawyerProfileUpdate = Joi.object().keys({
   yourBio: Joi.string(),
   yearOfCall: Joi.string().pattern(/^[0-9]{4}$/).message('Invalid year format'),
   alternativeEmailAddress: Joi.string().email().trim().lowercase(),
+  areasOfPractise: Joi.array().items(Joi.string().valid('Maritime', 'International Trade and Investment', 'Tax Practise', 'Aviation and Space', 'Sports', 'Entertainment', 'Technology')).required(),
 });
 
 export const validateAdminProfileUpdate = Joi.object().keys({

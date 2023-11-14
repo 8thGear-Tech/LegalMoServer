@@ -24,18 +24,19 @@ function passwordResetToken() {
 const passwordMatch = (password, passwordConfirm) => {
     return password === passwordConfirm;
 } 
-async function sendResetPasswordEmail(userEmail, token) {
+async function sendResetPasswordEmail(userEmail, token, name) {
     try {
   
       await sendEmail({
         email: userEmail,
         subject: 'Reset Password',
-        message: `Your password reset token is: ${token}`,
         html: `
-          <p>Your password reset token is:</p>
+          <h1>Hello ${name}</h1>
+          <p>Need to reset your password? Use OTP</p>
           <p><strong>${token}</strong></p>
-          <p>This token is required to reset your password. Please copy it and input it in the password reset form on our website.</p>
-          <p>This token <b>expires in 10 minutes</b>.</p>
+          <p>Click on the button below and enter the OTP above</p>
+          <button>google.com</button>
+          <p>If you did not forget your passwrd, you can ignore this email.</p>
         `,
       });
   
@@ -52,7 +53,6 @@ async function sendResetPasswordEmail(userEmail, token) {
 export const forgotPassword = async (req, res) => {
     try {
       const { officialEmail } = req.body;
-      // const { userType } = req.params;
       
       const admin = await getAdmin({ officialEmail });
       const company = await getCompany({ officialEmail });
@@ -102,7 +102,7 @@ export const forgotPassword = async (req, res) => {
       }
   
       // Send the password reset email
-      const sendEmailPromise = sendResetPasswordEmail(officialEmail, token);
+      const sendEmailPromise = sendResetPasswordEmail(officialEmail, token, updatedUser.name);
   
       // Wait for both promises to resolve
       await Promise.all([sendEmailPromise]);

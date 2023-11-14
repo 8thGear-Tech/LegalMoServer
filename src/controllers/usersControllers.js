@@ -2,9 +2,12 @@ import {Company} from '../models/companymodel.js';
 import {Lawyer} from '../models/lawyermodel.js';
 import {Admin } from '../models/adminmodel.js';
 import { validateLawyerProfileUpdate, validateAdminProfileUpdate, validateCompanyProfileUpdate, options } from '../utils/validator.js';
+import {checkInternetConnection} from '../utils/utils.js';
 
 export const getOneLawyer = async (req, res) => {
   try {
+    // check if the user is connected to the internet
+    await checkInternetConnection();
     const _id = req.query
 
     const lawyer = await Lawyer.findOne({ _id }); 
@@ -16,20 +19,38 @@ export const getOneLawyer = async (req, res) => {
     res.status(200).json(lawyer);
 
   } catch (error) {
+    if (error.message === 'No internet connection') {
+      return res.status(503).json({
+        status: 'fail',
+        message: 'No internet connection',
+      });
+    }
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 export const getAllLawyers = async (req, res) => {
   try {
+    // check if the user is connected to the internet
+    await checkInternetConnection();
+
     const lawyers = await Lawyer.find();
 
     res.status(200).json(lawyers);
   } catch (error) {
+    if (error.message === 'No internet connection') {
+      return res.status(503).json({
+        status: 'fail',
+        message: 'No internet connection',
+      });
+    }
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 export const getOneCompany = async (req, res) => {
   try {
+    // check if the user is connected to the internet
+    await checkInternetConnection();
+
     const _id = req.query
 
     const company = await Company.findOne({ _id})
@@ -39,21 +60,39 @@ export const getOneCompany = async (req, res) => {
     res.status(200).json(company);
 
   } catch (error) {
+    if (error.message === 'No internet connection') {
+      return res.status(503).json({
+        status: 'fail',
+        message: 'No internet connection',
+      });
+    }
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 export const getAllCompanies = async (req, res) => {
   try {
+    // check if the user is connected to the internet
+    await checkInternetConnection();
+
     const companies = await Company.find();
 
     res.status(200).json(companies);
 
   } catch (error) {
+    if (error.message === 'No internet connection') {
+      return res.status(503).json({
+        status: 'fail',
+        message: 'No internet connection',
+      });
+    }
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 export const getOneAdmin = async (req, res) => {
   try {
+    // check if the user is connected to the internet
+    await checkInternetConnection();
+
     const _id = req.query
 
     const admin = await Admin.findOne({ _id })
@@ -88,20 +127,37 @@ export const getOneAdmin = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
+    if (error.message === 'No internet connection') {
+      return res.status(503).json({
+        status: 'fail',
+        message: 'No internet connection',
+      });
+    }
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 export const getAllAdmins = async (req, res) => {
   try {
+    // check if the user is connected to the internet
+    await checkInternetConnection();
+
     const admins = await Admin.find();
     res.status(200).json(admins);
   } catch (error) {
+    if (error.message === 'No internet connection') {
+      return res.status(503).json({
+        status: 'fail',
+        message: 'No internet connection',
+      });
+    }
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 export const adminProfileUpdate = async (req, res) => {
   try {
+    // check if the user is connected to the internet
+    await checkInternetConnection();
+
     const _id = req.query
   
     const validate = validateAdminProfileUpdate.validate(req.body, options);
@@ -131,12 +187,21 @@ export const adminProfileUpdate = async (req, res) => {
     res.status(200).json({ message: 'Profile updated successfully', admin });
   }
   catch (error) {
+    if (error.message === 'No internet connection') {
+      return res.status(503).json({
+        status: 'fail',
+        message: 'No internet connection',
+      });
+    }
     res.status(500).json({ message: 'Error updating profile' });
   }
   
 };
 export const companyProfileUpdate = async (req, res) => {
   try {
+    // check if the user is connected to the internet
+    await checkInternetConnection();
+
     const _id = req.query
 
     const validate = validateCompanyProfileUpdate.validate(req.body, options);
@@ -169,13 +234,21 @@ export const companyProfileUpdate = async (req, res) => {
     res.status(200).json({ message: 'Profile updated successfully', company });
   }
   catch (error) {
-    console.log(error);
+    if (error.message === 'No internet connection') {
+      return res.status(503).json({
+        status: 'fail',
+        message: 'No internet connection',
+      });
+    }
     res.status(500).json({ message: 'Error updating profile' });
   }
   
 };
 export const lawyerProfileUpdate = async (req, res) => {
   try {
+    // check if the user is connected to the internet
+    await checkInternetConnection();
+
     const _id = req.query
 
     const validate = validateLawyerProfileUpdate.validate(req.body, options);
@@ -208,6 +281,12 @@ export const lawyerProfileUpdate = async (req, res) => {
     res.status(200).json({ message: 'Profile updated successfully', lawyer });
   }
   catch (error) {
+    if (error.message === 'No internet connection') {
+      return res.status(503).json({
+        status: 'fail',
+        message: 'No internet connection',
+      });
+    }
     res.status(500).json({ message: 'Error updating profile' });
   }
 };

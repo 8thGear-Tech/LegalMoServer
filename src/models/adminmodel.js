@@ -23,6 +23,9 @@ const adminSchema = new Schema({
     type: String,
     allowNull: true,
   },
+  profileImage: {
+    type: String,
+  },
   password: {
     type: String,
     required: false,

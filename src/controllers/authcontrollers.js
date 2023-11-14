@@ -4,7 +4,8 @@ import { Admin } from '../models/adminmodel.js';
 import { adminRegister, companyRegister, lawyerRegister, options } from '../utils/validator.js';
 import bcrypt from 'bcryptjs'
 import dotenv from "dotenv";
-import { generateToken, emailConfirmationToken, passwordMatch, sendConfirmationEmail } from '../utils/utils.js';
+import { generateToken, emailConfirmationToken, passwordMatch, sendConfirmationEmail, 
+  checkInternetConnection } from '../utils/utils.js';
 import { sendEmail } from '../utils/email.js';
 import { doesUserExist } from '../utils/utils.js';
 import useragent from 'useragent';
@@ -14,6 +15,9 @@ dotenv.config ({ path: "./configenv.env" });
 
 export const adminSignup = async (req, res) => {
   try {
+    // Check if the user is connected to the internet
+    await checkInternetConnection();
+
     const validate = adminRegister.validate(req.body, options);
     if (validate.error) {
       const message = validate.error.details.map((detail) => detail.message).join(',');
@@ -42,6 +46,10 @@ export const adminSignup = async (req, res) => {
 
       // Hash password and create new admin
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth() + 1; // Add 1 because getMonth() is zero-based
+      const date = now.getDate();  
   
       const newAdmin = new Admin({
         name: req.body.name,
@@ -61,12 +69,14 @@ export const adminSignup = async (req, res) => {
       const emailSent = await sendConfirmationEmail(
         newAdmin.officialEmail, 
         token,
+        newAdmin.name
       );
 
       if (emailSent) {
         res.status(201).json({
           status: 'success',
           message: 'Confirmation email sent successfully',
+          createdAt: `${date}/${month}/${year}`, 
           data: {
             admin: newAdmin,
           },
@@ -80,6 +90,13 @@ export const adminSignup = async (req, res) => {
       }
     }
   } catch (error) {
+    if (error.message === 'No internet connection') {
+      return res.status(503).json({
+        status: 'fail',
+        message: 'No internet connection',
+      });
+    }
+
     res.status(500).json({
       status: 'fail',
       message: 'Internal server error',
@@ -89,6 +106,8 @@ export const adminSignup = async (req, res) => {
 };
 export const companySignup = async (req, res) => {
   try {
+    // Check if the user is connected to the internet
+    await checkInternetConnection();
     // Validate company inputs
     const validate = companyRegister.validate(req.body, options);
     if (validate.error) {
@@ -119,6 +138,11 @@ export const companySignup = async (req, res) => {
 
     // Hash password and create a new company
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1; // Add 1 because getMonth() is zero-based
+    const date = now.getDate();
+
     const newCompany = new Company({
       name: req.body.name,
       contactName: req.body.contactName,
@@ -136,12 +160,13 @@ export const companySignup = async (req, res) => {
     const token = emailConfirmationToken(_id, userType);
 
         // Send the Confirmation Email to Company
-       const emailSent = await sendConfirmationEmail(newCompany.officialEmail, token);
+       const emailSent = await sendConfirmationEmail(newCompany.officialEmail, token, newCompany.name);
  
        if (emailSent) {
          res.status(201).json({
           status: 'success',
           message: 'Confirmation email sent successfully',
+          createdAt: `${date}/${month}/${year}`, // Format the date as MM/DD/YYYY
           data: {
             company: newCompany,
             youtoken: token,
@@ -155,6 +180,13 @@ export const companySignup = async (req, res) => {
          });
        }
   } catch (error) {
+    if (error.message === 'No internet connection') {
+      return res.status(503).json({
+        status: 'fail',
+        message: 'No internet connection',
+      });
+    }
+
     res.status(500).json({ 
       status: 'fail',
       message: error.message,
@@ -163,6 +195,9 @@ export const companySignup = async (req, res) => {
 };
 export const lawyerSignup = async (req, res) => {
   try {
+    // Check if the user is connected to the internet
+    await checkInternetConnection();
+   
     // Validate lawyer inputs
     const validate = lawyerRegister.validate(req.body, options);
     if (validate.error) {
@@ -172,7 +207,7 @@ export const lawyerSignup = async (req, res) => {
         message,
       });
     }
-
+  
     // Check if lawyer exists
     const officialEmail = req.body.officialEmail;
     if (await doesUserExist(officialEmail)) {
@@ -192,6 +227,11 @@ export const lawyerSignup = async (req, res) => {
     }
     // Hash password and create new lawyer
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1; // Add 1 because getMonth() is zero-based
+    const date = now.getDate();
+
     const newLawyer = new Lawyer({
       name: req.body.name,
       officialEmail: req.body.officialEmail,
@@ -210,14 +250,15 @@ export const lawyerSignup = async (req, res) => {
     const token = emailConfirmationToken(_id, userType);
 
     // Send the Confirmation Email to Lawyer
-        const emailSent = await sendConfirmationEmail(newLawyer.officialEmail, token);
+        const emailSent = await sendConfirmationEmail(newLawyer.officialEmail, token, newLawyer.name);
  
         if (emailSent) {
           res.status(201).json({
            status: 'success',
            message: 'Confirmation email sent successfully',
+           createdAt: `${date}/${month}/${year}`, // Format the date as MM/DD/YYYY
            data: {
-             lawyer: newLawyer,
+              lawyer: newLawyer,
            },
           });
         } else {
@@ -227,62 +268,96 @@ export const lawyerSignup = async (req, res) => {
           });
         }
   } catch (error) {
-    return res.status(500).json({ 
+    if (error.message === 'No internet connection') {
+      return res.status(503).json({
+        status: 'fail',
+        message: 'No internet connection',
+      });
+    }
+
+    res.status(500).json({ 
       status: 'fail',
       message: 'Internal server error',
     });
   }
 };
 async function handleGoogleLogin(req, res, user) {
-  // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
-  const _id = user.id;
-  const userType = user.userType;
-  const token = generateToken(_id, userType);
+try {
+        // Check if the user is connected to the internet
+        await checkInternetConnection();
+        // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
+        const _id = user.id;
+        const userType = user.userType;
+        const token = generateToken(_id, userType);
 
-  // Check if the user is logging in from a new device
-  const agent = useragent.parse(req.headers['user-agent']);
-  const osName = agent.os.family;
-  const deviceVendor = agent.family;
-  const deviceModel = agent.major;
-  const device = `${osName} ${deviceVendor} ${deviceModel}`;
-  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        // Check if the user is logging in from a new device
+        const agent = useragent.parse(req.headers['user-agent']);
+        const osName = agent.os.family;
+        const deviceVendor = agent.family;
+        const deviceModel = agent.major;
+        const device = `${osName} ${deviceVendor} ${deviceModel}`;
+        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
-  // Get the device's location
-  const response = await axios.get(`http://ip-api.com/json/${ip}`);
-  const location = response.data;
+        // Get the device's location
+        const response = await axios.get(`http://ip-api.com/json/${ip}`);
+        const location = response.data;
 
-  // Check if the location was successfully determined
-  let locationString;
-  if (location.status === 'fail') {
-    locationString = 'Unknown';
-  } else {
-    // Convert the location to a string
-    locationString = `${location.city}, ${location.country}`;
-  }
+        // Check if the location was successfully determined
+        let locationString;
+        if (location.status === 'fail') {
+          locationString = 'Unknown';
+          } else {
+            // Convert the location to a string
+            locationString = `${location.city}, ${location.country}`;
+          }
 
-  if (user.lastDevice !== device || user.lastLocation !== locationString) {
-    // Send email to the user
-    await sendEmail({
-      email: user.officialEmail,
-      subject: "New Login Notification",
-      html: `<p>A new login was detected for your account.</p>
-        <p>Device: ${device}</p>
-        <p>Location: ${locationString}</p>`,
-    });
-    // Update the user's last device and IP
-    user.lastDevice = device;
-    user.lastLocation = locationString;
-    await user.save();
-  }
-  req.headers.authorization = `Bearer ${token}`;
-res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 }).status(200).json({
-  status: 'success',
-  token,
-  data: { user },
-});
+          if (user.lastDevice !== device || user.lastLocation !== locationString) {
+            // Send email to the user
+              await sendEmail({
+                email: user.officialEmail,
+                subject: "New Login Notification",
+                html: `<p>A new login was detected for your account.</p>
+                  <p>Device: ${device}</p>
+                  <p>Location: ${locationString}</p>`,
+              });
+              // Update the user's last device and IP
+              user.lastDevice = device;
+              user.lastLocation = locationString;
+              await user.save();
+          }
+
+          const now = new Date();
+          const year = now.getFullYear();
+          const month = now.getMonth() + 1; // Add 1 because getMonth() is zero-based
+          const date = now.getDate();
+      
+          req.headers.authorization = `Bearer ${token}`;
+          res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 }).status(200).json({
+          status: 'success',
+          token,
+          createdAt: `${date}/${month}/${year}`, 
+          data: { user },
+          });
+
+    } catch (error) {
+        if (error.message === 'No internet connection') {
+          return res.status(503).json({
+            status: 'fail',
+            message: 'No internet connection',
+          });
+        }
+
+  // Handle other errors
+  res.status(500).json({
+    status: 'fail',
+    message: error.message,
+  }); 
 }
+};
 export const usersLogin = async (req, res) => {
   try {
+    // Check if the user is connected to the internet
+    await checkInternetConnection();
     // Handle Google SignIn
     if (req.url.startsWith("/auth/google/redirect/company?code=") || req.url.startsWith("/auth/google/redirect/lawyer?code=") || req.url.startsWith("/auth/google/redirect/admin?code=")) {
       const user = req.user
@@ -401,26 +476,41 @@ export const usersLogin = async (req, res) => {
         token,
         data: { user },
       });
-  } else {
-    return res.status(401).json({ 
-      status: 'fail',
-      message: 'Invalid email/password',
-    });
-  }
+    } else {
+      return res.status(401).json({ 
+        status: 'fail',
+        message: 'Invalid email/password',
+      });
+    }
   } catch (error) {
-    res.status(500).json({  
+    if (error.message === 'No internet connection') {
+    return res.status(503).json({  
       status: 'fail',
-      message: error.message,
+      message: 'No internet connection'
     });
   }
+
+  res.status(500).json({ 
+    status: 'fail',
+    message: 'Internal server error',
+  });
+};
 };
 export const logoutUser = async (req, res) => {
   try {
+    // Check if the user is connected to the internet
+    await checkInternetConnection();
     // Clear the JWT token by setting an expired token
     res.cookie('jwt', 'expired', { httpOnly: true, maxAge: 1 });
     // Redirect the user to the login page or any other page you prefer
     res.status(200).send("user logged out successfully from server");
   } catch (error) {
+    if (error.message === 'No internet connection') {
+      return res.status(503).json({
+        status: 'fail',
+        message: 'No internet connection',
+      });
+    }
     res.status(500).json({ message: 'Internal server error' });
   }
 }

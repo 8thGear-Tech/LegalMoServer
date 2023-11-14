@@ -1,9 +1,13 @@
 import jwt from 'jsonwebtoken';
 import { getOneAdmin, getOneCompany, getOneLawyer, adminProfileUpdate, companyProfileUpdate, lawyerProfileUpdate } from './usersControllers.js';
+import { checkInternetConnection } from '../utils/utils.js';
 
 const jwtsecret = process.env.JWT_SECRET;
 export const authenticateUser = async (req, res, next) => {
   try {
+    // check if the user is connected to the internet
+    await checkInternetConnection();
+
     const token = req.headers.authorization?.split(' ')[1] || req.cookies.token;
     console.log("Token:", token);
     
@@ -20,7 +24,12 @@ export const authenticateUser = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error("Authentication Error:", error);
+   if (error.message === 'No internet connection') {
+      return res.status(503).json({
+        status: 'fail',
+        message: 'No internet connection',
+      });
+    }
     res.status(401).json({ message: 'You are not authorized' });
   }
 };
@@ -35,39 +44,56 @@ export const isAdminUser = (req, res, next) => {
     res.status(403).json({ message: 'Access denied. Admin permissions required.' });
   }
 };
-export const routeBasedOnUserType = (req, res, next) => {
-  const {userType} = req.params;
+export  const  routeBasedOnUserType = async (req, res, next) => {
+  try {
+    // Check if the user is connected to the internet
+    await checkInternetConnection();
 
-  if (!userType || !['company', 'admin', 'lawyer'].includes(userType)) {
-    return res.status(400).json({
-      status: 'fail',
-      message: 'Invalid user type',
-    });
-  }
+    const {userType} = req.params;
 
-  // Based on the user type, route the request to the appropriate login function
-  switch (userType) {
-    case 'company':
-      return companyLogin(req, res, next);
-    case 'admin':
-      return adminLogin(req, res, next);
-    case 'lawyer':
-      return lawyerLogin(req, res, next);
-    default:
+    if (!userType || !['company', 'admin', 'lawyer'].includes(userType)) {
       return res.status(400).json({
         status: 'fail',
         message: 'Invalid user type',
       });
+    }
+  
+    // Based on the user type, route the request to the appropriate login function
+    switch (userType) {
+      case 'company':
+        return companyLogin(req, res, next);
+      case 'admin':
+        return adminLogin(req, res, next);
+      case 'lawyer':
+        return lawyerLogin(req, res, next);
+      default:
+        return res.status(400).json({
+          status: 'fail',
+          message: 'Invalid user type',
+        });
+    }
+  } catch (error) {
+    if (error.message === 'No internet connection') {
+      return res.status(503).json({
+        status: 'fail',
+        message: 'No internet connection',
+      });
+    }
+    res.status(401).json({ message: 'You are not authorized' });
   }
-};
+};  
+ 
+export const profileBasedOnUserType = async (req, res, next) => {
+   try {
+    // Check if the user is connected to the internet
+    await checkInternetConnection();
 
-export const profileBasedOnUserType = (req, res, next) => {
-   // Get the token from the request headers
+    // Get the token from the request headers
    const token = req.headers.authorization.split(' ')[1] || req.cookies.token;
 
-   try {
     // Verify and decode the token
     const decodedToken = jwt.verify(token, jwtsecret);
+
     // Get the user type from the decoded token
     const { userType } = decodedToken;
 
@@ -92,21 +118,32 @@ export const profileBasedOnUserType = (req, res, next) => {
           message: 'Invalid user type',
         });
     }
-   } catch (err) {
+   } catch (error) {
+    if (error.message === 'No internet connection') {
+      return res.status(503).json({
+        status: 'fail',
+        message: 'No internet connection',
+      });
+    }
     // If the token  is not valid, return an error
-    return res.status(401).json({
+      res.status(401).json({
       status: 'fail',
       message: 'Invalid token. Failed to verify userType',
     });
   };
 }
-
 export const updateProfileBasedOnUser = async (req, res, next) => {
-  // Get the token from the request headers
-  const token = req.headers.authorization.split(' ')[1] || req.cookies.token;
+ 
   try {
+    // Check if the user is connected to the internet
+    await checkInternetConnection();
+
+     // Get the token from the request headers
+  const token = req.headers.authorization.split(' ')[1] || req.cookies.token;
+
     // Verify and decode the token
      const decodedToken = jwt.verify(token, jwtsecret);
+
     // Get the user type from the decoded token
     const { userType } = decodedToken;
 
@@ -132,9 +169,15 @@ export const updateProfileBasedOnUser = async (req, res, next) => {
           message: 'Invalid user type',
         });
     }   
-  } catch (err) {
+  } catch (error) {
+    if (error.message === 'No internet connection') {
+      return res.status(503).json({
+        status: 'fail',
+        message: 'No internet connection',
+      });
+    }
     // If the token is not valid, return an error
-    return res.status(401).json({
+     res.status(401).json({
       status: 'fail',
       message: 'Invalid token. Failed to verify userType',
     });
