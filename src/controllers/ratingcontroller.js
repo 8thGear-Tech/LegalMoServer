@@ -27,11 +27,16 @@ export const addRating = async (req, res) => {
 export const getRatings = async (req, res) => {
     try {
         const ratings = await Rating.find();
-        if(!ratings || ratings.length === undefined){
+        if(!ratings || ratings.length === 0){
             res.status(200).json({message : "NO RATING"});
             return
         }
-        res.status(200).json(ratings);
+        const allRatings = []
+        for (const rating of ratings){
+            const populatedRating = await rating.populate('companyId')
+            allRatings.push(populatedRating)
+        }
+        return res.status(200).send(allJobsWithProducts)
     } catch (error) {
         res.status(404).json({ message: error.message });
     }
@@ -40,7 +45,12 @@ export const getRatings = async (req, res) => {
 export const getRating = async (req, res) => {
     try {
         const rating = await Rating.findById(req.params.id);
-        res.status(200).json(rating);
+        if(!rating || rating.length === 0){
+            res.status(200).json({message : "NO RATING"});
+            return
+        }
+        const ratingWithComany = await rating.populate('companyId')
+        res.status(200).json(ratingWithComany);
     } catch (error) {
         res.status(404).json({ message: error.message });
     }
