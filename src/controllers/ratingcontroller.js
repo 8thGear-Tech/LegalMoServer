@@ -36,7 +36,7 @@ export const getRatings = async (req, res) => {
             const populatedRating = await rating.populate('companyId')
             allRatings.push(populatedRating)
         }
-        return res.status(200).send(allJobsWithProducts)
+        return res.status(200).send(allRatings)
     } catch (error) {
         res.status(404).json({ message: error.message });
     }
