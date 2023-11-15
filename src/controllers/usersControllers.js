@@ -3,6 +3,7 @@ import {Lawyer} from '../models/lawyermodel.js';
 import {Admin } from '../models/adminmodel.js';
 import { validateLawyerProfileUpdate, validateAdminProfileUpdate, validateCompanyProfileUpdate, options } from '../utils/validator.js';
 import {checkInternetConnection} from '../utils/utils.js';
+import cloudinary from '../utils/cloudinary.js'
 
 export const getOneLawyer = async (req, res) => {
   try {
@@ -94,39 +95,24 @@ export const getOneAdmin = async (req, res) => {
     await checkInternetConnection();
 
     const _id = req.query
+    const id = _id._id
 
-    const admin = await Admin.findOne({ _id })
-      .populate('companies') // Populate the companies field
-      .populate('lawyers')   // Populate the lawyers field
-      .exec();
-    
-      console.log(admin);
+    const admin = await Admin.findById(id).populate('companies lawyers'); // Populate the companies field
+     
 
     if (!admin) {
       return res.status(404).json({ error: 'Admin not found' });
     }
 
-    // Extract all companies and lawyers from the admin document
-    const companies = admin.companies.map(company => ({
-      id: company._id,
-      name: company.name,
-      email: company.email,
-      phoneNumber: company.phoneNumber,
-    }));
-    const lawyers = admin.lawyers.map(lawyer => ({
-      id: lawyer._id,
-      name: lawyer.name,
-      email: lawyer.email,
-      phoneNumber: lawyer.phoneNumber,
-    }));
-
+   
     res.status(200).json({
       status: 'success',
       data: {
-        admin: admin.toObject(),
+        admin: admin,
       },
     });
   } catch (error) {
+    console.log(error);
     if (error.message === 'No internet connection') {
       return res.status(503).json({
         status: 'fail',
@@ -169,6 +155,13 @@ export const adminProfileUpdate = async (req, res) => {
       });
     }
 
+    const imageUpload = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'profileImages',
+      transformation: [
+        { width: 500, height: 500, crop: "limit" }
+      ]
+    });
+
     const admin =  await Admin.findById(_id);
 
     if (!admin) {
@@ -179,7 +172,11 @@ export const adminProfileUpdate = async (req, res) => {
     admin.name = req.body.name;
     admin.officialEmail = req.body.officialEmail,
     admin.phoneNumber = req.body.phoneNumber,
-  
+    admin.profileImage = {
+      url: imageUpload.secure_url,
+      publicId: imageUpload.public_id,
+    }
+
     // Save updated user to database
     await admin.save();
   
@@ -187,6 +184,7 @@ export const adminProfileUpdate = async (req, res) => {
     res.status(200).json({ message: 'Profile updated successfully', admin });
   }
   catch (error) {
+    console.log(error);
     if (error.message === 'No internet connection') {
       return res.status(503).json({
         status: 'fail',
@@ -213,6 +211,13 @@ export const companyProfileUpdate = async (req, res) => {
       });
     }
 
+    const imageUpload = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'profileImages',
+      transformation: [
+        { width: 500, height: 500, crop: "limit" }
+      ]
+    });
+
     const company =  await Company.findById(_id);
 
     if (!company) {
@@ -226,6 +231,10 @@ export const companyProfileUpdate = async (req, res) => {
     company.phoneNumber = req.body.phoneNumber;
     company.officeAddress = req.body.officeAddress;
     company.alternativeEmailAddress = req.body.alternativeEmailAddress;
+    company.profileImage = {
+      url: imageUpload.secure_url,
+      publicId: imageUpload.public_id,
+    }
   
     // Save updated user to database
     await company.save();
@@ -260,6 +269,13 @@ export const lawyerProfileUpdate = async (req, res) => {
       });
     }
 
+    const imageUpload = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'profileImages',
+      transformation: [
+        { width: 500, height: 500, crop: "limit" }
+      ]
+    });
+
     const lawyer =  await Lawyer.findById(_id);
 
     if (!lawyer) {
@@ -273,7 +289,10 @@ export const lawyerProfileUpdate = async (req, res) => {
       lawyer.yearOfCall = req.body.yearOfCall;
       lawyer.phoneNumber = req.body.phoneNumber;
       lawyer.alternativeEmailAddress = req.body.alternativeEmailAddress;
-
+      lawyer.profileImage = {
+        url: imageUpload.secure_url,
+        publicId: imageUpload.public_id,
+      }
     // Save updated user to database
     await lawyer.save();
   

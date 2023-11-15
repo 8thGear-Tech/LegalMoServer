@@ -155,6 +155,14 @@ export const companySignup = async (req, res) => {
     });
 
     await newCompany.save();
+
+       // Find all admins and add the new company to their companies array
+      const admins = await Admin.find({});
+      for (let admin of admins) {
+      admin.companies.push(newCompany._id);
+      await admin.save();
+    }
+
     const { _id } = newCompany;
     const userType = 'company';
     const token = emailConfirmationToken(_id, userType);
@@ -245,6 +253,14 @@ export const lawyerSignup = async (req, res) => {
     });
 
     await newLawyer.save();
+
+        // Find all admins and add the new company to their companies array
+        const admins = await Admin.find({});
+        for (let admin of admins) {
+        admin.lawyers.push(newLawyer._id);
+        await admin.save();
+      }
+
     const { _id } = newLawyer;
     const userType = 'lawyer';
     const token = emailConfirmationToken(_id, userType);
@@ -483,6 +499,7 @@ export const usersLogin = async (req, res) => {
       });
     }
   } catch (error) {
+    console.log(error)
     if (error.message === 'No internet connection') {
     return res.status(503).json({  
       status: 'fail',

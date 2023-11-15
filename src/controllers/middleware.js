@@ -33,9 +33,19 @@ export const authenticateUser = async (req, res, next) => {
     res.status(401).json({ message: 'You are not authorized' });
   }
 };
-export const isAdminUser = (req, res, next) => {
-  const {userType} = req.query;
-  // Check if the user is an admin based on their userType
+export const isAdminUser = async (req, res, next) => {
+    // Check if the user is connected to the internet
+    await checkInternetConnection();
+
+    // Get the token from the request headers
+    const token = req.headers.authorization.split(' ')[1] || req.cookies.token;
+
+    // Verify and decode the token
+    const decodedToken = jwt.verify(token, jwtsecret);
+
+    // Get the user type from the decoded token
+    const { userType } = decodedToken;
+
   if (userType === 'admin') {
     // User is an admin, allow access to the endpoint
     next();
@@ -104,7 +114,7 @@ export const profileBasedOnUserType = async (req, res, next) => {
         message: 'Invalid user type',
       });
     }
-    // Based on the user type, route the request to the appropriate login function
+    // Based on the user type, route the request to the appropriate profile function
     switch (userType) {
       case 'company':
         return getOneCompany(req, res, next);
