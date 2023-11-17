@@ -3,7 +3,7 @@ import  {Schema, model} from 'mongoose';
 const adminSchema = new Schema({
     name: {
     type: String,
-    required: [true, 'Please provide a Username'],
+    // required: [true, 'Please provide a Username'],
   },
    phoneNumber: {
     type: String,
@@ -11,7 +11,7 @@ const adminSchema = new Schema({
   },
   officialEmail: {
     type: String,
-    required: [true, 'Please provide a valid email address'],
+    // required: [true, 'Please provide a valid email address'],
     lowercase: true,
     unique: true,
   },
@@ -22,6 +22,16 @@ const adminSchema = new Schema({
   googleId: {
     type: String,
     allowNull: true,
+  },
+  profileImage: {
+    public_id: {
+      type: String,
+      default: 'profileImage',
+    },
+    url: {
+      type: String,
+      default: 'https://res.cloudinary.com/drlfylzhf/image/upload/v1700055556/cld-sample.jpg',
+    }
   },
   password: {
     type: String,

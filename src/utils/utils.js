@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import dns from "dns";
 import { sendEmail } from "../utils/email.js";
 import { Company } from "../models/companymodel.js";
 import { Lawyer } from "../models/lawyermodel.js";
@@ -11,36 +12,33 @@ dotenv.config({ path: "./configenv.env" });
 const jwtsecret = process.env.JWT_SECRET;
 export const generateToken = (id, userType) => {
   return jwt.sign({ id, userType }, jwtsecret, {
-    expiresIn: "1d",
-    // expiresIn: process.env.JWT_EXPIRES_IN,
+    expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
 export const emailConfirmationToken = (id, userType) => {
   return jwt.sign({ id, userType }, jwtsecret, {
-    expiresIn: "1d",
-    // expiresIn: process.env.EMAIL_CONFIRMATION_EXPIRES_IN,
+    expiresIn: process.env.EMAIL_CONFIRMATION_EXPIRES_IN,
   });
 };
 export const passwordMatch = (password, passwordConfirm) => {
   return password === passwordConfirm;
 };
 // Function to send confirmation email
-export async function sendConfirmationEmail(userEmail, token) {
+export async function sendConfirmationEmail(userEmail, token, name) {
   try {
-    const confirmationUrl = `https://legalmo-server.onrender.com/api/useremail/confirm/${token}`;
+    //  const currentUrl = "http://localhost:5005/";
     const currentUrl = "https://legalmo-server.onrender.com/";
-    // const confirmationUrl = `http://localhost:5005/api/useremail/confirm/${token}`;
-    // const currentUrl = "http://localhost:5005/";
 
     await sendEmail({
       email: userEmail,
-      subject: "Verify Email Address",
-      message: `Click this link to confirm your email: ${confirmationUrl}`,
+      subject: "Confirm Email Address",
       html: `
-         <p>Verify your email to complete your signup and login into your account</p>
-         <p>This link <b>expires in 6 hours</b>.</p>
-         <p>Click <a href="${currentUrl}api/useremail/confirm/${token}">here</a> to proceed.</p>
-       `,
+        <p>Hello ${name}</p>
+        <p>Thank you for signing up</p>
+        <p>To get you started, please click on the button below to confirm your email address</p>
+        <a href="${currentUrl}api/useremail/confirm/${token}" style="background-color: #4CAF50; color: white; padding: 10px 15px; text-align: center; text-decoration: none; display: inline-block;">Confirm Email</a>
+        <p>If you didn't submit your email address to join our community, kindly ignore this email.</p>
+      `,
     });
 
     // Return true to indicate that the email was successfully sent
@@ -59,4 +57,16 @@ export const doesUserExist = async (officialEmail) => {
     (await Company.findOne({ officialEmail }));
 
   return !!existingUser;
+};
+
+export const checkInternetConnection = () => {
+  return new Promise((resolve, reject) => {
+    dns.resolve("www.google.com", (err) => {
+      if (err) {
+        reject(new Error("No internet connection"));
+      } else {
+        resolve();
+      }
+    });
+  });
 };

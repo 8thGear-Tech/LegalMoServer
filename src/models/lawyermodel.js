@@ -21,6 +21,16 @@ const lawyerSchema = new Schema({
     type: String,
     allowNull: true,
   },
+  profileImage: {
+    public_id: {
+      type: String,
+      default: 'profileImage',
+    },
+    url: {
+      type: String,
+      default: 'https://res.cloudinary.com/drlfylzhf/image/upload/v1700055556/cld-sample.jpg',
+    }
+  },
   isEmailConfirmed: {
     type: Boolean,
     default: false,
@@ -44,6 +54,10 @@ const lawyerSchema = new Schema({
   },
   areasOfPractise: {
     type: [String],
+    enum : {
+      values: ['Maritime', 'International Trade and Investment', 'Tax Practise', 'Aviation and Space', 'Sports', 'Entertainment', 'Technology'],
+      message: '{VALUE} is not supported'
+    },
     required: false,
   },
   yourBio: {
@@ -97,6 +111,10 @@ const lawyerSchema = new Schema({
     type: String,
     default: "lawyer",
   },
+  admin:{
+    type: Schema.Types.ObjectId,
+    ref: 'Admin', 
+},
 });
 
 export const Lawyer = model("Lawyer", lawyerSchema);

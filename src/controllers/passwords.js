@@ -27,17 +27,18 @@ function passwordResetToken() {
 const passwordMatch = (password, passwordConfirm) => {
   return password === passwordConfirm;
 };
-async function sendResetPasswordEmail(userEmail, token) {
+async function sendResetPasswordEmail(userEmail, token, name) {
   try {
     await sendEmail({
       email: userEmail,
       subject: "Reset Password",
-      message: `Your password reset token is: ${token}`,
       html: `
-          <p>Your password reset token is:</p>
+          <h1>Hello ${name}</h1>
+          <p>Need to reset your password? Use OTP</p>
           <p><strong>${token}</strong></p>
-          <p>This token is required to reset your password. Please copy it and input it in the password reset form on our website.</p>
-          <p>This token <b>expires in 10 minutes</b>.</p>
+          <p>Click on the button below and enter the OTP above</p>
+          <button>google.com</button>
+          <p>If you did not forget your passwrd, you can ignore this email.</p>
         `,
     });
 
@@ -52,10 +53,8 @@ async function sendResetPasswordEmail(userEmail, token) {
 }
 
 export const forgotPassword = async (req, res) => {
-  let updatedUser; // Declare updatedUser variable
   try {
     const { officialEmail } = req.body;
-    // const { userType } = req.params;
 
     const admin = await getAdmin({ officialEmail });
     const company = await getCompany({ officialEmail });
@@ -95,48 +94,30 @@ export const forgotPassword = async (req, res) => {
     const token = passwordResetToken();
     const expires = new Date(Date.now() + 600000); // Token expires in 10 minutes
 
-    // Define an array of user models for different types
-    const userModels = [Admin, Company, Lawyer];
-
-    // Iterate over userModelArray and update the user
-    for (const userModel of userModels) {
-      // const updatedUser = await userModel
-      updatedUser = await userModel
-        .findOneAndUpdate(
-          { officialEmail },
-          { passwordToken: token, resetPasswordExpires: expires },
-          { new: true }
-        )
-        .exec();
-
-      if (updatedUser) {
-        break; // If user is found and updated, exit loop
-      }
-    }
+    // Find the user and update the token and expiration date in parallel
+    const updatedUser = await userModel
+      .findOneAndUpdate(
+        { officialEmail },
+        { passwordToken: token, resetPasswordExpires: expires },
+        { new: true }
+      )
+      .exec();
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
-    // // Find the user and update the token and expiration date in parallel
-    // const updatedUser = await userModel
-    //   .findOneAndUpdate(
-    //     { officialEmail },
-    //     { passwordToken: token, resetPasswordExpires: expires },
-    //     { new: true }
-    //   )
-    //   .exec();
-
-    // if (!updatedUser) {
-    //   return res.status(404).json({ message: "User not found" });
-    // }
 
     // Send the password reset email
-    const sendEmailPromise = sendResetPasswordEmail(officialEmail, token);
+    const sendEmailPromise = sendResetPasswordEmail(
+      officialEmail,
+      token,
+      updatedUser.name
+    );
 
     // Wait for both promises to resolve
     await Promise.all([sendEmailPromise]);
 
-    res.status(200).json({ message: "Password reset email sent", userType });
+    res.status(200).json({ message: "Password reset email sent" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });

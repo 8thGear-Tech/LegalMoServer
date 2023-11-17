@@ -17,6 +17,16 @@ const companySchema = new Schema({
     lowercase: true,
     unique: true,
   },
+  profileImage: {
+    public_id: {
+      type: String,
+      default: 'profileImage',
+    },
+    url: {
+      type: String,
+      default: 'https://res.cloudinary.com/drlfylzhf/image/upload/v1700055556/cld-sample.jpg',
+    }
+  },
   isEmailConfirmed: {
     type: Boolean,
     default: false,
@@ -76,6 +86,10 @@ const companySchema = new Schema({
     type: String,
     default: "company",
   },
+  admin:{
+    type: Schema.Types.ObjectId,
+    ref: 'Admin', 
+},
 });
 
 export const Company = model("Company", companySchema);

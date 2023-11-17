@@ -64,7 +64,7 @@ export const lawyerRegister = Joi.object().keys({
     )
     .required(),
   passwordConfirm: Joi.string().required(),
-  areasOfPractise: Joi.array().items(Joi.string()).required(),
+  areasOfPractise: Joi.array().items(Joi.string().valid('Maritime', 'International Trade and Investment', 'Tax Practise', 'Aviation and Space', 'Sports', 'Entertainment', 'Technology')).required(),
 });
 
 export const AdminLogin = Joi.object().keys({
@@ -120,27 +120,31 @@ export const ValidateResetPassword = Joi.object().keys({
 });
 
 export const validateLawyerProfileUpdate = Joi.object().keys({
-  officialEmail: Joi.string().email().trim().lowercase(),
-  scn: Joi.string(),
-  phoneNumber: Joi.string().pattern(/^[0-9]{11}$/).message('Invalid phone number format'),
-  yourBio: Joi.string(),
-  yearOfCall: Joi.string().pattern(/^[0-9]{4}$/).message('Invalid year format'),
-  alternativeEmailAddress: Joi.string().email().trim().lowercase(),
+  officialEmail: Joi.string().email().trim().lowercase().required(),
+  scn: Joi.string().required(),
+  phoneNumber: Joi.string().pattern(/^[0-9]{11}$/).message('Invalid phone number format').required(),
+  yourBio: Joi.string().required(),
+  yearOfCall: Joi.string().pattern(/^[0-9]{4}$/).message('Invalid year format').required(),
+  alternativeEmailAddress: Joi.string().email().trim().lowercase().required(),
+  areasOfPractise: Joi.array().items(Joi.string().valid('Maritime', 'International Trade and Investment', 'Tax Practise', 'Aviation and Space', 'Sports', 'Entertainment', 'Technology')),
+  profileImage: Joi.string()
 });
 
 export const validateAdminProfileUpdate = Joi.object().keys({
-  officialEmail: Joi.string().email().trim().lowercase().required(),
-  name: Joi.string().required(),
-  phoneNumber: Joi.string().pattern(/^[0-9]{11}$/).message('Invalid phone number format').required(),
+  officialEmail: Joi.string().email().trim().lowercase(),
+  name: Joi.string(),
+  phoneNumber: Joi.string().pattern(/^[0-9]{11}$/).message('Invalid phone number format'),
+  profileImage: Joi.string(),
 });
 
 export const validateCompanyProfileUpdate = Joi.object().keys({
-  officialEmail: Joi.string().email().trim().lowercase(),
-  website: Joi.string(),
-  yourBio: Joi.string(),
-  phoneNumber: Joi.string().pattern(/^[0-9]{11}$/).message('Invalid phone number format'),
-  officeAddress: Joi.string(),
-  alternativeEmailAddress: Joi.string().email().trim().lowercase(),
+  officialEmail: Joi.string().email().trim().lowercase().required(),
+  website: Joi.string().required(),
+  yourBio: Joi.string().required(),
+  phoneNumber: Joi.string().pattern(/^[0-9]{11}$/).message('Invalid phone number format').required(),
+  officeAddress: Joi.string().required(),
+  alternativeEmailAddress: Joi.string().email().trim().lowercase().required(),
+  profileImage: Joi.string(),
 });
 
 export const options = {

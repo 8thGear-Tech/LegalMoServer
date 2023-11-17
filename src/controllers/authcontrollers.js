@@ -14,6 +14,7 @@ import {
   emailConfirmationToken,
   passwordMatch,
   sendConfirmationEmail,
+  checkInternetConnection,
 } from "../utils/utils.js";
 import { sendEmail } from "../utils/email.js";
 import { doesUserExist } from "../utils/utils.js";
@@ -24,6 +25,9 @@ dotenv.config({ path: "./configenv.env" });
 
 export const adminSignup = async (req, res) => {
   try {
+    // Check if the user is connected to the internet
+    await checkInternetConnection();
+
     const validate = adminRegister.validate(req.body, options);
     if (validate.error) {
       const message = validate.error.details
@@ -57,6 +61,10 @@ export const adminSignup = async (req, res) => {
 
       // Hash password and create new admin
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth() + 1; // Add 1 because getMonth() is zero-based
+      const date = now.getDate();
 
       const newAdmin = new Admin({
         name: req.body.name,
@@ -74,13 +82,15 @@ export const adminSignup = async (req, res) => {
       // Send the Confirmation Email to Admin
       const emailSent = await sendConfirmationEmail(
         newAdmin.officialEmail,
-        token
+        token,
+        newAdmin.name
       );
 
       if (emailSent) {
         res.status(201).json({
           status: "success",
           message: "Confirmation email sent successfully",
+          createdAt: `${date}/${month}/${year}`,
           data: {
             admin: newAdmin,
           },
@@ -94,6 +104,13 @@ export const adminSignup = async (req, res) => {
       }
     }
   } catch (error) {
+    if (error.message === "No internet connection") {
+      return res.status(503).json({
+        status: "fail",
+        message: "No internet connection",
+      });
+    }
+
     res.status(500).json({
       status: "fail",
       message: "Internal server error",
@@ -103,6 +120,8 @@ export const adminSignup = async (req, res) => {
 };
 export const companySignup = async (req, res) => {
   try {
+    // Check if the user is connected to the internet
+    await checkInternetConnection();
     // Validate company inputs
     const validate = companyRegister.validate(req.body, options);
     if (validate.error) {
@@ -138,18 +157,31 @@ export const companySignup = async (req, res) => {
 
     // Hash password and create a new company
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1; // Add 1 because getMonth() is zero-based
+    const date = now.getDate();
+
     const newCompany = new Company({
-      companyName: req.body.companyName,
+      name: req.body.name,
       contactName: req.body.contactName,
       officialEmail: req.body.officialEmail,
       phoneNumber: req.body.phoneNumber,
       officeAddress: req.body.officeAddress,
-      cac: req.body.cac,
+      cacRegNo: req.body.cacRegNo,
       industry: req.body.industry,
       password: hashedPassword,
     });
 
     await newCompany.save();
+
+    // Find all admins and add the new company to their companies array
+    const admins = await Admin.find({});
+    for (let admin of admins) {
+      admin.companies.push(newCompany._id);
+      await admin.save();
+    }
+
     const { _id } = newCompany;
     const userType = "company";
     const token = emailConfirmationToken(_id, userType);
@@ -157,13 +189,15 @@ export const companySignup = async (req, res) => {
     // Send the Confirmation Email to Company
     const emailSent = await sendConfirmationEmail(
       newCompany.officialEmail,
-      token
+      token,
+      newCompany.name
     );
 
     if (emailSent) {
       res.status(201).json({
         status: "success",
         message: "Confirmation email sent successfully",
+        createdAt: `${date}/${month}/${year}`, // Format the date as MM/DD/YYYY
         data: {
           company: newCompany,
           youtoken: token,
@@ -177,6 +211,13 @@ export const companySignup = async (req, res) => {
       });
     }
   } catch (error) {
+    if (error.message === "No internet connection") {
+      return res.status(503).json({
+        status: "fail",
+        message: "No internet connection",
+      });
+    }
+
     res.status(500).json({
       status: "fail",
       message: error.message,
@@ -185,6 +226,9 @@ export const companySignup = async (req, res) => {
 };
 export const lawyerSignup = async (req, res) => {
   try {
+    // Check if the user is connected to the internet
+    await checkInternetConnection();
+
     // Validate lawyer inputs
     const validate = lawyerRegister.validate(req.body, options);
     if (validate.error) {
@@ -219,20 +263,32 @@ export const lawyerSignup = async (req, res) => {
     }
     // Hash password and create new lawyer
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1; // Add 1 because getMonth() is zero-based
+    const date = now.getDate();
+
     const newLawyer = new Lawyer({
       name: req.body.name,
-      phoneNumber: req.body.phoneNumber,
       officialEmail: req.body.officialEmail,
-      lawFirmName: req.body.lawFirmName,
-      lawFirmAddress: req.body.lawFirmAddress,
-      scn: req.body.scn,
-      cac: req.body.cac,
-      lawFirmAddress: req.body.lawFirmAddress,
-      lawFirmName: req.body.lawFirmName,
+      phoneNumber: req.body.phoneNumber,
       password: hashedPassword,
+      areasOfPractise: req.body.areasOfPractise,
+      scn: req.body.scn,
+      cacAccNo: req.body.cacAccNo,
+      lawFirmAddress: req.body.lawFirmAddress,
+      lawFirmName: req.body.lawFirmName,
     });
 
     await newLawyer.save();
+
+    // Find all admins and add the new company to their companies array
+    const admins = await Admin.find({});
+    for (let admin of admins) {
+      admin.lawyers.push(newLawyer._id);
+      await admin.save();
+    }
+
     const { _id } = newLawyer;
     const userType = "lawyer";
     const token = emailConfirmationToken(_id, userType);
@@ -240,17 +296,17 @@ export const lawyerSignup = async (req, res) => {
     // Send the Confirmation Email to Lawyer
     const emailSent = await sendConfirmationEmail(
       newLawyer.officialEmail,
-      token
+      token,
+      newLawyer.name
     );
 
     if (emailSent) {
       res.status(201).json({
         status: "success",
         message: "Confirmation email sent successfully",
+        createdAt: `${date}/${month}/${year}`, // Format the date as MM/DD/YYYY
         data: {
           lawyer: newLawyer,
-          token,
-          userType: newLawyer.userType,
         },
       });
     } else {
@@ -260,65 +316,98 @@ export const lawyerSignup = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).json({
+    if (error.message === "No internet connection") {
+      return res.status(503).json({
+        status: "fail",
+        message: "No internet connection",
+      });
+    }
+
+    res.status(500).json({
       status: "fail",
       message: "Internal server error",
     });
   }
 };
 async function handleGoogleLogin(req, res, user) {
-  // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
-  const _id = user.id;
-  const userType = user.userType;
-  const token = generateToken(_id, userType);
+  try {
+    // Check if the user is connected to the internet
+    await checkInternetConnection();
+    // Generate token and set a cookie with the token to be sent to the client and kept for 30 days
+    const _id = user.id;
+    const userType = user.userType;
+    const token = generateToken(_id, userType);
 
-  // Check if the user is logging in from a new device
-  const agent = useragent.parse(req.headers["user-agent"]);
-  const osName = agent.os.family;
-  const deviceVendor = agent.family;
-  const deviceModel = agent.major;
-  const device = `${osName} ${deviceVendor} ${deviceModel}`;
-  const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    // Check if the user is logging in from a new device
+    const agent = useragent.parse(req.headers["user-agent"]);
+    const osName = agent.os.family;
+    const deviceVendor = agent.family;
+    const deviceModel = agent.major;
+    const device = `${osName} ${deviceVendor} ${deviceModel}`;
+    const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
 
-  // Get the device's location
-  const response = await axios.get(`http://ip-api.com/json/${ip}`);
-  const location = response.data;
+    // Get the device's location
+    const response = await axios.get(`http://ip-api.com/json/${ip}`);
+    const location = response.data;
 
-  // Check if the location was successfully determined
-  let locationString;
-  if (location.status === "fail") {
-    locationString = "Unknown";
-  } else {
-    // Convert the location to a string
-    locationString = `${location.city}, ${location.country}`;
-  }
+    // Check if the location was successfully determined
+    let locationString;
+    if (location.status === "fail") {
+      locationString = "Unknown";
+    } else {
+      // Convert the location to a string
+      locationString = `${location.city}, ${location.country}`;
+    }
 
-  if (user.lastDevice !== device || user.lastLocation !== locationString) {
-    // Send email to the user
-    await sendEmail({
-      email: user.officialEmail,
-      subject: "New Login Notification",
-      html: `<p>A new login was detected for your account.</p>
-        <p>Device: ${device}</p>
-        <p>Location: ${locationString}</p>`,
+    if (user.lastDevice !== device || user.lastLocation !== locationString) {
+      // Send email to the user
+      await sendEmail({
+        email: user.officialEmail,
+        subject: "New Login Notification",
+        html: `<p>A new login was detected for your account.</p>
+                  <p>Device: ${device}</p>
+                  <p>Location: ${locationString}</p>`,
+      });
+      // Update the user's last device and IP
+      user.lastDevice = device;
+      user.lastLocation = locationString;
+      await user.save();
+    }
+
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1; // Add 1 because getMonth() is zero-based
+    const date = now.getDate();
+
+    req.headers.authorization = `Bearer ${token}`;
+    res
+      .cookie("jwt", token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 })
+      .status(200)
+      .json({
+        status: "success",
+        token,
+        createdAt: `${date}/${month}/${year}`,
+        data: { user },
+      });
+  } catch (error) {
+    if (error.message === "No internet connection") {
+      return res.status(503).json({
+        status: "fail",
+        message: "No internet connection",
+      });
+    }
+
+    // Handle other errors
+    res.status(500).json({
+      status: "fail",
+      message: error.message,
     });
-    // Update the user's last device and IP
-    user.lastDevice = device;
-    user.lastLocation = locationString;
-    await user.save();
   }
-  req.headers.authorization = `Bearer ${token}`;
-  res
-    .cookie("jwt", token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 })
-    .status(200)
-    .json({
-      status: "success",
-      token,
-      data: { user },
-    });
 }
 export const usersLogin = async (req, res) => {
   try {
+    // Check if the user is connected to the internet
+    await checkInternetConnection();
     // Handle Google SignIn
     if (
       req.url.startsWith("/auth/google/redirect/company?code=") ||
@@ -330,7 +419,6 @@ export const usersLogin = async (req, res) => {
     }
     // Manual Login
     const { officialEmail, password } = req.body;
-    // console.log("officialEmail:", officialEmail, "password:", password);
 
     if (!officialEmail || !password) {
       return res.status(400).json({
@@ -343,7 +431,6 @@ export const usersLogin = async (req, res) => {
     const admin = await getAdmin({ officialEmail });
     const company = await getCompany({ officialEmail });
     const lawyer = await getLawyer({ officialEmail });
-    // console.log("Lawyer from database:", lawyer);
 
     let user;
     let userType;
@@ -462,19 +549,35 @@ export const usersLogin = async (req, res) => {
       });
     }
   } catch (error) {
+    console.log(error);
+    if (error.message === "No internet connection") {
+      return res.status(503).json({
+        status: "fail",
+        message: "No internet connection",
+      });
+    }
+
     res.status(500).json({
       status: "fail",
-      message: error.message,
+      message: "Internal server error",
     });
   }
 };
 export const logoutUser = async (req, res) => {
   try {
+    // Check if the user is connected to the internet
+    await checkInternetConnection();
     // Clear the JWT token by setting an expired token
     res.cookie("jwt", "expired", { httpOnly: true, maxAge: 1 });
     // Redirect the user to the login page or any other page you prefer
     res.status(200).send("user logged out successfully from server");
   } catch (error) {
+    if (error.message === "No internet connection") {
+      return res.status(503).json({
+        status: "fail",
+        message: "No internet connection",
+      });
+    }
     res.status(500).json({ message: "Internal server error" });
   }
 };
