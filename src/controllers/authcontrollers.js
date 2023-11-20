@@ -476,6 +476,7 @@ export const usersLogin = async (req, res) => {
 
       // Get the device's location
       const response = await axios.get(`http://ip-api.com/json/${ip}`);
+      console.log(response.data);
       const location = response.data;
 
       // Check if the location was successfully determined
