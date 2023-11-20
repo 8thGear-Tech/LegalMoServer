@@ -12,12 +12,14 @@ dotenv.config({ path: "./configenv.env" });
 const jwtsecret = process.env.JWT_SECRET;
 export const generateToken = (id, userType) => {
   return jwt.sign({ id, userType }, jwtsecret, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
+    expiresIn: "7d",
+    // expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
 export const emailConfirmationToken = (id, userType) => {
   return jwt.sign({ id, userType }, jwtsecret, {
-    expiresIn: process.env.EMAIL_CONFIRMATION_EXPIRES_IN,
+    expiresIn: "7d",
+    // expiresIn: process.env.EMAIL_CONFIRMATION_EXPIRES_IN,
   });
 };
 export const passwordMatch = (password, passwordConfirm) => {
