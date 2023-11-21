@@ -97,14 +97,12 @@ export const getOneAdmin = async (req, res) => {
     const _id = req.query
     const id = _id._id
 
-    const admin = await Admin.findById(id).populate('companies lawyers'); // Populate the companies field
+    const admin = await Admin.findById(id).populate('companies lawyers');
      
-
     if (!admin) {
       return res.status(404).json({ error: 'Admin not found' });
     }
 
-   
     res.status(200).json({
       status: 'success',
       data: {
@@ -145,6 +143,11 @@ export const adminProfileUpdate = async (req, res) => {
     await checkInternetConnection();
 
     const _id = req.query
+
+      // Check if the request body is empty
+      if (Object.keys(req.body).length === 0 && req.body.constructor === Object && !req.file) {
+        return res.status(400).json({ message: 'No fields to update' });
+      }
   
     const validate = validateAdminProfileUpdate.validate(req.body, options);
     if (validate.error) {
@@ -155,12 +158,15 @@ export const adminProfileUpdate = async (req, res) => {
       });
     }
 
-    const imageUpload = await cloudinary.uploader.upload(req.file.path, {
-      folder: 'profileImages',
-      transformation: [
-        { width: 500, height: 500, crop: "limit" }
-      ]
-    });
+    let imageUpload;
+    if (req.file) {
+      imageUpload = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'profileImages',
+        transformation: [
+          { width: 500, height: 500, crop: "limit" }
+        ]
+      });
+    }
 
     const admin =  await Admin.findById(_id);
 
@@ -169,13 +175,15 @@ export const adminProfileUpdate = async (req, res) => {
     }
   
     // Update user profile with new information
-    admin.name = req.body.name;
-    admin.officialEmail = req.body.officialEmail,
-    admin.phoneNumber = req.body.phoneNumber,
-    admin.profileImage = {
-      url: imageUpload.secure_url,
-      publicId: imageUpload.public_id,
-    }
+    if (req.body.name) admin.name = req.body.name;
+    if (req.body.officialEmail) admin.officialEmail = req.body.officialEmail;
+    if (req.body.phoneNumber) admin.phoneNumber = req.body.phoneNumber;
+    if (imageUpload) {
+      admin.profileImage = {
+        url: imageUpload.secure_url,
+        publicId: imageUpload.public_id,
+      };
+    };
 
     // Save updated user to database
     await admin.save();
@@ -202,6 +210,11 @@ export const companyProfileUpdate = async (req, res) => {
 
     const _id = req.query
 
+      // Check if the request body is empty
+      if (Object.keys(req.body).length === 0 && req.body.constructor === Object && !req.file) {
+        return res.status(400).json({ message: 'No fields to update' });
+      }
+
     const validate = validateCompanyProfileUpdate.validate(req.body, options);
     if (validate.error) {
       const message = validate.error.details.map((detail) => detail.message).join(',');
@@ -210,13 +223,17 @@ export const companyProfileUpdate = async (req, res) => {
         message,
       });
     }
+    console.log(message)
 
-    const imageUpload = await cloudinary.uploader.upload(req.file.path, {
-      folder: 'profileImages',
-      transformation: [
-        { width: 500, height: 500, crop: "limit" }
-      ]
-    });
+    let imageUpload;
+    if (req.file) {
+      imageUpload = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'profileImages',
+        transformation: [
+          { width: 500, height: 500, crop: "limit" }
+        ]
+      });
+    }
 
     const company =  await Company.findById(_id);
 
@@ -225,15 +242,17 @@ export const companyProfileUpdate = async (req, res) => {
     }
 
     // Update user profile with new information
-    company.officialEmail = req.body.officialEmail;
-    company.website = req.body.website;
-    company.yourBio = req.body.yourBio;
-    company.phoneNumber = req.body.phoneNumber;
-    company.officeAddress = req.body.officeAddress;
-    company.alternativeEmailAddress = req.body.alternativeEmailAddress;
-    company.profileImage = {
-      url: imageUpload.secure_url,
-      publicId: imageUpload.public_id,
+    if (req.body.officialEmail) company.officialEmail = req.body.officialEmail;
+    if (req.body.website) company.website = req.body.website;
+    if (req.body.yourBio) company.yourBio = req.body.yourBio;
+    if (req.body.phoneNumber) company.phoneNumber = req.body.phoneNumber;
+    if (req.body.officeAddress) company.officeAddress = req.body.officeAddress;
+    if (req.body.alternativeEmailAddress) company.alternativeEmailAddress = req.body.alternativeEmailAddress;
+    if (imageUpload) {
+      company.profileImage = {
+        url: imageUpload.secure_url,
+        publicId: imageUpload.public_id,
+      }
     }
   
     // Save updated user to database
@@ -260,6 +279,11 @@ export const lawyerProfileUpdate = async (req, res) => {
 
     const _id = req.query
 
+      // Check if the request body is empty
+      if (Object.keys(req.body).length === 0 && req.body.constructor === Object && !req.file) {
+        return res.status(400).json({ message: 'No fields to update' });
+      }
+
     const validate = validateLawyerProfileUpdate.validate(req.body, options);
     if (validate.error) {
       const message = validate.error.details.map((detail) => detail.message).join(',');
@@ -269,12 +293,15 @@ export const lawyerProfileUpdate = async (req, res) => {
       });
     }
 
-    const imageUpload = await cloudinary.uploader.upload(req.file.path, {
-      folder: 'profileImages',
-      transformation: [
-        { width: 500, height: 500, crop: "limit" }
-      ]
-    });
+      let imageUpload;
+      if (req.file) {
+        imageUpload = await cloudinary.uploader.upload(req.file.path, {
+          folder: 'profileImages',
+          transformation: [
+            { width: 500, height: 500, crop: "limit" }
+          ]
+        });
+      }
 
     const lawyer =  await Lawyer.findById(_id);
 
@@ -282,17 +309,19 @@ export const lawyerProfileUpdate = async (req, res) => {
       return res.status(404).json({ message: 'Lawyer not found' });
     }
   
-    // Update user profile with new information
-      lawyer.officialEmail = req.body.officialEmail;
-      lawyer.scn = req.body.scn;
-      lawyer.yourBio = req.body.yourBio;
-      lawyer.yearOfCall = req.body.yearOfCall;
-      lawyer.phoneNumber = req.body.phoneNumber;
-      lawyer.alternativeEmailAddress = req.body.alternativeEmailAddress;
+        // Update user profile with new information
+    if (req.body.officialEmail) lawyer.officialEmail = req.body.officialEmail;
+    if (req.body.scn) lawyer.scn = req.body.scn;
+    if (req.body.yourBio) lawyer.yourBio = req.body.yourBio;
+    if (req.body.yearOfCall) lawyer.yearOfCall = req.body.yearOfCall;
+    if (req.body.phoneNumber) lawyer.phoneNumber = req.body.phoneNumber;
+    if (req.body.alternativeEmailAddress) lawyer.alternativeEmailAddress = req.body.alternativeEmailAddress;
+    if (imageUpload) {
       lawyer.profileImage = {
         url: imageUpload.secure_url,
         publicId: imageUpload.public_id,
       }
+    }
     // Save updated user to database
     await lawyer.save();
   
@@ -300,6 +329,7 @@ export const lawyerProfileUpdate = async (req, res) => {
     res.status(200).json({ message: 'Profile updated successfully', lawyer });
   }
   catch (error) {
+    console.log(error);
     if (error.message === 'No internet connection') {
       return res.status(503).json({
         status: 'fail',
