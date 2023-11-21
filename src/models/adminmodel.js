@@ -64,7 +64,9 @@ const adminSchema = new Schema({
     type: String,
     default: 'admin',
   },
-});
+},
+{ timestamps: true },
+);
 
 export const Admin = model('Admin', adminSchema);
 

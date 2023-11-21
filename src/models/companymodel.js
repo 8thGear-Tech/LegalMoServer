@@ -78,8 +78,10 @@ const companySchema = new Schema({
   admin:{
     type: Schema.Types.ObjectId,
     ref: 'Admin', 
+  },
 },
-});
+{ timestamps: true },
+);
 
 export const Company = model('Company', companySchema);
 
