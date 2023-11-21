@@ -114,7 +114,9 @@ const lawyerSchema = new Schema({
   admin:{
     type: Schema.Types.ObjectId,
     ref: 'Admin', 
-},
-});
+  },
+}, 
+{ timestamps: true }
+);
 
 export const Lawyer = model("Lawyer", lawyerSchema);

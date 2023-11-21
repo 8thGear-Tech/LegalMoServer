@@ -61,10 +61,6 @@ export const adminSignup = async (req, res) => {
 
       // Hash password and create new admin
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = now.getMonth() + 1; // Add 1 because getMonth() is zero-based
-      const date = now.getDate();
 
       const newAdmin = new Admin({
         name: req.body.name,
@@ -90,7 +86,6 @@ export const adminSignup = async (req, res) => {
         res.status(201).json({
           status: "success",
           message: "Confirmation email sent successfully",
-          createdAt: `${date}/${month}/${year}`,
           data: {
             admin: newAdmin,
           },
@@ -157,10 +152,6 @@ export const companySignup = async (req, res) => {
 
     // Hash password and create a new company
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth() + 1; // Add 1 because getMonth() is zero-based
-    const date = now.getDate();
 
     const newCompany = new Company({
       name: req.body.name,
@@ -197,7 +188,6 @@ export const companySignup = async (req, res) => {
       res.status(201).json({
         status: "success",
         message: "Confirmation email sent successfully",
-        createdAt: `${date}/${month}/${year}`, // Format the date as MM/DD/YYYY
         data: {
           company: newCompany,
           youtoken: token,
@@ -263,10 +253,6 @@ export const lawyerSignup = async (req, res) => {
     }
     // Hash password and create new lawyer
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth() + 1; // Add 1 because getMonth() is zero-based
-    const date = now.getDate();
 
     const newLawyer = new Lawyer({
       name: req.body.name,
@@ -304,7 +290,6 @@ export const lawyerSignup = async (req, res) => {
       res.status(201).json({
         status: "success",
         message: "Confirmation email sent successfully",
-        createdAt: `${date}/${month}/${year}`, // Format the date as MM/DD/YYYY
         data: {
           lawyer: newLawyer,
         },
