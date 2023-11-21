@@ -14,7 +14,9 @@ export const allJob = async (req, res) => {
         }
         const allJobsWithProducts = []
         for (const job of jobs){
-            const populatedJob = await job.populate('productId')
+            const populatedJob = await job.populate(
+              'productId companyId assignedTo'
+            );
             allJobsWithProducts.push(populatedJob)
         }
         return res.status(200).send(allJobsWithProducts)

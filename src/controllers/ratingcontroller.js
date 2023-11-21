@@ -76,7 +76,6 @@ export const updateRating = async (req, res) => {
     
 };
 
-
 export const deleteRating = async (req, res) => {
     const companyExists = await Company.findById(req.userId)
     if(!companyExists){
