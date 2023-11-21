@@ -9,27 +9,30 @@ import { sendEmail } from "../utils/email.js";
 export const allJob = async (req, res) => {
   try {
     const jobs = await Job.find();
-    return res.status(200).send(jobs);
+    if (!jobs || jobs.length === 0) {
+      return res.status(404).json({ error: "No jobs found" });
+    }
+    const allJobsWithProducts = [];
+    for (const job of jobs) {
+      const populatedJob = await job.populate("productId companyId assignedTo");
+      allJobsWithProducts.push(populatedJob);
+    }
+    return res.status(200).send(allJobsWithProducts);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// export const companyProfile = async (req, res) => {
-//   try {
-//     const company = await Company.findById(req.params.id);
-//     res.status(200).json({ company });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
 export const singleJob = async (req, res) => {
-  const jobId = req.params.id;
-  // const jobId = req.params.jobId;
+  const jobId = req.params.jobId;
   try {
     const job = await Job.findById(jobId);
+    if (!job || job.length === 0) {
+      return res.status(404).json({ error: "No jobs found" });
+    }
     if (job) {
-      res.status(200).json(job);
+      const jobWithProduct = await job.populate("productId");
+      res.status(200).json(jobWithProduct);
     } else {
       res.send(null);
       console.log("Job not found");
