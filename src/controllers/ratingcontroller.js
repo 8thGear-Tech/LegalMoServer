@@ -18,7 +18,13 @@ export const addRating = async (req, res) => {
   });
   try {
     await rating.save();
-    res.status(201).json(rating);
+    const userRating = await Rating.findById(rating._id);
+    if (!userRating || userRating.length === 0) {
+      res.status(200).json({ message: "NO RATING" });
+      return;
+    }
+    const ratingWithComany = await userRating.populate("companyId productId");
+    res.status(201).json(ratingWithComany);
   } catch (error) {
     res.status(409).json({ message: error.message });
   }
@@ -49,7 +55,7 @@ export const getRating = async (req, res) => {
       res.status(200).json({ message: "NO RATING" });
       return;
     }
-    const ratingWithComany = await rating.populate("companyId");
+    const ratingWithComany = await rating.populate("companyId productId");
     res.status(200).json(ratingWithComany);
   } catch (error) {
     res.status(404).json({ message: error.message });
@@ -76,7 +82,13 @@ export const updateRating = async (req, res) => {
       _id: id,
     };
     await Rating.findByIdAndUpdate(id, updatedRating, { new: true });
-    res.status(200).json(updatedRating);
+    const userRating = await Rating.findById(updatedRating._id);
+    if (!userRating || userRating.length === 0) {
+      res.status(200).json({ message: "NO RATING" });
+      return;
+    }
+    const ratingWithComany = await userRating.populate("companyId productId");
+    res.status(201).json(ratingWithComany);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
