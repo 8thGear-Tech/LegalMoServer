@@ -75,7 +75,13 @@ export const updateRating = async (req, res) => {
     // if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No rating with id: ${id}`);
     const updatedRating = { companyId, productId, reviewTitle, review, status, _id: id };
     await Rating.findByIdAndUpdate(id, updatedRating, { new: true });
-    res.status(200).json(updatedRating);
+    const userRating = await Rating.findById(updatedRating._id);
+    if (!userRating || userRating.length === 0) {
+      res.status(200).json({ message: 'NO RATING' });
+      return;
+    }
+    const ratingWithComany = await userRating.populate('companyId productId');
+    res.status(201).json(ratingWithComany);
     } catch (error) {
         res.status(404).json({ message: error.message });   
     }
