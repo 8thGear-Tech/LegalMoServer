@@ -326,6 +326,8 @@ export const lawyerProfileUpdate = async (req, res) => {
     if (req.body.yourBio) lawyer.yourBio = req.body.yourBio;
     if (req.body.yearOfCall) lawyer.yearOfCall = req.body.yearOfCall;
     if (req.body.phoneNumber) lawyer.phoneNumber = req.body.phoneNumber;
+    if (req.body.areasOfPractise)
+      lawyer.areasOfPractise = req.body.areasOfPractise;
     if (req.body.alternativeEmailAddress)
       lawyer.alternativeEmailAddress = req.body.alternativeEmailAddress;
     if (imageUpload) {
