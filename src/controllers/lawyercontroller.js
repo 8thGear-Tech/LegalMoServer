@@ -67,33 +67,31 @@ export const editPaymentDetails = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
 export const sendOTP = async (req, res) => {
-    const lawyerExists = await Lawyer.findById(req.userId)
-    if(!lawyerExists){
-        res.status(404).send({message : "Unauthorized!, You must be a lawyer"})
-        return
-    }
-    try {
-        const lawyer = await Lawyer.findById(req.userId);
-        const OTP = Math.floor(100000 + Math.random() * 900000);
-        console.log(OTP);
-        await sendEmail({
-            email: lawyer.officialEmail,
-            subject: 'OTP for updating payment details',
-            message: `Your OTP is ${OTP}`,
-            html: ` <p>Your OTP is ${OTP}</p>`
-      });
-        await Lawyer.findByIdAndUpdate(req.userId, {
-            updateOTP: OTP,
-        });
-        res.status(200).json({ message: 'OTP sent successfully' });
-        return
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-    };
-
+  const lawyerExists = await Lawyer.findById(req.userId);
+  if (!lawyerExists) {
+    res.status(404).send({ message: 'Unauthorized!, You must be a lawyer' });
+    return;
+  }
+  try {
+    const lawyer = await Lawyer.findById(req.userId);
+    const OTP = Math.floor(100000 + Math.random() * 900000);
+    console.log(OTP);
+    await sendEmail({
+      email: lawyer.officialEmail,
+      subject: 'OTP for updating payment details',
+      message: `Your OTP is ${OTP}`,
+      html: ` <p>Your OTP is ${OTP}</p>`,
+    });
+    await Lawyer.findByIdAndUpdate(req.userId, {
+      updateOTP: OTP,
+    });
+    res.status(200).json({ message: 'OTP sent successfully' });
+    return;
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 export const confirmOTP = async(req, res) => {
     const lawyerExists = await Lawyer.findById(req.userId)
     if(!lawyerExists){
