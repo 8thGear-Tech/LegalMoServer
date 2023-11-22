@@ -2,58 +2,64 @@ import { Rating } from "../models/ratingmodel.js";
 import { Company } from '../models/companymodel.js';
 
 export const addRating = async (req, res) => {
-    const companyExists = await Company.findById(req.userId)
-    if(!companyExists){
-        res.status(404).send({message : "Unauthorized!, You must be a company"})
-        return
+  const companyExists = await Company.findById(req.userId);
+  if (!companyExists) {
+    res.status(404).send({ message: 'Unauthorized!, You must be a company' });
+    return;
+  }
+  const companyId = req.userId;
+  const { productId, reviewTitle, review, status } = req.body;
+  const rating = new Rating({
+    companyId,
+    productId,
+    review,
+    status,
+    reviewTitle,
+  });
+  try {
+    await rating.save();
+    const userRating = await Rating.findById(rating._id);
+    if (!userRating || userRating.length === 0) {
+      res.status(200).json({ message: 'NO RATING' });
+      return;
     }
-    const companyId = req.userId
-    const { productId,reviewTitle, review, status } = req.body;
-    const rating = new Rating({
-        companyId,
-        productId,
-        review,
-        status,
-        reviewTitle
-    });
-    try {
-        await rating.save();
-        res.status(201).json(rating);
-    } catch (error) {
-        res.status(409).json({ message: error.message });
-    }
-    };
+    const ratingWithComany = await userRating.populate('companyId productId');
+    res.status(201).json(ratingWithComany);
+  } catch (error) {
+    res.status(409).json({ message: error.message });
+  }
+};
 
 export const getRatings = async (req, res) => {
-    try {
-        const ratings = await Rating.find();
-        if(!ratings || ratings.length === 0){
-            res.status(200).json({message : "NO RATING"});
-            return
-        }
-        const allRatings = []
-        for (const rating of ratings){
-            const populatedRating = await rating.populate('companyId')
-            allRatings.push(populatedRating)
-        }
-        return res.status(200).send(allRatings)
-    } catch (error) {
-        res.status(404).json({ message: error.message });
+  try {
+    const ratings = await Rating.find();
+    if (!ratings || ratings.length === 0) {
+      res.status(200).json({ message: 'NO RATING' });
+      return;
     }
+    const allRatings = [];
+    for (const rating of ratings) {
+      const populatedRating = await rating.populate('companyId');
+      allRatings.push(populatedRating);
+    }
+    return res.status(200).send(allRatings);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
 };
 
 export const getRating = async (req, res) => {
-    try {
-        const rating = await Rating.findById(req.params.id);
-        if(!rating || rating.length === 0){
-            res.status(200).json({message : "NO RATING"});
-            return
-        }
-        const ratingWithComany = await rating.populate('companyId')
-        res.status(200).json(ratingWithComany);
-    } catch (error) {
-        res.status(404).json({ message: error.message });
+  try {
+    const rating = await Rating.findById(req.params.id);
+    if (!rating || rating.length === 0) {
+      res.status(200).json({ message: 'NO RATING' });
+      return;
     }
+    const ratingWithComany = await rating.populate('companyId productId');
+    res.status(200).json(ratingWithComany);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
 };
 
 export const updateRating = async (req, res) => {
