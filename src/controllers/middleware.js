@@ -9,7 +9,6 @@ export const authenticateUser = async (req, res, next) => {
     await checkInternetConnection();
 
     const token = req.headers.authorization?.split(' ')[1] || req.cookies.token;
-    console.log("Token:", token);
     
     if (!token) {
       console.log("No Token");
@@ -17,7 +16,6 @@ export const authenticateUser = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, jwtsecret);
-    console.log("Decoded Token:", decoded);
     
     req.userId = decoded.id;
     req.userType = decoded.userType;
@@ -180,6 +178,7 @@ export const updateProfileBasedOnUser = async (req, res, next) => {
         });
     }   
   } catch (error) {
+    console.log(error);
     if (error.message === 'No internet connection') {
       return res.status(503).json({
         status: 'fail',
