@@ -34,8 +34,6 @@ async function sendResetPasswordEmail(userEmail, token, name) {
           <h1>Hello ${name}</h1>
           <p>Need to reset your password? Use OTP</p>
           <p><strong>${token}</strong></p>
-          <p>Click on the button below and enter the OTP above</p>
-          <button>google.com</button>
           <p>If you did not forget your passwrd, you can ignore this email.</p>
         `,
       });
@@ -58,17 +56,17 @@ export const forgotPassword = async (req, res) => {
       const company = await getCompany({ officialEmail });
       const lawyer = await getLawyer({ officialEmail });
        
-      let user;
+      let UserModel;
       let userType;
   
       if (company) {
-        user = company;
+        UserModel = Company;
         userType = 'company';
       } else if (admin) {
-        user = admin;
+        UserModel = Admin;
         userType = 'admin';
       } else if (lawyer) {
-        user = lawyer;
+        UserModel = Lawyer;
         userType = 'lawyer';
       } else {
         return res.status(400).json({  
@@ -91,7 +89,7 @@ export const forgotPassword = async (req, res) => {
       const expires = new Date(Date.now() + 600000); // Token expires in 10 minutes
   
       // Find the user and update the token and expiration date in parallel
-      const updatedUser = await userModel.findOneAndUpdate(
+      const updatedUser = await UserModel.findOneAndUpdate(
         { officialEmail },
         { passwordToken: token, resetPasswordExpires: expires },
         { new: true }
