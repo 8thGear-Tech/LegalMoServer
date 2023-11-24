@@ -5,16 +5,16 @@ import { sendEmail } from "../utils/email.js";
 export const addPaymentDetails = async (req, res) => {
   const lawyerExists = await Lawyer.findById(req.userId);
   if (!lawyerExists) {
-    res.status(404).send({ message: "Unauthorized!, You must be a lawyer" });
+    res.status(404).send({ message: 'Unauthorized!, You must be a lawyer' });
     return;
   }
   const validate = paymentDetail.validate(req.body, options);
   if (validate.error) {
     const message = validate.error.details
       .map((detail) => detail.message)
-      .join(",");
+      .join(',');
     return res.status(400).send({
-      status: "fail",
+      status: 'fail',
       message,
     });
   }
@@ -24,7 +24,7 @@ export const addPaymentDetails = async (req, res) => {
     if (!isLawyerMailConfirmed.isEmailConfirmed) {
       res
         .status(401)
-        .send({ message: "Unauthorized!, Lawyer has not confirmed email" });
+        .send({ message: 'Unauthorized!, Lawyer has not confirmed email' });
       return;
     }
     const lawyer = await Lawyer.findByIdAndUpdate(req.userId, {
@@ -36,7 +36,8 @@ export const addPaymentDetails = async (req, res) => {
         },
       },
     });
-    res.status(200).json({ lawyer });
+    const lawyerUpdate = await Lawyer.findById(req.userId);
+    res.status(200).json({ lawyerUpdate });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -45,7 +46,7 @@ export const addPaymentDetails = async (req, res) => {
 export const editPaymentDetails = async (req, res) => {
   const lawyerExists = await Lawyer.findById(req.userId);
   if (!lawyerExists) {
-    res.status(404).send({ message: "Unauthorized!, You must be a lawyer" });
+    res.status(404).send({ message: 'Unauthorized!, You must be a lawyer' });
     return;
   }
   const { accountNumber, accountName, bank } = req.body;
@@ -59,16 +60,16 @@ export const editPaymentDetails = async (req, res) => {
         },
       },
     });
-    res.status(200).json({ lawyer });
+    const lawyerUpdate = await Lawyer.findById(req.userId);
+    res.status(200).json({ lawyerUpdate });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
-
 export const sendOTP = async (req, res) => {
   const lawyerExists = await Lawyer.findById(req.userId);
   if (!lawyerExists) {
-    res.status(404).send({ message: "Unauthorized!, You must be a lawyer" });
+    res.status(404).send({ message: 'Unauthorized!, You must be a lawyer' });
     return;
   }
   try {
@@ -77,20 +78,19 @@ export const sendOTP = async (req, res) => {
     console.log(OTP);
     await sendEmail({
       email: lawyer.officialEmail,
-      subject: "OTP for updating payment details",
+      subject: 'OTP for updating payment details',
       message: `Your OTP is ${OTP}`,
       html: ` <p>Your OTP is ${OTP}</p>`,
     });
     await Lawyer.findByIdAndUpdate(req.userId, {
       updateOTP: OTP,
     });
-    res.status(200).json({ message: "OTP sent successfully" });
+    res.status(200).json({ message: 'OTP sent successfully' });
     return;
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
-
 export const confirmOTP = async (req, res) => {
   const lawyerExists = await Lawyer.findById(req.userId);
   if (!lawyerExists) {
@@ -126,3 +126,4 @@ export const getPaymentDetails = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+  

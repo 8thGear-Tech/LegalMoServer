@@ -31,7 +31,9 @@ export const singleJob = async (req, res) => {
       return res.status(404).json({ error: "No jobs found" });
     }
     if (job) {
-      const jobWithProduct = await job.populate("productId");
+      const jobWithProduct = await job.populate(
+        "productId companyId assignedTo"
+      );
       res.status(200).json(jobWithProduct);
     } else {
       res.send(null);

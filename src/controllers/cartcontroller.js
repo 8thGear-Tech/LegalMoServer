@@ -62,6 +62,7 @@ export const addToCart = async (req, res) => {
         }, 0);
         cart.products[productIndex] = item;
         await cart.save();
+        const populateCart = await cart.populate("companyId productId");
         res.status(200).send(cart);
       } else {
         cart.products.push({ productId, quantity, price, detail });
@@ -71,6 +72,7 @@ export const addToCart = async (req, res) => {
         }, 0);
 
         await cart.save();
+        const populateCart = await cart.populate("companyId productId");
         res.status(200).send(cart);
       }
     } else {
@@ -80,14 +82,16 @@ export const addToCart = async (req, res) => {
           products: [{ productId, quantity, price, detail }],
           bill: quantity * price,
         });
-        return res.status(201).send(newCart);
+        const populateCart = await newCart.populate("companyId productId");
+        res.status(200).send(cart);
       } else {
         const newCart = await Cart.create({
           companyId,
           products: [{ productId, price, detail }],
           bill: price,
         });
-        return res.status(201).send(newCart);
+        const populateCart = await newCart.populate("companyId productId");
+        res.status(200).send(cart);
       }
     }
   } catch (error) {
@@ -119,6 +123,7 @@ export const getCart = async (req, res) => {
         res.json({ message: "Cart is Empty" });
         return;
       } else {
+        const populateCart = await cart.populate("companyId productId");
         res.status(200).send(cart);
       }
     } else {
