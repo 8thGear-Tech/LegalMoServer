@@ -12,11 +12,14 @@ export const adminRegister = Joi.object().keys({
     )
     .required(),
   passwordConfirm: Joi.string().required(),
-  phoneNumber: Joi.string().pattern(/^[0-9]{11}$/).message('Invalid phone number format').required(),
+  phoneNumber: Joi.string()
+    .pattern(/^[0-9]{11}$/)
+    .message("Invalid phone number format")
+    .required(),
 });
 
 export const companyRegister = Joi.object().keys({
-  companyName: Joi.string().required(),
+  name: Joi.string().required(),
   contactName: Joi.string().required(),
   phoneNumber: Joi.string()
     .pattern(/^[0-9]{11}$/)
@@ -64,7 +67,19 @@ export const lawyerRegister = Joi.object().keys({
     )
     .required(),
   passwordConfirm: Joi.string().required(),
-  areasOfPractise: Joi.array().items(Joi.string().valid('Maritime', 'International Trade and Investment', 'Tax Practise', 'Aviation and Space', 'Sports', 'Entertainment', 'Technology')).required(),
+  areasOfPractise: Joi.array()
+    .items(
+      Joi.string().valid(
+        "Maritime",
+        "International Trade and Investment",
+        "Tax Practise",
+        "Aviation and Space",
+        "Sports",
+        "Entertainment",
+        "Technology"
+      )
+    )
+    .required(),
 });
 
 export const AdminLogin = Joi.object().keys({
@@ -122,18 +137,34 @@ export const ValidateResetPassword = Joi.object().keys({
 export const validateLawyerProfileUpdate = Joi.object().keys({
   officialEmail: Joi.string().email().trim().lowercase(),
   scn: Joi.string(),
-  phoneNumber: Joi.string().pattern(/^[0-9]{11}$/).message('Invalid phone number format'),
+  phoneNumber: Joi.string()
+    .pattern(/^[0-9]{11}$/)
+    .message("Invalid phone number format"),
   yourBio: Joi.string(),
-  yearOfCall: Joi.string().pattern(/^[0-9]{4}$/).message('Invalid year format'),
+  yearOfCall: Joi.string()
+    .pattern(/^[0-9]{4}$/)
+    .message("Invalid year format"),
   alternativeEmailAddress: Joi.string().email().trim().lowercase(),
-  areasOfPractise: Joi.array().items(Joi.string().valid('Maritime', 'International Trade and Investment', 'Tax Practise', 'Aviation and Space', 'Sports', 'Entertainment', 'Technology')),
-  profileImage: Joi.string()
+  areasOfPractise: Joi.array().items(
+    Joi.string().valid(
+      "Maritime",
+      "International Trade and Investment",
+      "Tax Practise",
+      "Aviation and Space",
+      "Sports",
+      "Entertainment",
+      "Technology"
+    )
+  ),
+  profileImage: Joi.string(),
 });
 
 export const validateAdminProfileUpdate = Joi.object().keys({
   officialEmail: Joi.string().email().trim().lowercase(),
   name: Joi.string(),
-  phoneNumber: Joi.string().pattern(/^[0-9]{11}$/).message('Invalid phone number format'),
+  phoneNumber: Joi.string()
+    .pattern(/^[0-9]{11}$/)
+    .message("Invalid phone number format"),
   profileImage: Joi.string(),
 });
 
@@ -141,7 +172,9 @@ export const validateCompanyProfileUpdate = Joi.object().keys({
   officialEmail: Joi.string().email().trim().lowercase(),
   website: Joi.string(),
   yourBio: Joi.string(),
-  phoneNumber: Joi.string().pattern(/^[0-9]{11}$/).message('Invalid phone number format'),
+  phoneNumber: Joi.string()
+    .pattern(/^[0-9]{11}$/)
+    .message("Invalid phone number format"),
   officeAddress: Joi.string(),
   alternativeEmailAddress: Joi.string().email().trim().lowercase(),
   profileImage: Joi.string(),
