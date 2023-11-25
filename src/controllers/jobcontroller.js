@@ -8,16 +8,18 @@ import { sendEmail } from "../utils/email.js";
 //view al jobs for request products
 export const allJob = async (req, res) => {
   try {
-    const jobs = await Job.find();
+    const jobs = await Job.find().populate(
+      "productId companyId assignedTo appliedLawer"
+    );
     if (!jobs || jobs.length === 0) {
       return res.status(404).json({ error: "No jobs found" });
     }
-    const allJobsWithProducts = [];
-    for (const job of jobs) {
-      const populatedJob = await job.populate("productId companyId assignedTo");
-      allJobsWithProducts.push(populatedJob);
-    }
-    return res.status(200).send(allJobsWithProducts);
+    // const allJobsWithProducts = [];
+    // for (const job of jobs) {
+    //   const populatedJob = await job.populate('productId companyId assignedTo');
+    //   allJobsWithProducts.push(populatedJob);
+    // }
+    return res.status(200).send(jobs);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -26,15 +28,17 @@ export const allJob = async (req, res) => {
 export const singleJob = async (req, res) => {
   const jobId = req.params.jobId;
   try {
-    const job = await Job.findById(jobId);
+    const job = await Job.findById(jobId).populate(
+      "productId companyId assignedTo appliedLawer"
+    );
     if (!job || job.length === 0) {
       return res.status(404).json({ error: "No jobs found" });
     }
     if (job) {
-      const jobWithProduct = await job.populate(
-        "productId companyId assignedTo"
-      );
-      res.status(200).json(jobWithProduct);
+      //   const jobWithProduct = await job.populate(
+      //     'productId companyId assignedTo'
+      //   );
+      res.status(200).json(job);
     } else {
       res.send(null);
       console.log("Job not found");
@@ -78,18 +82,17 @@ export const assignJob = async (req, res) => {
 };
 
 export const assigned = async (req, res) => {
-  const isAdmin = await Admin.findById(req.userId);
-  if (!isAdmin) {
-    res.status(401).send({ message: "Unauthorized!, You must be an Admin" });
-    return;
-  }
   try {
-    const assignedJob = await Job.find({ assignedTo: { $ne: [] } });
-    if (assignJob) {
-      res.status(201).json(assignedJob);
-    } else {
+    const assignedJob = await Job.find({ assignedTo: { $ne: [] } }).populate(
+      "productId companyId assignedTo appliedLawer"
+    );
+    console.log(assignedJob.length);
+    if (!assignedJob || assignedJob.length === 0) {
       res.send(null);
       console.log("Nothing here");
+    } else {
+      //   const jobWithProduct = await assignedJob
+      res.status(200).json(assignedJob);
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -97,18 +100,18 @@ export const assigned = async (req, res) => {
 };
 
 export const unassigned = async (req, res) => {
-  const isAdmin = await Admin.findById(req.userId);
-  if (!isAdmin) {
-    res.status(401).send({ message: "Unauthorized!, You must be an Admin" });
-    return;
-  }
   try {
-    const unassignedJob = await Job.find({ assignedTo: [] });
-    if (unassignedJob) {
-      res.status(200).json(unassignedJob);
-    } else {
+    const unassignedJob = await Job.find({ assignedTo: [] }).populate(
+      "productId companyId assignedTo appliedLawer"
+    );
+    if (!unassignedJob || unassignedJob.length === 0) {
       res.send(null);
       console.log("No unnassignedJob");
+    } else {
+      //   const jobWithProduct = await unassignedJob.populate(
+      //     'productId companyId assignedTo'
+      //   );
+      res.status(200).json(unassignedJob);
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
