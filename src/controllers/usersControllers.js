@@ -233,7 +233,6 @@ export const companyProfileUpdate = async (req, res) => {
         message,
       });
     }
-    console.log(message);
 
     let imageUpload;
     if (req.file) {
@@ -270,6 +269,7 @@ export const companyProfileUpdate = async (req, res) => {
     // Return success response to client
     res.status(200).json({ message: "Profile updated successfully", company });
   } catch (error) {
+    console.log(error);
     if (error.message === "No internet connection") {
       return res.status(503).json({
         status: "fail",
