@@ -48,6 +48,28 @@ export const singleJob = async (req, res) => {
   }
 };
 
+export const addJobDetails = async (req, res) => {
+  const isAdmin = await Admin.findById(req.userId);
+  if (!isAdmin) {
+    res.status(401).send({ message: 'Unauthorized!, You must be an Admin' });
+    return;
+  }
+  const { detail, file } = req.body;
+  try {
+    const job = await Job.findByIdAndUpdate(
+      req.params.jobId,
+      { detail, file },
+      { new: true }
+    );
+    const populatedJob = await job.populate(
+      'productId companyId assignedTo appliedLawer'
+    );
+    res.status(201).json(populatedJob);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
 export const assignJob = async (req, res) => {
   const isAdmin = await Admin.findById(req.userId);
   if (!isAdmin) {
@@ -72,7 +94,10 @@ export const assignJob = async (req, res) => {
       job.assignedTo.push(lawyerId);
       job.status = "pending";
       await job.save();
-      return res.status(201).send(job);
+      const populateJob = job.populate(
+        'productId companyId assignedTo appliedLawer'
+      );
+      return res.status(201).send(populateJob);
     } else {
       return res.status(400).json({ error: "Unverified Lawyer" });
     }
@@ -139,7 +164,10 @@ export const removeLawyer = async (req, res) => {
     job.assignedTo = job.assignedTo.filter((id) => id.toString() != lawyerId);
     job.status = "unassigned";
     await job.save();
-    return res.status(201).send(job);
+    const populateJob = job.populate(
+      'productId companyId assignedTo appliedLawer'
+    );
+    return res.status(201).send(populateJob);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -178,7 +206,10 @@ export const completeJob = async (req, res) => {
     if (job) {
       job.status = "completed";
       await job.save();
-      res.status(200).json(job);
+      const populateJob = job.populate(
+        'productId companyId assignedTo appliedLawer'
+      );
+      return res.status(201).send(populateJob);
     } else {
       res.send(null);
       console.log("Job not found");
@@ -197,7 +228,10 @@ export const pendingJob = async (req, res) => {
   try {
     const pendingJob = await Job.find({ status: "pending" });
     if (pendingJob) {
-      res.status(200).json(pendingJob);
+      const populateJob = pendingJob.populate(
+        'productId companyId assignedTo appliedLawer'
+      );
+      return res.status(201).send(populateJob);
     } else {
       res.send(null);
       console.log("No pending job");
@@ -216,7 +250,10 @@ export const completedJob = async (req, res) => {
   try {
     const completedJob = await Job.find({ status: "completed" });
     if (completedJob) {
-      res.status(200).json(completedJob);
+      const populateJob = completedJob.populate(
+        'productId companyId assignedTo appliedLawer'
+      );
+      return res.status(200).send(populateJob);
     } else {
       res.send(null);
       console.log("No completed job");
@@ -232,7 +269,10 @@ export const viewJobDetails = async (req, res) => {
     const job = await Job.findById(jobId);
     const jobDetails = job.detail;
     if (job) {
-      res.status(200).json(jobDetails);
+      const populateJob = job.populate(
+        'productId companyId assignedTo appliedLawer'
+      );
+      return res.status(200).send(populateJob);
     } else {
       res.send(null);
       console.log("Job not found");
@@ -257,7 +297,10 @@ export const editJobDetails = async (req, res) => {
     if (job) {
       job.detail = detail;
       await job.save();
-      res.status(200).json(job);
+      const populateJob = job.populate(
+        'productId companyId assignedTo appliedLawer'
+      );
+      return res.status(201).send(populateJob);
     } else {
       res.send(null);
       console.log("Job not found");
@@ -286,7 +329,10 @@ export const companyPendingJob = async (req, res) => {
       return;
     }
 
-    res.status(200).json(companyPendingJob);
+    const populateJob = companyPendingJob.populate(
+      'productId companyId assignedTo appliedLawer'
+    );
+    return res.status(200).send(populateJob);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -308,7 +354,10 @@ export const companyCompletedJob = async (req, res) => {
       console.log("No completed job");
       return;
     }
-    res.status(200).json(companyCompletedJob);
+    const populateJob = companyCompletedJob.populate(
+      'productId companyId assignedTo appliedLawer'
+    );
+    return res.status(200).send(populateJob);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -329,7 +378,10 @@ export const lawyerAssignedJobs = async (req, res) => {
       console.log("No assigned job");
       return;
     }
-    res.status(200).json(lawyerAssignedJob);
+    const populateJob = lawyerAssignedJob.populate(
+      'productId companyId assignedTo appliedLawer'
+    );
+    return res.status(200).send(populateJob);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -351,7 +403,10 @@ export const lawyerPendingJobs = async (req, res) => {
       console.log("No pending job");
       return;
     }
-    res.status(200).json(lawyerPendingJob);
+    const populateJob = lawyerPendingJob.populate(
+      'productId companyId assignedTo appliedLawer'
+    );
+    return res.status(200).send(populateJob);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -444,7 +499,10 @@ export const applyForJob = async (req, res) => {
     if (lawyer.verified == true) {
       job.appliedLawer.push(req.userId);
       await job.save();
-      return res.status(201).send(job);
+      const populateJob = job.populate(
+        'productId companyId assignedTo appliedLawer'
+      );
+      return res.status(200).send(populateJob);
     } else {
       return res.status(400).json({ error: "Unverified Lawyer" });
     }

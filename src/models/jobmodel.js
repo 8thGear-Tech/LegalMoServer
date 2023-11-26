@@ -16,6 +16,9 @@ const jobSchema = new Schema(
     detail: {
       type: String,
     },
+    file: {
+      type: String,
+    },
     status: {
       type: String,
       enum: {
