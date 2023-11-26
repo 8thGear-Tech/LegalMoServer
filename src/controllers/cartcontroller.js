@@ -24,10 +24,7 @@ export const addToCart = async (req, res) => {
   }
   console.log(req.body);
   const companyId = req.userId;
-  const { productId, quantity, detail } = req.body;
-  // if(!quantity){
-  //     let quantity = 1
-  // }
+  const { productId, quantity, file, detail } = req.body;
   try {
     const cart = await Cart.findOne({ companyId });
     console.log(cart);
@@ -63,9 +60,9 @@ export const addToCart = async (req, res) => {
         cart.products[productIndex] = item;
         await cart.save();
         const populateCart = await cart.populate('companyId products');
-        res.status(200).send(cart);
+        res.status(200).send(populateCart);
       } else {
-        cart.products.push({ productId, quantity, price, detail });
+        cart.products.push({ productId, quantity, price, file, detail });
         console.log(cart);
         cart.bill = cart.products.reduce((acc, curr) => {
           return acc + curr.quantity * curr.price;
@@ -73,25 +70,25 @@ export const addToCart = async (req, res) => {
 
         await cart.save();
         const populateCart = await cart.populate('companyId products');
-        res.status(200).send(cart);
+        res.status(200).send(populateCart);
       }
     } else {
       if (quantity > 0) {
         const newCart = await Cart.create({
           companyId,
-          products: [{ productId, quantity, price, detail }],
+          products: [{ productId, quantity, price, file, detail }],
           bill: quantity * price,
         });
         const populateCart = await newCart.populate('companyId products');
-        res.status(200).send(cart);
+        res.status(200).send(populateCart);
       } else {
         const newCart = await Cart.create({
           companyId,
-          products: [{ productId, price, detail }],
+          products: [{ productId, price, file, detail }],
           bill: price,
         });
         const populateCart = await newCart.populate('companyId products');
-        res.status(200).send(cart);
+        res.status(200).send(populateCart);
       }
     }
   } catch (error) {
@@ -205,11 +202,10 @@ export const checkout = async (req, res) => {
     console.log(cart.products)
     try {
         if(cart.products){
-            cart.products.forEach(job => {
+            cart.products.forEach(product => {
                 const jobs = new Job({
-                    companyId : cart.companyId,
-                    productId: job.productId,
-                    detail:job.detail  
+                    companyId : req.userId,
+                    productId: product.productId,  
                 })
                 jobs.save().then(() => {
                     console.log(saved)

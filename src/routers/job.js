@@ -1,12 +1,33 @@
 import express from "express";
-import { assignJob, assigned,singleJob, unassigned, allJob, removeLawyer, deleteJob,completeJob, viewJobDetails, editJobDetails, pendingJob, completedJob, companyCompletedJob, companyPendingJob, lawyerAssignedJobs, lawyerPendingJobs, lawyerCompletedJobs, requestMoreJobDetails, applyForJob } from "../controllers/jobcontroller.js";
-import { authToken } from "../middleware/AuthToken.js";
-
+import {
+  assignJob,
+  addJobDetails,
+  assigned,
+  singleJob,
+  unassigned,
+  allJob,
+  removeLawyer,
+  deleteJob,
+  completeJob,
+  viewJobDetails,
+  editJobDetails,
+  pendingJob,
+  completedJob,
+  companyCompletedJob,
+  companyPendingJob,
+  lawyerAssignedJobs,
+  lawyerPendingJobs,
+  lawyerCompletedJobs,
+  requestMoreJobDetails,
+  applyForJob,
+} from '../controllers/jobcontroller.js';
+import { authToken } from '../middleware/AuthToken.js';
 
 const router = express.Router();
 
-router.get('/api/jobs',authToken, allJob)
-router.get('/api/job/:jobId',authToken, singleJob)
+router.get('/api/jobs', authToken, allJob);
+router.get('/api/job/:jobId', authToken, singleJob);
+router.post('/api/job/:jobId', authToken, addJobDetails);
 router.post('/api/assign',authToken, assignJob)
 router.get('/api/assign', authToken, assigned)
 router.get('/api/unassign', authToken, unassigned)
