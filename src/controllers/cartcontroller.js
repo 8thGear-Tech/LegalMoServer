@@ -7,140 +7,130 @@ import sendEmail from '../utils/email.js';
 
 
 export const addToCart = async (req, res) => {
-    const companyExists = await Company.findById(req.userId)
-    if(!companyExists){
-        res.status(404).send({message : "Unauthorized!, You must be a company"})
-        return
+  const companyExists = await Company.findById(req.userId);
+  if (!companyExists) {
+    res.status(404).send({ message: 'Unauthorized!, You must be a company' });
+    return;
+  }
+  const validate = addCart.validate(req.body, options);
+  if (validate.error) {
+    const message = validate.error.details
+      .map((detail) => detail.message)
+      .join(',');
+    return res.status(400).send({
+      status: 'fail',
+      message,
+    });
+  }
+  console.log(req.body);
+  const companyId = req.userId;
+  const { productId, quantity, detail } = req.body;
+  // if(!quantity){
+  //     let quantity = 1
+  // }
+  try {
+    const cart = await Cart.findOne({ companyId });
+    console.log(cart);
+    const product = await Product.findById(productId);
+    if (!product) {
+      res.status(404).send({ message: 'product not found' });
+      return;
     }
-    const validate = addCart.validate(req.body, options)
-        if (validate.error) {
-            const message = validate.error.details.map((detail) => detail.message).join(',');
-                return res.status(400).send({
-                    status: 'fail',
-                    message,
-                })
-          }
-          console.log(req.body)
-    const companyId = req.userId
-    const { productId, quantity, detail } = req.body;
-    if(!quantity){
-        let quantity = 1
-    }
-    try {
-        const cart = await Cart.findOne({companyId})
-        console.log(cart)
-        const product = await Product.findById(productId)
-        if(!product){
-            res.status(404).send({message : "product not found"})
-            return
+
+    const price = product.productPrice;
+    const name = product.productName;
+    if (cart) {
+      const productIndex = cart.products.findIndex(
+        (product) => product.productId == productId
+      );
+      console.log(productIndex);
+      if (productIndex > -1) {
+        let item = cart.products[productIndex];
+        if (!quantity) {
+          let quantity = 1;
         }
-       
-        const price = product.productPrice;
-        const name = product.productName;
-        
-        if(cart){
-            const productIndex = cart.products.findIndex((product)=> product.productId == productId)
-            console.log(productIndex)
-            if(productIndex > -1){
-                let item = cart.products[productIndex]
-                if(!quantity){
-                    let quantity = 1
-                }
-                console.log(item)
-                if(quantity > 0){
-                    item.quantity = quantity
-                }
-                else{
-                    item.quantity = item.quantity + 1
-                }
-                // item.quantity += quantity
-                item.detail = detail
-                cart.bill = cart.products.reduce((acc, curr) => {
-                    return acc + curr.quantity * curr.price
-                }, 0)        
-                cart.products[productIndex] = item
-                await cart.save()
-                const populateCart = await cart.populate('companyId productId');
-                res.status(200).send(cart)
-            }
-            else{
-                cart.products.push({productId, quantity, price, detail})
-                console.log(cart)
-                cart.bill = cart.products.reduce((acc, curr) => {
-                    return acc + curr.quantity * curr.price
-                }, 0)
-
-                await cart.save()
-                const populateCart = await cart.populate('companyId productId');
-                res.status(200).send(cart)
-            }
-        }      
-        else{
-            if(quantity > 0){
-                const newCart = await Cart.create({
-                    companyId,
-                    products: [{ productId, quantity, price, detail}],
-                    bill : quantity * price ,
-                });
-                const populateCart = await newCart.populate('companyId productId');
-                res.status(200).send(cart)
-            }
-            else{
-                const newCart = await Cart.create({
-                    companyId,
-                    products: [{ productId,price, detail}],
-                    bill : price ,
-                });
-                const populateCart = await newCart.populate('companyId productId');
-                res.status(200).send(cart)
-            }
-           
+        // console.log(item)
+        if (quantity > 0) {
+          item.quantity = quantity;
+        } else {
+          item.quantity = item.quantity + 1;
         }
+        // item.quantity += quantity
+        item.detail = detail;
+        cart.bill = cart.products.reduce((acc, curr) => {
+          return acc + curr.quantity * curr.price;
+        }, 0);
+        cart.products[productIndex] = item;
+        await cart.save();
+        const populateCart = await cart.populate('companyId products');
+        res.status(200).send(cart);
+      } else {
+        cart.products.push({ productId, quantity, price, detail });
+        console.log(cart);
+        cart.bill = cart.products.reduce((acc, curr) => {
+          return acc + curr.quantity * curr.price;
+        }, 0);
 
-    } catch (error) {
-        console.log(error)
-        res.status(500).send("something went wrong") 
+        await cart.save();
+        const populateCart = await cart.populate('companyId products');
+        res.status(200).send(cart);
+      }
+    } else {
+      if (quantity > 0) {
+        const newCart = await Cart.create({
+          companyId,
+          products: [{ productId, quantity, price, detail }],
+          bill: quantity * price,
+        });
+        const populateCart = await newCart.populate('companyId products');
+        res.status(200).send(cart);
+      } else {
+        const newCart = await Cart.create({
+          companyId,
+          products: [{ productId, price, detail }],
+          bill: price,
+        });
+        const populateCart = await newCart.populate('companyId products');
+        res.status(200).send(cart);
+      }
     }
-
-
-}
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('something went wrong');
+  }
+};
 
 export const getAllCart = async (req, res) => {
-    try{
-        const cart = await Cart.find();
-        res.status(200).json({cart})
-    }
-    catch(err){
-        res.status(500).json({error :  err.message})
-    }
-}
+  try {
+    const cart = await Cart.find();
+    res.status(200).json({ cart });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 export const getCart = async (req, res) => {
-    const companyExists = await Company.findById(req.userId)
-    if(!companyExists){
-        res.status(404).send({message : "Unauthorized!, You must be a company"})
-        return
+  const companyExists = await Company.findById(req.userId);
+  if (!companyExists) {
+    res.status(404).send({ message: 'Unauthorized!, You must be a company' });
+    return;
+  }
+  try {
+    const cart = await Cart.find({ companyId: req.userId }).populate(
+      'companyId products'
+    );
+    if (cart === null || cart.length == undefined) {
+      res
+        .status(400)
+        .send('Nothing in the Cart, Pls add some products to your cart');
+      return;
     }
-    const cart = await Cart.find({companyId: req.userId})
-    try {
-        console.log(cart.length)
-       if(cart){
-        if(cart.length == 0 || cart == null || cart.length == undefined){
-            res.json({message: 'Cart is Empty'})
-            return
-        }else{
-            const populateCart = await cart.populate('companyId productId');
-            res.status(200).send(cart)
-        }   
-       }
-       else{
-        res.json({message: 'Cart is Empty'})
-        console.log("Nothing in the cart")
-       }
-    } catch (error) {
-        res.status(500).send("something went wrong")
-    }
-}
+    res.status(200).json(cart);
+    return;
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
 
 export const deleteCart = async (req, res) => {
     const companyExists = await Company.findById(req.userId)
