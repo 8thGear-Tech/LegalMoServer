@@ -151,7 +151,9 @@ export const removeLawyer = async (req, res) => {
   }
   const { lawyerId, jobId } = req.body;
   try {
-    const job = await Job.findById(jobId);
+    const job = await Job.findById(jobId).populate(
+      'productId companyId assignedTo appliedLawer'
+    );
     const lawyer = await Lawyer.findById(lawyerId);
     if (!job || !lawyer) {
       return res.status(400).json({ error: 'Job or Lawyer not found' });
@@ -164,10 +166,7 @@ export const removeLawyer = async (req, res) => {
     job.assignedTo = job.assignedTo.filter((id) => id.toString() != lawyerId);
     job.status = 'unassigned';
     await job.save();
-    const populateJob = job.populate(
-      'productId companyId assignedTo appliedLawer'
-    );
-    return res.status(201).send(populateJob);
+    return res.status(201).send(job);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -202,14 +201,13 @@ export const completeJob = async (req, res) => {
   }
   const jobId = req.params.jobId;
   try {
-    const job = await Job.findById(jobId);
+    const job = await Job.findById(jobId).populate(
+      'productId companyId assignedTo appliedLawer'
+    );
     if (job) {
       job.status = 'completed';
       await job.save();
-      const populateJob = job.populate(
-        'productId companyId assignedTo appliedLawer'
-      );
-      return res.status(201).send(populateJob);
+      return res.status(201).send(job);
     } else {
       res.send(null);
       console.log('Job not found');
@@ -220,18 +218,12 @@ export const completeJob = async (req, res) => {
 };
 
 export const pendingJob = async (req, res) => {
-  const isAdmin = await Admin.findById(req.userId);
-  if (!isAdmin) {
-    res.status(401).send({ message: 'Unauthorized!, You must be an Admin' });
-    return;
-  }
   try {
-    const pendingJob = await Job.find({ status: 'pending' });
+    const pendingJob = await Job.find({ status: 'pending' }).populate(
+      'productId companyId assignedTo appliedLawer'
+    );
     if (pendingJob) {
-      const populateJob = pendingJob.populate(
-        'productId companyId assignedTo appliedLawer'
-      );
-      return res.status(201).send(populateJob);
+      return res.status(201).send(pendingJob);
     } else {
       res.send(null);
       console.log('No pending job');
@@ -248,12 +240,11 @@ export const completedJob = async (req, res) => {
     return;
   }
   try {
-    const completedJob = await Job.find({ status: 'completed' });
+    const completedJob = await Job.find({ status: 'completed' }).populate(
+      'productId companyId assignedTo appliedLawer'
+    );
     if (completedJob) {
-      const populateJob = completedJob.populate(
-        'productId companyId assignedTo appliedLawer'
-      );
-      return res.status(200).send(populateJob);
+      return res.status(200).send(completedJob);
     } else {
       res.send(null);
       console.log('No completed job');
@@ -266,13 +257,12 @@ export const completedJob = async (req, res) => {
 export const viewJobDetails = async (req, res) => {
   const jobId = req.params.jobId;
   try {
-    const job = await Job.findById(jobId);
+    const job = await Job.findById(jobId).populate(
+      'productId companyId assignedTo appliedLawer'
+    );
     const jobDetails = job.detail;
     if (job) {
-      const populateJob = job.populate(
-        'productId companyId assignedTo appliedLawer'
-      );
-      return res.status(200).send(populateJob);
+      return res.status(200).send(job);
     } else {
       res.send(null);
       console.log('Job not found');
@@ -293,14 +283,13 @@ export const editJobDetails = async (req, res) => {
   const jobId = req.params.jobId;
   const { detail } = req.body;
   try {
-    const job = await Job.findById(jobId);
+    const job = await Job.findById(jobId).populate(
+      'productId companyId assignedTo appliedLawer'
+    );
     if (job) {
       job.detail = detail;
       await job.save();
-      const populateJob = job.populate(
-        'productId companyId assignedTo appliedLawer'
-      );
-      return res.status(201).send(populateJob);
+      return res.status(201).send(job);
     } else {
       res.send(null);
       console.log('Job not found');
@@ -322,17 +311,15 @@ export const companyPendingJob = async (req, res) => {
     const companyPendingJob = await Job.find({
       companyId: req.userId,
       status: 'pending',
-    });
+    }).populate(
+      'productId companyId assignedTo appliedLawer'
+    );
     if (!companyPendingJob || companyPendingJob.length === undefined) {
       res.status(404).send({ message: 'No pending job' });
       console.log('No pending job');
       return;
     }
-
-    const populateJob = companyPendingJob.populate(
-      'productId companyId assignedTo appliedLawer'
-    );
-    return res.status(200).send(populateJob);
+    return res.status(200).send(companyPendingJob);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -348,16 +335,15 @@ export const companyCompletedJob = async (req, res) => {
     const companyCompletedJob = await Job.find({
       companyId: req.userId,
       status: 'completed',
-    });
+    }).populate(
+      'productId companyId assignedTo appliedLawer'
+    );
     if (!companyCompletedJob || companyCompletedJob.length === undefined) {
       res.status(404).send({ message: 'No completed job' });
       console.log('No completed job');
       return;
     }
-    const populateJob = companyCompletedJob.populate(
-      'productId companyId assignedTo appliedLawer'
-    );
-    return res.status(200).send(populateJob);
+    return res.status(200).send(companyCompletedJob);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -372,16 +358,15 @@ export const lawyerAssignedJobs = async (req, res) => {
     return;
   }
   try {
-    const lawyerAssignedJob = await Job.find({ assignedTo: req.userId });
+    const lawyerAssignedJob = await Job.find({
+      assignedTo: req.userId,
+    }).populate('productId companyId assignedTo appliedLawer');
     if (!lawyerAssignedJob || lawyerAssignedJob.length === undefined) {
       res.status(404).send({ message: 'No assigned job' });
       console.log('No assigned job');
       return;
     }
-    const populateJob = lawyerAssignedJob.populate(
-      'productId companyId assignedTo appliedLawer'
-    );
-    return res.status(200).send(populateJob);
+    return res.status(200).send(lawyerAssignedJob);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -397,16 +382,15 @@ export const lawyerPendingJobs = async (req, res) => {
     const lawyerPendingJob = await Job.find({
       assignedTo: req.userId,
       status: 'pending',
-    });
+    }).populate(
+      'productId companyId assignedTo appliedLawer'
+    );
     if (!lawyerPendingJob || lawyerPendingJob.length === undefined) {
       res.status(404).send({ message: 'No pending job' });
       console.log('No pending job');
       return;
     }
-    const populateJob = lawyerPendingJob.populate(
-      'productId companyId assignedTo appliedLawer'
-    );
-    return res.status(200).send(populateJob);
+    return res.status(200).send(lawyerPendingJob);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -422,7 +406,9 @@ export const lawyerCompletedJobs = async (req, res) => {
     const lawyerCompletedJob = await Job.find({
       assignedTo: req.userId,
       status: 'completed',
-    });
+    }).populate(
+      'productId companyId assignedTo appliedLawer'
+    );
     if (!lawyerCompletedJob || lawyerCompletedJob.length === undefined) {
       res.status(404).send({ message: 'No pending job' });
       console.log('No pending job');
@@ -477,7 +463,9 @@ export const applyForJob = async (req, res) => {
     return;
   }
   try {
-    const job = await Job.findById(req.params.jobId);
+    const job = await Job.findById(req.params.jobId).populate(
+      'productId companyId assignedTo appliedLawer'
+    );
     if (!job) {
       return res.status(400).json({ error: 'Job not found' });
     }
@@ -499,10 +487,7 @@ export const applyForJob = async (req, res) => {
     if (lawyer.verified == true) {
       job.appliedLawer.push(req.userId);
       await job.save();
-      const populateJob = job.populate(
-        'productId companyId assignedTo appliedLawer'
-      );
-      return res.status(200).send(populateJob);
+      return res.status(200).send(job);
     } else {
       return res.status(400).json({ error: 'Unverified Lawyer' });
     }
