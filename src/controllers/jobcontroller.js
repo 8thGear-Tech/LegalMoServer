@@ -475,15 +475,15 @@ export const applyForJob = async (req, res) => {
         .json({ error: 'You are already assigned to this job' });
     }
 
-    if (
-      job.assignedTo.length !== 0 ||
-      job.assignedTo !== null ||
-      job.assignedTo.length !== undefined
-    ) {
-      return res
-        .status(400)
-        .json({ error: 'A Lawyer already assigned to this job' });
-    }
+    // if (
+    //   job.assignedTo.length !== 0 ||
+    //   job.assignedTo !== null ||
+    //   job.assignedTo.length !== undefined
+    // ) {
+    //   return res
+    //     .status(400)
+    //     .json({ error: 'A Lawyer already assigned to this job' });
+    // }
     if (lawyer.verified == true) {
       job.appliedLawer.push(req.userId);
       await job.save();
