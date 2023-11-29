@@ -56,11 +56,13 @@ export const addJobDetails = async (req, res) => {
   }
   const { detail, file } = req.body;
   try {
-    const job = await Job.findByIdAndUpdate(
-      req.params.jobId,
-      { detail, file },
-      { new: true }
-    );
+    const job = await Job.findById(req.params.jobId);
+    if (!job) {
+      return res.status(400).json({ error: "Job not found" });
+    }
+    job.adminDetail = detail;
+    job.adminFile = file;
+    await job.save();
     const populatedJob = await job.populate(
       "productId companyId assignedTo appliedLawer"
     );
@@ -272,29 +274,26 @@ export const viewJobDetails = async (req, res) => {
 };
 
 export const editJobDetails = async (req, res) => {
-  const lawyerExists = await Lawyer.findById(req.userId);
-  if (lawyerExists) {
-    res
-      .status(401)
-      .send({ message: "Unauthorized!, You must be a company or Admin" });
+  const isAdmin = await Admin.findById(req.userId);
+  if (!isAdmin) {
+    res.status(401).send({ message: "Unauthorized!, You must be an Admin" });
     return;
   }
-  const jobId = req.params.jobId;
-  const { detail } = req.body;
+  const { detail, file } = req.body;
   try {
-    const job = await Job.findById(jobId).populate(
+    const job = await Job.findById(req.params.jobId);
+    if (!job) {
+      return res.status(400).json({ error: "Job not found" });
+    }
+    job.adminDetail = detail;
+    job.adminFile = file;
+    await job.save();
+    const populatedJob = await job.populate(
       "productId companyId assignedTo appliedLawer"
     );
-    if (job) {
-      job.detail = detail;
-      await job.save();
-      return res.status(201).send(job);
-    } else {
-      res.send(null);
-      console.log("Job not found");
-    }
+    res.status(201).json(populatedJob);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).send(error);
   }
 };
 
@@ -341,6 +340,38 @@ export const companyCompletedJob = async (req, res) => {
     return res.status(200).send(companyCompletedJob);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+export const companyEditJobDetails = async (req, res) => {
+  const companyExists = await Company.findById(req.userId);
+  if (!companyExists) {
+    res.status(401).send({ message: "Unauthorized!, You must be a company" });
+    return;
+  }
+  const { detail, file } = req.body;
+  try {
+    const job = await Job.findById(req.params.jobId);
+    if (!job) {
+      return res.status(400).json({ error: "Job not found" });
+    }
+    if (job.companyId != req.userId) {
+      return res
+        .status(401)
+        .send({
+          message:
+            "Unauthorized!, You must be the company that created this job",
+        });
+    }
+    job.companyDetail = detail;
+    job.companyFile = file;
+    await job.save();
+    const populatedJob = await job.populate(
+      "productId companyId assignedTo appliedLawer"
+    );
+    res.status(201).json(populatedJob);
+  } catch (error) {
+    res.status(500).send(error);
   }
 };
 

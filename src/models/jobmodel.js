@@ -13,10 +13,16 @@ const jobSchema = new Schema(
       ref: 'Product',
       required: true,
     },
-    detail: {
+    companyDetail: {
       type: String,
     },
-    file: {
+    companyFile: {
+      type: String,
+    },
+    adminDetail: {
+      type: String,
+    },
+    adminFile: {
       type: String,
     },
     status: {

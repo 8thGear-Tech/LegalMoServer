@@ -15,6 +15,7 @@ import {
   completedJob,
   companyCompletedJob,
   companyPendingJob,
+  companyEditJobDetails,
   lawyerAssignedJobs,
   lawyerPendingJobs,
   lawyerCompletedJobs,
