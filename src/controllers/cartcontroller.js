@@ -222,6 +222,8 @@ export const checkout = async (req, res) => {
           productId: product.productId,
           companyDetail: product.detail,
           companyFile: product.file,
+          adminDetail: '',
+          adminFile: '',
         });
         jobs
           .save()
