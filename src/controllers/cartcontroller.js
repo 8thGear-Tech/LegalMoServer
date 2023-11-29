@@ -54,12 +54,16 @@ export const addToCart = async (req, res) => {
         }
         // item.quantity += quantity
         item.detail = detail;
+        item.file = file;
+
         cart.bill = cart.products.reduce((acc, curr) => {
           return acc + curr.quantity * curr.price;
         }, 0);
         cart.products[productIndex] = item;
         await cart.save();
-        const populateCart = await cart.populate('companyId products');
+        const populateCart = await cart.populate(
+          'companyId products.productId'
+        );
         res.status(200).send(populateCart);
       } else {
         cart.products.push({ productId, quantity, price, file, detail });
@@ -69,7 +73,9 @@ export const addToCart = async (req, res) => {
         }, 0);
 
         await cart.save();
-        const populateCart = await cart.populate('companyId products');
+        const populateCart = await cart.populate(
+          'companyId products.productId'
+        );
         res.status(200).send(populateCart);
       }
     } else {
@@ -79,7 +85,9 @@ export const addToCart = async (req, res) => {
           products: [{ productId, quantity, price, file, detail }],
           bill: quantity * price,
         });
-        const populateCart = await newCart.populate('companyId products');
+        const populateCart = await newCart.populate(
+          'companyId products.productId'
+        );
         res.status(200).send(populateCart);
       } else {
         const newCart = await Cart.create({
@@ -87,7 +95,9 @@ export const addToCart = async (req, res) => {
           products: [{ productId, price, file, detail }],
           bill: price,
         });
-        const populateCart = await newCart.populate('companyId products');
+        const populateCart = await newCart.populate(
+          'companyId products.productId'
+        );
         res.status(200).send(populateCart);
       }
     }
@@ -114,7 +124,7 @@ export const getCart = async (req, res) => {
   }
   try {
     const cart = await Cart.find({ companyId: req.userId }).populate(
-      'companyId products'
+      'companyId products.productId'
     );
     if (cart === null || cart.length == undefined) {
       res
