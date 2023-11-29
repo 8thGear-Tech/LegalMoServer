@@ -41,6 +41,11 @@ router.get("/job-api/viewjobdetails/:jobId", authToken, viewJobDetails);
 router.put("/job-api/editjobdetails/:jobId", authToken, editJobDetails);
 router.get("/job-api/company/completedjobs", authToken, companyCompletedJob);
 router.get("/job-api/company/pendingjobs", authToken, companyPendingJob);
+router.put(
+  "/job-api/company/editjobdetails/:jobId",
+  authToken,
+  companyEditJobDetails
+);
 router.get("/job-api/lawyer/assignedjobs", authToken, lawyerAssignedJobs);
 router.get("/job-api/lawyer/pendingjobs", authToken, lawyerPendingJobs);
 router.get("/job-api/lawyer/completedjobs", authToken, lawyerCompletedJobs);
