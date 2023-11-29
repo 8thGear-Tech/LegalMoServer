@@ -199,9 +199,8 @@ export const completeJob = async (req, res) => {
     res.status(401).send({ message: "Unauthorized!, You must be an Admin" });
     return;
   }
-  const jobId = req.params.jobId;
   try {
-    const job = await Job.findById(jobId).populate(
+    const job = await Job.findById(req.params.jobId).populate(
       "productId companyId assignedTo appliedLawer"
     );
     if (job) {
@@ -467,15 +466,15 @@ export const applyForJob = async (req, res) => {
         .json({ error: "You are already assigned to this job" });
     }
 
-    if (
-      job.assignedTo.length !== 0 ||
-      job.assignedTo !== null ||
-      job.assignedTo.length !== undefined
-    ) {
-      return res
-        .status(400)
-        .json({ error: "A Lawyer already assigned to this job" });
-    }
+    // if (
+    //   job.assignedTo.length !== 0 ||
+    //   job.assignedTo !== null ||
+    //   job.assignedTo.length !== undefined
+    // ) {
+    //   return res
+    //     .status(400)
+    //     .json({ error: 'A Lawyer already assigned to this job' });
+    // }
     if (lawyer.verified == true) {
       job.appliedLawer.push(req.userId);
       await job.save();
