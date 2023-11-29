@@ -199,9 +199,8 @@ export const completeJob = async (req, res) => {
     res.status(401).send({ message: 'Unauthorized!, You must be an Admin' });
     return;
   }
-  const jobId = req.params.jobId;
   try {
-    const job = await Job.findById(jobId).populate(
+    const job = await Job.findById(req.params.jobId).populate(
       'productId companyId assignedTo appliedLawer'
     );
     if (job) {

@@ -35,7 +35,7 @@ router.delete('/api/removelawyer', authToken, removeLawyer)
 router.delete('/api/deletejob', authToken, deleteJob)
 router.get('/api/pendingjobs', authToken, pendingJob)
 router.get('/api/completedjobs', authToken, completedJob)
-router.put('/api/completejob',authToken, completeJob)
+router.put('/api/completejob/:jobId', authToken, completeJob);
 router.get('/api/viewjobdetails/:jobId',authToken, viewJobDetails)
 router.put('/api/editjobdetails/:jobId',authToken, editJobDetails)
 router.get('/api/company/completedjobs',authToken, companyCompletedJob)
