@@ -356,12 +356,9 @@ export const companyEditJobDetails = async (req, res) => {
       return res.status(400).json({ error: "Job not found" });
     }
     if (job.companyId != req.userId) {
-      return res
-        .status(401)
-        .send({
-          message:
-            "Unauthorized!, You must be the company that created this job",
-        });
+      return res.status(401).send({
+        message: "Unauthorized!, You must be the company that created this job",
+      });
     }
     job.companyDetail = detail;
     job.companyFile = file;
