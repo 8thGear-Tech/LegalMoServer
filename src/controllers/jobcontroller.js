@@ -472,10 +472,12 @@ export const requestMoreJobDetails = async (req, res) => {
         message: `Kindly updated the description of this product you bought: ${jobUrl}`,
         html: `<p>The lawyer working on the product you bought need some information on it </b> </p><p> ${detail} </b>.</p> <p>Click <a href=${jobUrl}> to update the description of this product you bought</p>`,
       });
-      res.send({ message: 'Mail sent' });
+      job.lawyerRequestedDetail = detail;
+      await job.save();
+      res.status(201).send({ message: 'Mail sent' });
       return;
     } else {
-      res.send(null);
+      res.status(400).send(null);
       console.log('Job not found');
       return;
     }

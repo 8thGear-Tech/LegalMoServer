@@ -25,6 +25,9 @@ const jobSchema = new Schema(
     adminFile: {
       type: String,
     },
+    lawyerRequestedDetail: {
+      type: String,
+    },
     status: {
       type: String,
       enum: {
