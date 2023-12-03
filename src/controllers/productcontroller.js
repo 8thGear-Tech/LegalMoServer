@@ -24,25 +24,25 @@ export const create = async (req, res) => {
   }
 
   //new
-  // const productUpload = await cloudinary.uploader.upload(req.file.path);
+  const productUpload = await cloudinary.uploader.upload(req.file.path);
   // Upload the file to Cloudinary while preserving the filename and generating a unique public ID
-  const productUpload = await cloudinary.uploader.upload(req.file.path, {
-    use_filename: true, // Preserve original filename
-    public_id: (filename) => {
-      const timestamp = Date.now();
-      return `${filename}-${timestamp}`; // Generates unique public ID based on filename and timestamp
-    },
-    secure_url: {
-      template: `https://res.cloudinary.com/${
-        cloudinary.config().cloud_name
-      }/${(file) => file.public_id}.${(file) => file.format}`, // Use the public_id and format properties of the uploaded file
-    },
-    // secure_url: {
-    //   template: `https://res.cloudinary.com/${cloudinary.config().cloud_name}/${
-    //     productUpload.public_id
-    //   }${req.file.extension}`,
-    // },
-  });
+  // const productUpload = await cloudinary.uploader.upload(req.file.path, {
+  //   use_filename: true, // Preserve original filename
+  //   public_id: (filename) => {
+  //     const timestamp = Date.now();
+  //     return `${filename}-${timestamp}`; // Generates unique public ID based on filename and timestamp
+  //   },
+  //   secure_url: {
+  //     template: `https://res.cloudinary.com/${
+  //       cloudinary.config().cloud_name
+  //     }/${(file) => file.public_id}.${(file) => file.format}`, // Use the public_id and format properties of the uploaded file
+  //   },
+  // secure_url: {
+  //   template: `https://res.cloudinary.com/${cloudinary.config().cloud_name}/${
+  //     productUpload.public_id
+  //   }${req.file.extension}`,
+  // },
+  // });
 
   const {
     productName,
@@ -64,7 +64,7 @@ export const create = async (req, res) => {
         adminId,
         // productImage,
         productImage: productUpload.secure_url,
-        productImage_id: productUpload.public_id,
+        // productImage_id: productUpload.public_id,
       });
       if (product) {
         return res.status(201).json({
