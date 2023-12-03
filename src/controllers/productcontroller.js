@@ -28,7 +28,7 @@ export const create = async (req, res) => {
   // Upload the file to Cloudinary while preserving the filename and generating a unique public ID
   const productUpload = await cloudinary.uploader.upload(req.file.path, {
     use_filename: true, // Preserve original filename
-    public_id: (filename) => {
+    productImage_id: (filename) => {
       const timestamp = Date.now();
       return `${filename}-${timestamp}`; // Generates unique public ID based on filename and timestamp
     },
