@@ -32,11 +32,11 @@ export const create = async (req, res) => {
       const timestamp = Date.now();
       return `${filename}-${timestamp}`; // Generates unique public ID based on filename and timestamp
     },
-    secure_url: {
-      template: `https://res.cloudinary.com/${
-        cloudinary.config().cloud_name
-      }/${public_id}${req.file.extension}`,
-    },
+    // secure_url: {
+    //   template: `https://res.cloudinary.com/${
+    //     cloudinary.config().cloud_name
+    //   }/${public_id}${req.file.extension}`,
+    // },
   });
 
   const {
@@ -46,6 +46,9 @@ export const create = async (req, res) => {
     // productImage
   } = req.body;
   const adminId = req.userId;
+  const secure_url = `https://res.cloudinary.com/${
+    cloudinary.config().cloud_name
+  }/${productUpload.public_id}.${req.file.format}`;
   // const _id = adminId;
   // const adminExists = await Admin.findOne({ _id });
   const adminExists = await Admin.findById(adminId);
@@ -58,7 +61,8 @@ export const create = async (req, res) => {
         productDescription,
         adminId,
         // productImage,
-        productImage: productUpload.secure_url,
+        productImage: secure_url,
+        // productImage: productUpload.secure_url,
         productImage_id: productUpload.public_id,
       });
       if (product) {
