@@ -458,6 +458,11 @@ export const requestMoreJobDetails = async (req, res) => {
   const { detail } = req.body;
   try {
     const job = await Job.findById(jobId);
+    if (!job.assignedTo.includes(req.userId)) {
+      return res
+        .status(400)
+        .json({ error: 'You are not assigned to this job' });
+    }
     if (job) {
       // const companyId = job.companyId.toHexString()
       // console.log(companyId)
