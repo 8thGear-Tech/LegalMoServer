@@ -35,7 +35,7 @@ export const create = async (req, res) => {
     secure_url: {
       template: `https://res.cloudinary.com/${
         cloudinary.config().cloud_name
-      }/${public_id}${req.file.extension}`,
+      }/${productImage_id}${req.file.extension}`,
     },
   });
 
