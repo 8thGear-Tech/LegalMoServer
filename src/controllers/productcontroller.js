@@ -33,10 +33,15 @@ export const create = async (req, res) => {
       return `${filename}-${timestamp}`; // Generates unique public ID based on filename and timestamp
     },
     secure_url: {
-      template: `https://res.cloudinary.com/${cloudinary.config().cloud_name}/${
-        productUpload.public_id
-      }${req.file.extension}`,
+      template: `https://res.cloudinary.com/${
+        cloudinary.config().cloud_name
+      }/${(file) => file.public_id}.${(file) => file.format}`, // Use the public_id and format properties of the uploaded file
     },
+    // secure_url: {
+    //   template: `https://res.cloudinary.com/${cloudinary.config().cloud_name}/${
+    //     productUpload.public_id
+    //   }${req.file.extension}`,
+    // },
   });
 
   const {
