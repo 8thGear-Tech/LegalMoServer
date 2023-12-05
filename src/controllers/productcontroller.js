@@ -25,10 +25,20 @@ export const create = async (req, res) => {
 
   const upload = async (req, res) => {
     const { originalname } = req.file;
-    const publicId = `${Date.now()}-${originalname}`;
+    const fileExtension = originalname.split(".").pop(); // Extracting file extension
+    const publicId = `${Date.now()}-${originalname.replace(
+      `.${fileExtension}`,
+      ""
+    )}`;
     const uploadResult = await cloudinary.uploader.upload(req.file.path, {
       public_id: publicId,
     });
+
+    // const { originalname } = req.file;
+    // const publicId = `${Date.now()}-${originalname}`;
+    // const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+    //   public_id: publicId,
+    // });
 
     if (uploadResult.secure_url) {
       // Use the secure_url to save the product image URL to the database
