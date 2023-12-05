@@ -23,26 +23,24 @@ export const create = async (req, res) => {
     });
   }
 
-  //new
-  const productUpload = await cloudinary.uploader.upload(req.file.path);
-  // Upload the file to Cloudinary while preserving the filename and generating a unique public ID
-  // const productUpload = await cloudinary.uploader.upload(req.file.path, {
-  //   use_filename: true, // Preserve original filename
-  //   public_id: (filename) => {
-  //     const timestamp = Date.now();
-  //     return `${filename}-${timestamp}`; // Generates unique public ID based on filename and timestamp
-  //   },
-  //   secure_url: {
-  //     template: `https://res.cloudinary.com/${
-  //       cloudinary.config().cloud_name
-  //     }/${(file) => file.public_id}.${(file) => file.format}`, // Use the public_id and format properties of the uploaded file
-  //   },
-  // secure_url: {
-  //   template: `https://res.cloudinary.com/${cloudinary.config().cloud_name}/${
-  //     productUpload.public_id
-  //   }${req.file.extension}`,
-  // },
-  // });
+  const upload = async (req, res) => {
+    const { originalname } = req.file;
+    const publicId = `${Date.now()}-${originalname}`;
+    const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+      public_id: publicId,
+    });
+
+    if (uploadResult.secure_url) {
+      // Use the secure_url to save the product image URL to the database
+      req.body.productImage = uploadResult.secure_url;
+
+      // Proceed with creating the product using the rest of the code
+    } else {
+      res.status(500).send({ error: "Failed to upload product image" });
+    }
+  };
+
+  await upload(req, res);
 
   const {
     productName,
@@ -62,9 +60,8 @@ export const create = async (req, res) => {
         productPrice,
         productDescription,
         adminId,
-        // productImage,
-        productImage: productUpload.secure_url,
-        // productImage_id: productUpload.public_id,
+
+        productImage: req.body.productImage,
       });
       if (product) {
         return res.status(201).json({
@@ -81,6 +78,92 @@ export const create = async (req, res) => {
     throw new Error("Admin doesn't Exist");
   }
 };
+// export const create = async (req, res) => {
+//   const validate = productcreation.validate(req.body, options);
+//   if (validate.error) {
+//     const message = validate.error.details
+//       .map((detail) => detail.message)
+//       .join(",");
+//     return res.status(400).send({
+//       status: "fail",
+//       message,
+//     });
+//   }
+
+//   //new
+//   const upload = async (req, res) => {
+//     const { originalname } = req.file;
+//     const publicId = `${Date.now()}-${originalname}`;
+//     const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+//       public_id: publicId,
+//     });
+
+//     if (uploadResult.secure_url) {
+//       // Use the secure_url to save the product image URL to the database
+//       req.body.productImage = uploadResult.secure_url;
+
+//       // Proceed with creating the product using the rest of the code
+//     } else {
+//       res.status(500).send({ error: "Failed to upload product image" });
+//     }
+//   };
+//   // const productUpload = await cloudinary.uploader.upload(req.file.path);
+//   // Upload the file to Cloudinary while preserving the filename and generating a unique public ID
+//   // const productUpload = await cloudinary.uploader.upload(req.file.path, {
+//   //   use_filename: true, // Preserve original filename
+//   //   public_id: (filename) => {
+//   //     const timestamp = Date.now();
+//   //     return `${filename}-${timestamp}`; // Generates unique public ID based on filename and timestamp
+//   //   },
+//   //   secure_url: {
+//   //     template: `https://res.cloudinary.com/${
+//   //       cloudinary.config().cloud_name
+//   //     }/${(file) => file.public_id}.${(file) => file.format}`, // Use the public_id and format properties of the uploaded file
+//   //   },
+//   // secure_url: {
+//   //   template: `https://res.cloudinary.com/${cloudinary.config().cloud_name}/${
+//   //     productUpload.public_id
+//   //   }${req.file.extension}`,
+//   // },
+//   // });
+
+//   const {
+//     productName,
+//     productPrice,
+//     productDescription,
+//     // productImage
+//   } = req.body;
+//   const adminId = req.userId;
+//   // const _id = adminId;
+//   // const adminExists = await Admin.findOne({ _id });
+//   const adminExists = await Admin.findById(adminId);
+//   console.log(adminExists);
+//   if (adminExists) {
+//     try {
+//       const product = await Product.create({
+//         productName,
+//         productPrice,
+//         productDescription,
+//         adminId,
+//         // productImage,
+//         productImage: productUpload.secure_url,
+//         // productImage_id: productUpload.public_id,
+//       });
+//       if (product) {
+//         return res.status(201).json({
+//           status: "success",
+//           data: product,
+//         });
+//       }
+//     } catch (error) {
+//       res.send(error);
+//       console.log(error);
+//     }
+//   } else {
+//     res.status(400);
+//     throw new Error("Admin doesn't Exist");
+//   }
+// };
 
 export const getProducts = async (req, res) => {
   try {
