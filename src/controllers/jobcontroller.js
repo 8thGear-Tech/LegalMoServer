@@ -99,6 +99,14 @@ export const assignJob = async (req, res) => {
       const populateJob = job.populate(
         "productId companyId assignedTo appliedLawer"
       );
+      const jobUrl = `http://api/job/:${jobId}`; //user/verify
+      const lawyerMail = lawyer.officialEmail;
+      await sendEmail({
+        email: lawyerMail,
+        subject: "Congratulation!!!, You have been assigned a Job",
+        message: `You have been assigned a job, click here: ${jobUrl} to view`,
+        html: `<p>Hello,</p><p>You hvae been assigned a job, click <a href=${jobUrl}> here </a> to view</p> <p>Warm Regards</p> <p>LegalMo</p>`,
+      });
       return res.status(201).send(populateJob);
     } else {
       return res.status(400).json({ error: "Unverified Lawyer" });
@@ -366,6 +374,15 @@ export const companyEditJobDetails = async (req, res) => {
     const populatedJob = await job.populate(
       "productId companyId assignedTo appliedLawer"
     );
+    const lawyer = await Company.findById(job.assignedTo[0]);
+    const jobUrl = `http://api/job/:${req.params.jobId}`; //user/verify
+    const lawyerMail = lawyer.officialEmail;
+    await sendEmail({
+      email: lawyerMail,
+      subject: "Job details have been updated",
+      message: `Job details have been updated: ${jobUrl} to view`,
+      html: `<p>Hello,</p><p>Job details have been updated, click <a href=${jobUrl}> here </a> to view</p> <p>Warm Regards</p> <p>LegalMo</p>`,
+    });
     res.status(201).json(populatedJob);
   } catch (error) {
     res.status(500).send(error);
