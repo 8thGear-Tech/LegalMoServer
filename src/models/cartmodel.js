@@ -25,6 +25,9 @@ const cartSchema = new Schema(
         file: {
           type: String,
         },
+        fileName: {
+          type: String,
+        },
         price: Number,
       },
     ],
