@@ -44,21 +44,21 @@ const cartSchema = new Schema(
     //   type: String,
     //   default: "Pending", // You can set a default status
     // },
-    paymentStatus: {
-      type: String,
-      enum: ["pending", "success", "failed"],
-    },
-    currency: {
-      type: String,
-      required: [true, "currency is required"],
-      enum: ["NGN", "USD", "EUR", "GBP"],
-    },
-    transactionDate: {
-      type: Date,
-    },
-    referenceNumber: {
-      type: String,
-    },
+    // paymentStatus: {
+    //   type: String,
+    //   enum: ["pending", "success", "failed"],
+    // },
+    // currency: {
+    //   type: String,
+    //   required: [true, "currency is required"],
+    //   enum: ["NGN", "USD", "EUR", "GBP"],
+    // },
+    // transactionDate: {
+    //   type: Date,
+    // },
+    // referenceNumber: {
+    //   type: String,
+    // },
     // paystack ends
   },
 
