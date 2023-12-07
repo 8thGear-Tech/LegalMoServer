@@ -8,7 +8,7 @@ export const adminRegister = Joi.object().keys({
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,30}$/
     )
     .message(
-      "Password must contain at least one uppercase letter, one lowercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length."
+      "Password must contain at least one uppercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length."
     )
     .required(),
   passwordConfirm: Joi.string().required(),
@@ -37,7 +37,7 @@ export const companyRegister = Joi.object().keys({
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,30}$/
     )
     .message(
-      "Password must contain at least one uppercase letter, one lowercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length."
+      "Password must contain at least one uppercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length."
     )
     .required(),
   passwordConfirm: Joi.string().required(),
@@ -63,7 +63,7 @@ export const lawyerRegister = Joi.object().keys({
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,30}$/
     )
     .message(
-      "Password must contain at least one uppercase letter, one lowercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length."
+      "Password must contain at least one uppercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length."
     )
     .required(),
   passwordConfirm: Joi.string().required(),
@@ -89,7 +89,7 @@ export const AdminLogin = Joi.object().keys({
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,30}$/
     )
     .message(
-      "Password must contain at least one uppercase letter, one lowercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length."
+      "Password must contain at least one uppercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length."
     )
     .required(),
 });
@@ -101,7 +101,7 @@ export const CompanyLogin = Joi.object().keys({
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,30}$/
     )
     .message(
-      "Password must contain at least one uppercase letter, one lowercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length."
+      "Password must contain at least one uppercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length."
     )
     .required(),
 });
@@ -113,7 +113,7 @@ export const LawyerLogin = Joi.object().keys({
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,30}$/
     )
     .message(
-      "Password must contain at least one uppercase letter, one lowercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length."
+      "Password must contain at least one uppercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length."
     )
     .required(),
 });
@@ -128,7 +128,7 @@ export const ValidateResetPassword = Joi.object().keys({
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,30}$/
     )
     .message(
-      "Password must contain at least one uppercase letter, one lowercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length."
+      "Password must contain at least one uppercase letter, one of these symbols (@$!%*?&#) , one digit, and be between 8 and 30 characters in length."
     )
     .required(),
   passwordConfirm: Joi.string().required(),

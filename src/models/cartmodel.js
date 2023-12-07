@@ -34,11 +34,26 @@ const cartSchema = new Schema(
       default: 0,
     },
     // paystack starts
+    // paystackReference: {
+    //   type: String,
+    // },
+    // transactionStatus: {
+    //   type: String,
+    //   default: "Pending", // You can set a default status
+    // },
     paymentStatus: {
       type: String,
       enum: ["pending", "success", "failed"],
     },
-    paystackReference: {
+    currency: {
+      type: String,
+      required: [true, "currency is required"],
+      enum: ["NGN", "USD", "EUR", "GBP"],
+    },
+    transactionDate: {
+      type: Date,
+    },
+    referenceNumber: {
       type: String,
     },
     // paystack ends
