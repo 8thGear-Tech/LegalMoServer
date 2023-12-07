@@ -63,6 +63,18 @@ export const addJobDetails = async (req, res) => {
     job.adminDetail = detail;
     job.adminFile = file;
     await job.save();
+    if (job.assignedTo.length > 0) {
+      const lawyer = await Lawyer.findById(job.assignedTo[0].toHexString());
+      console.log(lawyer);
+      const jobUrl = `http://api/job/:${req.params.jobId}`; //user/verify
+      const lawyerMail = lawyer.officialEmail;
+      await sendEmail({
+        email: lawyerMail,
+        subject: "Job details have been updated",
+        message: `Job details have been updated: ${jobUrl} to view`,
+        html: `<p>Hello,</p><p>Job details have been updated, click <a href=${jobUrl}> here </a> to view</p> <p>Warm Regards</p> <p>LegalMo</p>`,
+      });
+    }
     const populatedJob = await job.populate(
       "productId companyId assignedTo appliedLawer"
     );
@@ -282,11 +294,11 @@ export const viewJobDetails = async (req, res) => {
 };
 
 export const editJobDetails = async (req, res) => {
-  const isAdmin = await Admin.findById(req.userId);
-  if (!isAdmin) {
-    res.status(401).send({ message: "Unauthorized!, You must be an Admin" });
-    return;
-  }
+  // const isAdmin = await Admin.findById(req.userId);
+  // if (!isAdmin) {
+  //   res.status(401).send({ message: "Unauthorized!, You must be an Admin" });
+  //   return;
+  // }
   const { detail, file } = req.body;
   try {
     const job = await Job.findById(req.params.jobId);
@@ -296,6 +308,20 @@ export const editJobDetails = async (req, res) => {
     job.adminDetail = detail;
     job.adminFile = file;
     await job.save();
+    console.log(job);
+    console.log(job.assignedTo[0]);
+    if (job.assignedTo.length > 0) {
+      const lawyer = await Lawyer.findById(job.assignedTo[0].toHexString());
+      console.log(lawyer);
+      const jobUrl = `http://api/job/:${req.params.jobId}`; //user/verify
+      const lawyerMail = lawyer.officialEmail;
+      await sendEmail({
+        email: lawyerMail,
+        subject: "Job details have been updated",
+        message: `Job details have been updated: ${jobUrl} to view`,
+        html: `<p>Hello,</p><p>Job details have been updated, click <a href=${jobUrl}> here </a> to view</p> <p>Warm Regards</p> <p>LegalMo</p>`,
+      });
+    }
     const populatedJob = await job.populate(
       "productId companyId assignedTo appliedLawer"
     );
@@ -371,18 +397,21 @@ export const companyEditJobDetails = async (req, res) => {
     job.companyDetail = detail;
     job.companyFile = file;
     await job.save();
+    if (job.assignedTo.length > 0) {
+      const lawyer = await Lawyer.findById(job.assignedTo[0].toHexString());
+      console.log(lawyer);
+      const jobUrl = `http://api/job/:${req.params.jobId}`; //user/verify
+      const lawyerMail = lawyer.officialEmail;
+      await sendEmail({
+        email: lawyerMail,
+        subject: "Job details have been updated",
+        message: `Job details have been updated: ${jobUrl} to view`,
+        html: `<p>Hello,</p><p>Job details have been updated, click <a href=${jobUrl}> here </a> to view</p> <p>Warm Regards</p> <p>LegalMo</p>`,
+      });
+    }
     const populatedJob = await job.populate(
       "productId companyId assignedTo appliedLawer"
     );
-    const lawyer = await Company.findById(job.assignedTo[0]);
-    const jobUrl = `http://api/job/:${req.params.jobId}`; //user/verify
-    const lawyerMail = lawyer.officialEmail;
-    await sendEmail({
-      email: lawyerMail,
-      subject: "Job details have been updated",
-      message: `Job details have been updated: ${jobUrl} to view`,
-      html: `<p>Hello,</p><p>Job details have been updated, click <a href=${jobUrl}> here </a> to view</p> <p>Warm Regards</p> <p>LegalMo</p>`,
-    });
     res.status(201).json(populatedJob);
   } catch (error) {
     res.status(500).send(error);
