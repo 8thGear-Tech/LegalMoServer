@@ -294,11 +294,11 @@ export const viewJobDetails = async (req, res) => {
 };
 
 export const editJobDetails = async (req, res) => {
-  // const isAdmin = await Admin.findById(req.userId);
-  // if (!isAdmin) {
-  //   res.status(401).send({ message: "Unauthorized!, You must be an Admin" });
-  //   return;
-  // }
+  const isAdmin = await Admin.findById(req.userId);
+  if (!isAdmin) {
+    res.status(401).send({ message: "Unauthorized!, You must be an Admin" });
+    return;
+  }
   const { detail, file } = req.body;
   try {
     const job = await Job.findById(req.params.jobId);
