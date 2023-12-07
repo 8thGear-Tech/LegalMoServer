@@ -1,17 +1,17 @@
-import  {Schema, model} from 'mongoose';
-import mongoose from 'mongoose';
+import { Schema, model } from "mongoose";
+import mongoose from "mongoose";
 
 const cartSchema = new Schema(
   {
     companyId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Company',
+      ref: "Company",
     },
     products: [
       {
         productId: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'Product',
+          ref: "Product",
           required: true,
         },
         quantity: {
@@ -33,10 +33,25 @@ const cartSchema = new Schema(
       required: true,
       default: 0,
     },
+    // paystack starts
+    paymentStatus: {
+      type: String,
+      enum: ["pending", "success", "failed"],
+    },
+    paystackReference: {
+      type: String,
+    },
+    // paystack ends
   },
+
+  // {
+  //   paystackReference: {
+  //     type: String,
+  //   },
+  // },
   {
     timestamps: true,
   }
 );
 
-export const Cart = model('Cart', cartSchema);
+export const Cart = model("Cart", cartSchema);
