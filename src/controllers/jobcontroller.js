@@ -54,7 +54,7 @@ export const addJobDetails = async (req, res) => {
     res.status(401).send({ message: "Unauthorized!, You must be an Admin" });
     return;
   }
-  const { detail, file } = req.body;
+  const { detail, file, fileName } = req.body;
   try {
     const job = await Job.findById(req.params.jobId);
     if (!job) {
@@ -62,6 +62,7 @@ export const addJobDetails = async (req, res) => {
     }
     job.adminDetail = detail;
     job.adminFile = file;
+    job.adminFileName = fileName;
     await job.save();
     if (job.assignedTo.length > 0) {
       const lawyer = await Lawyer.findById(job.assignedTo[0].toHexString());
@@ -299,7 +300,7 @@ export const editJobDetails = async (req, res) => {
     res.status(401).send({ message: "Unauthorized!, You must be an Admin" });
     return;
   }
-  const { detail, file } = req.body;
+  const { detail, file, fileName } = req.body;
   try {
     const job = await Job.findById(req.params.jobId);
     if (!job) {
@@ -307,6 +308,7 @@ export const editJobDetails = async (req, res) => {
     }
     job.adminDetail = detail;
     job.adminFile = file;
+    job.adminFileName = fileName;
     await job.save();
     console.log(job);
     console.log(job.assignedTo[0]);
@@ -383,7 +385,7 @@ export const companyEditJobDetails = async (req, res) => {
     res.status(401).send({ message: "Unauthorized!, You must be a company" });
     return;
   }
-  const { detail, file } = req.body;
+  const { detail, file, fileName } = req.body;
   try {
     const job = await Job.findById(req.params.jobId);
     if (!job) {
@@ -396,6 +398,7 @@ export const companyEditJobDetails = async (req, res) => {
     }
     job.companyDetail = detail;
     job.companyFile = file;
+    job.companyFileName = fileName;
     await job.save();
     if (job.assignedTo.length > 0) {
       const lawyer = await Lawyer.findById(job.assignedTo[0].toHexString());

@@ -5,13 +5,14 @@ export const addCart = Joi.object().keys({
   quantity: Joi.number(),
   detail: Joi.string(),
   file: Joi.string(),
+  fileName: Joi.string(),
 });
 
 export const options = {
-    abortEarly: false,
-    errors: {
-      wrap: {
-        label: "",
-      },
+  abortEarly: false,
+  errors: {
+    wrap: {
+      label: "",
     },
-  };
+  },
+};

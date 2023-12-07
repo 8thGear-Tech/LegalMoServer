@@ -1,16 +1,16 @@
-import  {Schema, model} from 'mongoose';
-import mongoose from 'mongoose';
+import { Schema, model } from "mongoose";
+import mongoose from "mongoose";
 
 const jobSchema = new Schema(
   {
     companyId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Company',
+      ref: "Company",
       required: true,
     },
     productId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Product',
+      ref: "Product",
       required: true,
     },
     companyDetail: {
@@ -19,10 +19,16 @@ const jobSchema = new Schema(
     companyFile: {
       type: String,
     },
+    companyFileName: {
+      type: String,
+    },
     adminDetail: {
       type: String,
     },
     adminFile: {
+      type: String,
+    },
+    adminFileName: {
       type: String,
     },
     lawyerRequestedDetail: {
@@ -31,21 +37,21 @@ const jobSchema = new Schema(
     status: {
       type: String,
       enum: {
-        values: ['unassigned', 'pending', 'completed'],
-        message: 'status not supported',
+        values: ["unassigned", "pending", "completed"],
+        message: "status not supported",
       },
-      default: 'unassigned',
+      default: "unassigned",
     },
     assignedTo: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Lawyer',
+        ref: "Lawyer",
       },
     ],
     appliedLawer: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Lawyer',
+        ref: "Lawyer",
       },
     ],
   },
@@ -54,5 +60,4 @@ const jobSchema = new Schema(
   }
 );
 
-export const Job = model('Job', jobSchema);
- 
+export const Job = model("Job", jobSchema);
