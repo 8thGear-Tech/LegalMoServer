@@ -391,6 +391,7 @@ export const companyEditJobDetails = async (req, res) => {
     if (!job) {
       return res.status(400).json({ error: "Job not found" });
     }
+    console.log(req.userId, job.companyId);
     if (job.companyId != req.userId) {
       return res.status(401).send({
         message: "Unauthorized!, You must be the company that created this job",
@@ -412,6 +413,7 @@ export const companyEditJobDetails = async (req, res) => {
         html: `<p>Hello,</p><p>Job details have been updated, click <a href=${jobUrl}> here </a> to view</p> <p>Warm Regards</p> <p>LegalMo</p>`,
       });
     }
+
     const populatedJob = await job.populate(
       "productId companyId assignedTo appliedLawer"
     );
