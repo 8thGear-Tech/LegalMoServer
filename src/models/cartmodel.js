@@ -32,7 +32,7 @@ const cartSchema = new Schema(
       },
     ],
     bill: {
-      type: String,
+      type: Number,
       required: true,
       default: 0,
     },
