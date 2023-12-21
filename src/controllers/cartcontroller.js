@@ -266,24 +266,89 @@ export const checkout = async (req, res) => {
                 <p>We appreciate the trust you have placed in us and aim to provide you with the highest quality of service. If you have any questions or need further assistance, please do not hesitate to contact our customer service team at bukola@legalmo.biz or 08137686118. Thank you for choosing LegalMO. We value your business and look forward to serving you again.</p>
                 <p>Warm regards,</p>
                 <p>LegalMO</p>
+                <p>[Company contact details]</p>
+                <p></p>
                 `,
       });
-
-      //monnify start
-      cart.paymentStatus = "success"; // Update based on Monnify response
-      cart.completedOn = new Date(); // Update based on Monnify response
-      cart.paymentReference = req.body.paymentResponse.reference; // Update based on Monnify response
-
-      await cart.save();
-      //  monify end
       return res.status(201).json("Checkout successful");
     } else {
       res.status(400).send("Nothing in your cart");
     }
   } catch (error) {
-    //monnify start
-    console.error("Error processing payment:", error);
-    //monnify end
     res.status(500).send("something went wrong");
   }
 };
+
+// export const checkout = async (req, res) => {
+//   const company = await Company.findById(req.userId);
+//   if (!company) {
+//     res.status(404).send({ message: "Unauthorized!, You must be a company" });
+//     return;
+//   }
+//   const companyId = req.userId;
+//   const cart = await Cart.findOne({ companyId });
+//   console.log(cart);
+//   try {
+//     if (cart === null) {
+//       res.status(400).send("Nothing in your cart");
+//       return;
+//     }
+//     if (cart.products) {
+//       cart.products.forEach((product) => {
+//         const jobs = new Job({
+//           companyId: req.userId,
+//           productId: product.productId,
+//           companyDetail: product.detail,
+//           companyFile: product.file,
+//           adminDetail: "",
+//           adminFile: "",
+//           lawyerRequestedDetail: "",
+//           companyFileName: product.fileName,
+//           adminFileName: "",
+//         });
+//         jobs
+//           .save()
+//           .then(() => {
+//             console.log("Job saved");
+//           })
+//           .catch((err) => {
+//             console.log(err);
+//           });
+//       });
+//       await Cart.deleteMany({ companyId });
+//       await sendEmail({
+//         email: company.officialEmail,
+//         subject: "Purchase Completed",
+//         message: `Purchase Completed`,
+//         html: `<p>Hello ${company.companyName}</p>
+//                 <p>Thank your for placing an order with LegalMO. We are pleased to confirm the receipt of your order </p>
+//                 <p>Order details:</p>
+//                 <p>Item(s):  </p>
+//                 <p>Total Amount:</p>
+
+//                 <p>Your order is now being processed and will be completed between 10-14 working days. You will receive a notification once your order has been dropped on your dashboard.</p>
+//                 <p>We appreciate the trust you have placed in us and aim to provide you with the highest quality of service. If you have any questions or need further assistance, please do not hesitate to contact our customer service team at bukola@legalmo.biz or 08137686118. Thank you for choosing LegalMO. We value your business and look forward to serving you again.</p>
+//                 <p>Warm regards,</p>
+//                 <p>LegalMO</p>
+
+//                 `,
+//       });
+
+//       //monnify start
+//       cart.paymentStatus = "success"; // Update based on Monnify response
+//       cart.completedOn = new Date(); // Update based on Monnify response
+//       cart.paymentReference = req.body.paymentResponse.reference; // Update based on Monnify response
+
+//       await cart.save();
+//       //  monify end
+//       return res.status(201).json("Checkout successful");
+//     } else {
+//       res.status(400).send("Nothing in your cart");
+//     }
+//   } catch (error) {
+//     //monnify start
+//     console.error("Error processing payment:", error);
+//     //monnify end
+//     res.status(500).send("something went wrong");
+//   }
+// };
