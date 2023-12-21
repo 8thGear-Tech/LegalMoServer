@@ -104,9 +104,11 @@ export const resendConfirmationEmail = async (req, res) => {
     const userType = user instanceof Admin ? 'admin' : (user instanceof Lawyer ? 'lawyer' : 'company');
     const token = emailConfirmationToken(_id, userType);
 
+
     // Send the confirmation email
     if (!user.isEmailConfirmed){
-      const emailSent = await sendConfirmationEmail(officialEmail, token);
+      const emailSent = await sendConfirmationEmail(officialEmail, token, user.name);
+
 
       if (emailSent) {
         res.status(200).json({
