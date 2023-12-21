@@ -114,7 +114,11 @@ export const resendConfirmationEmail = async (req, res) => {
 
     // Send the confirmation email
     if (!user.isEmailConfirmed) {
-      const emailSent = await sendConfirmationEmail(officialEmail, token);
+      const emailSent = await sendConfirmationEmail(
+        officialEmail,
+        token,
+        user.name
+      );
 
       if (emailSent) {
         res.status(200).json({
