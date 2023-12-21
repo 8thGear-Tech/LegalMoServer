@@ -9,6 +9,7 @@ import {
 import { authToken } from "../middleware/AuthToken.js";
 const router = express.Router();
 
+router.get("/api/get-payment-details", authToken, getPaymentDetails);
 router.post("/api/add-payment-details", authToken, addPaymentDetails);
 router.patch("/api/edit-payment-details", authToken, editPaymentDetails);
 router.get("/api/get-payment-details", authToken, getPaymentDetails);

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # AUTHENTICATION
 
 ## Creating an account
@@ -96,6 +97,8 @@ Passwords are expected to adhere to the following conventions:
 
 Please make sure to create a password that adheres to these rules to help ensure the security of your account.
 
+=======
+>>>>>>> debe69d712d8b8426343f63ffea351ac9138ffba
 # Endpoints
 
 ## FOR ADMIN
@@ -256,6 +259,7 @@ Please make sure to create a password that adheres to these rules to help ensure
   <<<<<<< HEAD
   - You are allowed to use special characters like `@`,`$`,`!`,`%`,`*`,`?`, and `&` in your password.
 
+<<<<<<< HEAD
 5. **Has a length between 8 and 30 characters.**
    - Your password must have a length that falls within the range of 8 to 30 characters.
 
@@ -321,6 +325,11 @@ The response to these will be a JSON object with the following information:
   ```
 
 ### 2. GET ALL JOBS
+=======
+## JOB ENDPOINTS
+
+### 1. GET ALL JOBS
+>>>>>>> debe69d712d8b8426343f63ffea351ac9138ffba
 
 - **Endpoint:** `/api/jobs`
 - **HTTP Method:** GET
@@ -332,11 +341,11 @@ The response to these will be a JSON object with the following information:
   {}
   ```
 
-### 3. GET ALL ASSIGNED JOBS
+### 2. GET SINGLE JOBS
 
-- **Endpoint:** `/api/assign`
+- **Endpoint:** `/api/job/:jobId`
 - **HTTP Method:** GET
-- **Url**: [https://localhost:5005/api/assign]()
+- **Url**: [https://localhost:5005/api/job/:jobId]()
 
   - on success:
 
@@ -344,6 +353,7 @@ The response to these will be a JSON object with the following information:
   {}
   ```
 
+<<<<<<< HEAD
 ### 4. GET ALL UNASSIGNED JOBS
 
 - **Endpoint:** `/api/unassign`
@@ -381,10 +391,14 @@ The response to these will be a JSON object with the following information:
   ```
 
 ### 6. DELETE JOB
+=======
+### 3. DELETE JOB
+>>>>>>> debe69d712d8b8426343f63ffea351ac9138ffba
 
 - **Endpoint:** `/api/deletejob`
 - **HTTP Method:** DELETE
 - **Url**: [https://localhost:5005/api/deletejob]()
+- **Auhorization:** `User Bearer token`
 - **Request Params**: jobId
 
   - on success:
@@ -395,7 +409,72 @@ The response to these will be a JSON object with the following information:
   }
   ```
 
-### 7. GET ALL PENDING JOBS
+### 4. ASSIGN LAWYER TO A JOB
+
+- **Endpoint:** `/api/assign`
+- **HTTP Method:** POST
+- **Url**: [https://localhost:5005/api/assign]()
+- **Auhorization:** `User Bearer token`
+- **Request Body**: JSON field
+
+- **Example**:
+  ```json
+  {
+    "lawyerId": "sksjhd494940202020brgr",
+    "jobId": "Contract Drafting and Review"
+  }
+  ```
+
+### 5. REMOVE A LAWYER FROM A JOB
+
+- **Endpoint:** `/api/removelawyer`
+- **HTTP Method:** DELETE
+- **Url**: [https://localhost:5005/api/removelawyer]()
+- **Auhorization:** `User Bearer token`
+- **Request Body**: JSON field
+
+- **Example**:
+
+  ```json
+  {
+    "lawyerId": "sksjhd494940202020brgr",
+    "jobId": "Contract Drafting and Review"
+  }
+  ```
+
+  - on success:
+
+  ```json
+  {
+    {success: true}
+  }
+  ```
+
+### 6. GET ALL ASSIGNED JOBS
+
+- **Endpoint:** `/api/assign`
+- **HTTP Method:** GET
+- **Url**: [https://localhost:5005/api/assign]()
+
+  - on success:
+
+  ```json
+  {}
+  ```
+
+### 7. GET ALL UNASSIGNED JOBS
+
+- **Endpoint:** `/api/unassign`
+- **HTTP Method:** GET
+- **Url**: [https://localhost:5005/api/unassign]()
+
+  - on success:
+
+  ```json
+  {}
+  ```
+
+### 8. GET ALL PENDING JOBS
 
 - **Endpoint:** `/api/pendingjobs`
 - **HTTP Method:** GET
@@ -407,7 +486,7 @@ The response to these will be a JSON object with the following information:
   {}
   ```
 
-### 8. GET ALL COMPLETED JOBS
+### 9. GET ALL COMPLETED JOBS
 
 - **Endpoint:** `/api/completedjobs`
 - **HTTP Method:** GET
@@ -419,13 +498,14 @@ The response to these will be a JSON object with the following information:
   {}
   ```
 
-### 9. COMPLETE A JOB
+### 10. COMPLETE A JOB
 
 - **Endpoint:** `/api/completejob`
 - **HTTP Method:** PUT
 - **Url**: [https://localhost:5005/api/completejob]()
 - **Request params**: url(job id)
 
+<<<<<<< HEAD
 > > > > > > > # 27b7a3e15d49ec4507b40577e418b4ca9318f9a4
 
 - status (string): The status of the request (success or failure).
@@ -458,3 +538,212 @@ The response to these will be a JSON object with the following information:
 **To view a user's profile, you make a GET request to the /api/userprofile/?\_id endpoint.The id of the user should be included in the query.**
 
 > > > > > > > bffe29891abd3df7878bd576891dc8eae36d7bdf
+=======
+### 11. VIEW JOB DETAILS
+
+- **Endpoint:** `/api/viewjobdetails/:jobId`
+- **HTTP Method:** GET
+- **Url**: [https://localhost:5005/api/viewjobdetails/:jobId]()
+- **Auhorization:** `User Bearer token`
+
+  - on success:
+
+  ```json
+  {}
+  ```
+
+### 12. ADMIN ADDING DETAILS TO A JOB
+
+- **Endpoint:** `/api/job/:jobId`
+- **HTTP Method:** POST
+- **Url**: [https://localhost:5005/api/job/:jobId]()
+- **Auhorization:** `User Bearer token`
+- **Request Body**: JSON field
+
+- **Example**:
+  ```json
+  {
+    "detail": "additional details to the job",
+    "file": "cloudinary respone file",
+    "fileName": "name of the original file"
+  }
+  ```
+
+### 13. COMPANY ADDING DETAILS TO A JOB
+
+- **Endpoint:** `/api/company/editjobdetails/:jobId`
+- **HTTP Method:** POST
+- **Url**: [https://localhost:5005/api/company/editjobdetails/:jobId]()
+- **Auhorization:** `User Bearer token`
+- **Request Body**: JSON field
+
+- **Example**:
+  ```json
+  {
+    "detail": "additional details to the job",
+    "file": "cloudinary respone file",
+    "fileName": "name of the original file"
+  }
+  ```
+
+### 14. APPLY FOR JOB (LAWYER)
+
+- **Endpoint:** `/api/applyforjob/:jobId`
+- **HTTP Method:** POST
+- **Url**: [https://localhost:5005/api/applyforjob/:jobId]()
+- **Auhorization:** `User Bearer token`
+
+### 15. APPLY FOR JOB (LAWYER)
+
+- **Endpoint:** `/api/requestmorejobdetails/:jobId`
+- **HTTP Method:** POST
+- **Url**: [https://localhost:5005/api/requestmorejobdetails/:jobId]()
+- **Auhorization:** `User Bearer token`
+- **Request Body**: JSON field
+
+- **Example**:
+  ```json
+  {
+    "detail": "additional details thelawyer is requesting for"
+  }
+  ```
+
+## FOR LAWYER
+
+### 1. GET LAWYER PAYMENT DETAILS
+
+- **Endpoint:** `/api/get-payment-details`
+- **HTTP Method:** GET
+- **Url**: [https://localhost:5005/api/get-payment-details]()
+
+  - on success:
+
+  ```json
+  {}
+  ```
+
+### 2. ADD LAWYER PAYMENT DETAILS
+
+- **Endpoint:** `/api/add-payment-details`
+- **HTTP Method:** POST
+- **Url**: [https://localhost:5005/api/add-payment-details]()
+- **Auhorization:** `User Bearer token`
+- **Request Body**: JSON field
+
+- **Example**:
+  ```json
+  {
+    "accountNumber": "0241228197",
+    "accountName": "LegalMo",
+    "bank": "Wema Bank"
+  }
+  ```
+
+### 3. EDIT LAWYER PAYMENT DETAILS
+
+- **Endpoint:** `/api/edit-payment-details`
+- **HTTP Method:** PATCH
+- **Url**: [https://localhost:5005/api/edit-payment-details]()
+- **Auhorization:** `User Bearer token`
+- **Request Body**: JSON field
+
+- **Example**:
+  ```json
+  {
+    "accountNumber": "0241228197",
+    "accountName": "LegalMo",
+    "bank": "Wema Bank"
+  }
+  ```
+
+### 4. SEND ONE TIME PASSWORD (OTP)
+
+- **Endpoint:** `/api/send-otp`
+- **HTTP Method:** POST
+- **Url**: [https://localhost:5005/api/send-otp]()
+- **Auhorization:** `User Bearer token`
+
+### 5. CONFIRM ONE TIME PASSWORD (OTP)
+
+- **Endpoint:** `/api/confirm-otp`
+- **HTTP Method:** POST
+- **Url**: [https://localhost:5005/api/confirm-otp]()
+- **Auhorization:** `User Bearer token`
+
+## FOR RATINGS
+
+### 1. GET ALL RATINGS
+
+- **Endpoint:** `/api/rating`
+- **HTTP Method:** GET
+- **Url**: [https://localhost:5005/api/rating]()
+
+  - on success:
+
+  ```json
+  {}
+  ```
+
+### 2. GET SINGLE RATING
+
+- **Endpoint:** `/api/rating/:id`
+- **HTTP Method:** GET
+- **Url**: [https://localhost:5005/api/rating/:id]()
+
+  - on success:
+
+  ```json
+  {}
+  ```
+
+### 3. ADD RATING
+
+- **Endpoint:** `/api/rating`
+- **HTTP Method:** POST
+- **Url**: [https://localhost:5005/api/rating]()
+- **Auhorization:** `User Bearer token`
+- **Request Body**: JSON field
+
+- **Example**:
+  ```json
+  {
+    "productId": "0sksnkn nq1219ennnfnnnndn2f",
+    "reviewTitle": "Nice Product",
+    "review": "Quality andd timely product",
+    "status": 3
+  }
+  ```
+
+### 4. UPDATE RATING
+
+- **Endpoint:** `/api/rating/:id`
+- **HTTP Method:** PATCH
+- **Url**: [https://localhost:5005/api/rating/:id]()
+- **Auhorization:** `User Bearer token`
+- **Request Body**: JSON field
+
+- **Example**:
+  ```json
+  {
+    "productId": "0sksnkn nq1219ennnfnnnndn2f",
+    "reviewTitle": "Nice Product",
+    "review": "Quality andd timely product",
+    "status": 3
+  }
+  ```
+
+### 5. DELETE RATING
+
+- **Endpoint:** `"/api/rating/:id`
+- **HTTP Method:** DELETE
+- **Url**: [https://localhost:5005/api/rating/:id]()
+- **Auhorization:** `User Bearer token`
+
+  - on success:
+
+  ```json
+  {
+    {success: true}
+  }
+  ```
+>>>>>>> debe69d712d8b8426343f63ffea351ac9138ffba

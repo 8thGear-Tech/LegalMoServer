@@ -99,10 +99,18 @@ export const assignJob = async (req, res) => {
       return res.status(400).json({ error: "Job or Lawyer not found" });
     }
 
-    if (job.assignedTo.includes(lawyerId)) {
+    //check if lawyer is already assigned to the job
+
+    if (job.assignedTo[0].toHexString() == lawyerId) {
       return res
         .status(400)
         .json({ error: "Lawyer already assigned to this job" });
+    }
+
+    if (job.assignedTo.length > 0) {
+      return res
+        .status(400)
+        .json({ error: "A Lawyer already assigned to this job" });
     }
 
     if (lawyer.verified == true) {
@@ -134,7 +142,7 @@ export const assigned = async (req, res) => {
     const assignedJob = await Job.find({ assignedTo: { $ne: [] } }).populate(
       "productId companyId assignedTo appliedLawer"
     );
-    console.log(assignedJob.length);
+    console.log(assignedJob);
     if (!assignedJob || assignedJob.length === 0) {
       res.send(null);
       console.log("Nothing here");

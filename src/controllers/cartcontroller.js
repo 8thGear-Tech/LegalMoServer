@@ -214,7 +214,10 @@ export const checkout = async (req, res) => {
     return;
   }
   const companyId = req.userId;
-  const cart = await Cart.findOne({ companyId });
+  const companyName = company.companyName;
+  console.log(companyName);
+
+  const cart = await Cart.findOne({ companyId }).populate("companyId products");
   console.log(cart);
   try {
     if (cart === null) {
@@ -244,15 +247,21 @@ export const checkout = async (req, res) => {
           });
       });
       await Cart.deleteMany({ companyId });
+      const productIden = cart.products[0].productId.toHexString();
+      const product = await Product.findById(productIden);
+      const productNaming = product.productName;
+      console.log(product);
+      console.log(productNaming);
+      console.log(cart.bill);
       await sendEmail({
         email: company.officialEmail,
         subject: "Purchase Completed",
         message: `Purchase Completed`,
-        html: `<p>Hello ${company.companyName}</p> 
+        html: `<p>Hello ${companyName}</p> 
                 <p>Thank your for placing an order with LegalMO. We are pleased to confirm the receipt of your order </p>
                 <p>Order details:</p>
-                <p>Item(s):  </p>
-                <p>Total Amount:</p>
+                <p>Item(s): ${productNaming} </p>
+                <p>Total Amount: ${cart.bill}}</p>
                 <p>Your order is now being processed and will be completed between 10-14 working days. You will receive a notification once your order has been dropped on your dashboard.</p>
                 <p>We appreciate the trust you have placed in us and aim to provide you with the highest quality of service. If you have any questions or need further assistance, please do not hesitate to contact our customer service team at bukola@legalmo.biz or 08137686118. Thank you for choosing LegalMO. We value your business and look forward to serving you again.</p>
                 <p>Warm regards,</p>
