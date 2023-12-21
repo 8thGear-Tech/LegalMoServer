@@ -253,20 +253,28 @@ export const checkout = async (req, res) => {
                 <p>Order details:</p>
                 <p>Item(s):  </p>
                 <p>Total Amount:</p>
-                <p>Estimated Delivery Date:</p>
                 <p>Your order is now being processed and will be completed between 10-14 working days. You will receive a notification once your order has been dropped on your dashboard.</p>
                 <p>We appreciate the trust you have placed in us and aim to provide you with the highest quality of service. If you have any questions or need further assistance, please do not hesitate to contact our customer service team at bukola@legalmo.biz or 08137686118. Thank you for choosing LegalMO. We value your business and look forward to serving you again.</p>
                 <p>Warm regards,</p>
                 <p>LegalMO</p>
-                <p>[Company contact details]</p>
-                <p></p>
                 `,
       });
+
+      //monnify start
+      cart.paymentStatus = "success"; // Update based on Monnify response
+      cart.completedOn = new Date(); // Update based on Monnify response
+      cart.paymentReference = req.body.paymentResponse.reference; // Update based on Monnify response
+
+      await cart.save();
+      //  monify end
       return res.status(201).json("Checkout successful");
     } else {
       res.status(400).send("Nothing in your cart");
     }
   } catch (error) {
+    //monnify start
+    console.error("Error processing payment:", error);
+    //monnify end
     res.status(500).send("something went wrong");
   }
 };
