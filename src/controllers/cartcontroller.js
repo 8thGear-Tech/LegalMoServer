@@ -263,10 +263,9 @@ export const checkout = async (req, res) => {
                 <p>Item(s): ${productNaming} </p>
                 <p>Total Amount: ${cart.bill}}</p>
                 <p>Your order is now being processed and will be completed between 10-14 working days. You will receive a notification once your order has been dropped on your dashboard.</p>
-                <p>We appreciate the trust you have placed in us and aim to provide you with the highest quality of service. If you have any questions or need further assistance, please do not hesitate to contact our customer service team at bukola@legalmo.biz or 08137686118. Thank you for choosing LegalMO. We value your business and look forward to serving you again.</p>
+                <p>We appreciate the trust you have placed in us and aim to provide you with the highest quality of service. If you have any questions or need further assistance, please do not hesitate to contact our customer service team at info@legalmo.biz or 08094818884. Thank you for choosing LegalMO. We value your business and look forward to serving you again.</p>
                 <p>Warm regards,</p>
                 <p>LegalMO</p>
-                <p>[Company contact details]</p>
                 <p></p>
                 `,
       });
@@ -327,7 +326,7 @@ export const checkout = async (req, res) => {
 //                 <p>Total Amount:</p>
 
 //                 <p>Your order is now being processed and will be completed between 10-14 working days. You will receive a notification once your order has been dropped on your dashboard.</p>
-//                 <p>We appreciate the trust you have placed in us and aim to provide you with the highest quality of service. If you have any questions or need further assistance, please do not hesitate to contact our customer service team at bukola@legalmo.biz or 08137686118. Thank you for choosing LegalMO. We value your business and look forward to serving you again.</p>
+//                 <p>We appreciate the trust you have placed in us and aim to provide you with the highest quality of service. If you have any questions or need further assistance, please do not hesitate to contact our customer service team at bukola@legalmo.biz or 08094818884. Thank you for choosing LegalMO. We value your business and look forward to serving you again.</p>
 //                 <p>Warm regards,</p>
 //                 <p>LegalMO</p>
 
