@@ -253,11 +253,12 @@ export const checkout = async (req, res) => {
       console.log(product);
       console.log(productNaming);
       console.log(cart.bill);
+      // html: `<p>Hello ${companyName}</p>
       await sendEmail({
         email: company.officialEmail,
         subject: "Purchase Completed",
         message: `Purchase Completed`,
-        html: `<p>Hello ${companyName}</p> 
+        html: `<p>Hello</p> 
                 <p>Thank your for placing an order with LegalMO. We are pleased to confirm the receipt of your order </p>
                 <p>Order details:</p>
                 <p>Item(s): ${productNaming} </p>
