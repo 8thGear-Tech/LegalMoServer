@@ -26,7 +26,7 @@ const companySchema = new Schema(
       url: {
         type: String,
         default:
-          "https://res.cloudinary.com/ds8byyltz/image/upload/v1703242828/default-logo_x1rmai.webp",
+          "https://res.cloudinary.com/ds8byyltz/image/upload/v1703246263/default-image.png",
         // "https://res.cloudinary.com/drlfylzhf/image/upload/v1700055556/cld-sample.jpg",
       },
     },
