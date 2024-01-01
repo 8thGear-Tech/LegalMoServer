@@ -240,7 +240,7 @@ export const lawyerSignup = async (req, res) => {
 
     await newLawyer.save();
 
-        // Find all admins and add the new company to their companies array
+        // Find all admins and add the new lawyer to their lawyers array
         const admins = await Admin.find({});
         for (let admin of admins) {
         admin.lawyers.push(newLawyer._id);

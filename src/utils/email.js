@@ -76,7 +76,7 @@ export const confirmEmail = async (req, res) => {
     await user.save();
 
     // Optionally, you can redirect the user to a login page or show a confirmation success message.
-    res.status(200).send(` ${userType} Email confirmed successfully. You can now log in.`);
+    res.status(200).send(`${userType} Email Confirmed Successfully. You can now log in.`);
   } catch (error) {
     console.error('Email confirmation error:', error);
     res.status(500).send('Internal server error.');
