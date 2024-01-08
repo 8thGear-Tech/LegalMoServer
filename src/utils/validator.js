@@ -55,7 +55,7 @@ export const lawyerRegister = Joi.object().keys({
     .required(),
   officialEmail: Joi.string().email().trim().lowercase().required(),
   lawFirmName: Joi.string(),
-  lawFirmAddress: Joi.string().required(),
+  lawFirmAddress: Joi.string(),
   scn: Joi.string().required(),
   cac: Joi.string(),
   password: Joi.string()
