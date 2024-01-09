@@ -551,6 +551,9 @@ export const applyForJob = async (req, res) => {
     const job = await Job.findById(req.params.jobId).populate(
       "productId companyId assignedTo appliedLawer"
     );
+    if (lawyer.verified == false) {
+      return res.status(400).json({ error: "Unverified Lawyer" });
+    }
     if (!job) {
       return res.status(400).json({ error: "Job not found" });
     }
@@ -558,6 +561,13 @@ export const applyForJob = async (req, res) => {
       return res
         .status(400)
         .json({ error: "You are already assigned to this job" });
+    }
+
+    //check if lawyer already applied for this job
+    if (job.appliedLawer.includes(req.userId)) {
+      return res
+        .status(400)
+        .json({ error: "You already applied for this job" });
     }
 
     // if (
