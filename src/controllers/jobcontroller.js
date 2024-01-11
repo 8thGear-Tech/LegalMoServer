@@ -552,7 +552,11 @@ export const applyForJob = async (req, res) => {
       "productId companyId assignedTo appliedLawer"
     );
     if (lawyer.verified == false) {
-      return res.status(400).json({ error: "Unverified Lawyer" });
+      return res.status(400).json({
+        status: "fail",
+        message:
+          "Your account has not been verified, contact support for assistance",
+      });
     }
     if (!job) {
       return res.status(400).json({ error: "Job not found" });
@@ -565,9 +569,10 @@ export const applyForJob = async (req, res) => {
 
     //check if lawyer already applied for this job
     if (job.appliedLawer.includes(req.userId)) {
-      return res
-        .status(400)
-        .json({ error: "You already applied for this job" });
+      return res.status(400).json({
+        status: "fail",
+        message: "You are already applied for this job",
+      });
     }
 
     // if (
@@ -584,7 +589,11 @@ export const applyForJob = async (req, res) => {
       await job.save();
       return res.status(200).send(job);
     } else {
-      return res.status(400).json({ error: "Unverified Lawyer" });
+      return res.status(400).json({
+        status: "fail",
+        message:
+          "Your account has not been verified, contact support for assistance",
+      });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
