@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import multer from "multer";
 import globalErrorHandler from "./src/utils/errorHandler.js";
 // import config from "./src/config/index.js";
 // import session from "express-session";
@@ -49,6 +50,8 @@ app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
+const upload = multer();
+app.use(upload.array());
 app.use("/api", authRouter);
 app.use("/api", userRouter);
 // app.use("/", authRouter);
