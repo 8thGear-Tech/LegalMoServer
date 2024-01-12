@@ -50,8 +50,8 @@ app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
-const upload = multer();
-app.use(upload.array());
+// const upload = multer();
+// app.use(upload.array());
 app.use("/api", authRouter);
 app.use("/api", userRouter);
 // app.use("/", authRouter);
