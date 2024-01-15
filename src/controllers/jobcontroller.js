@@ -561,29 +561,20 @@ export const applyForJob = async (req, res) => {
     if (!job) {
       return res.status(400).json({ error: "Job not found" });
     }
-    if (job.assignedTo.includes(req.userId)) {
+    //check if lawyer is already assigned to the job
+    if (job.assignedTo.toHexString().includes(req.userId)) {
       return res
         .status(400)
         .json({ error: "You are already assigned to this job" });
     }
 
     //check if lawyer already applied for this job
-    if (job.appliedLawer.includes(req.userId)) {
+    if (job.appliedLawer.toHexString().includes(req.userId)) {
       return res.status(400).json({
         status: "fail",
         message: "You are already applied for this job",
       });
     }
-
-    // if (
-    //   job.assignedTo.length !== 0 ||
-    //   job.assignedTo !== null ||
-    //   job.assignedTo.length !== undefined
-    // ) {
-    //   return res
-    //     .status(400)
-    //     .json({ error: 'A Lawyer already assigned to this job' });
-    // }
     if (lawyer.verified == true) {
       job.appliedLawer.push(req.userId);
       await job.save();
