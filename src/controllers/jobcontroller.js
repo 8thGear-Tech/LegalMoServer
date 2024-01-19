@@ -10,7 +10,7 @@ import { ObjectId } from "mongodb";
 export const allJob = async (req, res) => {
   try {
     const jobs = await Job.find().populate(
-      "productId companyId assignedTo appliedLawer"
+      "productId companyId assignedTo appliedLaweer"
     );
     if (!jobs || jobs.length === 0) {
       return res.status(404).json({ error: "No jobs found" });
