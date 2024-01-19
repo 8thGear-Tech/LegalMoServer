@@ -239,6 +239,7 @@ export const updateProduct = async (req, res) => {
   }
 
   const { productName, productPrice, productDescription } = req.body;
+  let productImage; // Initialize productImage
 
   // Check if there is a file in the request
   if (req.file) {
@@ -256,7 +257,7 @@ export const updateProduct = async (req, res) => {
 
       if (uploadResult.secure_url) {
         // Use the secure_url to update the product image URL in the database
-        req.body.productImage = uploadResult.secure_url;
+        productImage = uploadResult.secure_url;
       } else {
         res.status(500).send({ error: "Failed to upload product image" });
         return;
@@ -275,7 +276,7 @@ export const updateProduct = async (req, res) => {
           productName,
           productPrice,
           productDescription,
-          productImage: req.body.productImage || productImage,
+          productImage: productImage || req.body.productImage, // Use productImage or the existing value
         },
       },
       { new: true }
