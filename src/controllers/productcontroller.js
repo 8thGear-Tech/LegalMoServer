@@ -250,9 +250,14 @@ export const updateProduct = async (req, res) => {
   if (adminExists) {
     try {
       const updateProduct = await Product.findByIdAndUpdate(
-        req.params.id,
+        req.params._id,
         {
-          $set: { productName, productPrice, productImage, productDescription },
+          $set: {
+            productName,
+            productPrice,
+            productImage: req.body.productImage,
+            productDescription,
+          },
         },
         { new: true } // Return the updated product
       );
