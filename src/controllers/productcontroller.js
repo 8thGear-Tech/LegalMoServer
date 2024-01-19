@@ -234,6 +234,12 @@ export const updateProduct = async (req, res) => {
   const adminExists = await Admin.findById(req.userId);
   if (adminExists) {
     try {
+      let updateFields = {
+        productName: req.body.productName,
+        productPrice: req.body.productPrice,
+        productDescription: req.body.productDescription,
+      };
+
       // Check if there's a file in the request
       if (req.file) {
         const { originalname } = req.file;
@@ -250,7 +256,7 @@ export const updateProduct = async (req, res) => {
 
         if (uploadResult.secure_url) {
           // If image upload is successful, update the product image URL
-          req.body.productImage = uploadResult.secure_url;
+          updateFields.productImage = uploadResult.secure_url;
         } else {
           return res
             .status(500)
@@ -258,14 +264,9 @@ export const updateProduct = async (req, res) => {
         }
       }
 
-      const { productName, productPrice, productDescription, productImage } =
-        req.body;
-
       const updateProduct = await Product.findByIdAndUpdate(
         req.params.id,
-        {
-          $set: { productName, productPrice, productDescription, productImage },
-        },
+        { $set: updateFields },
         { new: true }
       );
 
