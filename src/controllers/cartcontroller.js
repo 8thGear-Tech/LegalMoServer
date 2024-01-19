@@ -329,6 +329,25 @@ export const checkout = async (req, res) => {
     const product = await Product.findById(productIden);
     const productNaming = product.productName;
 
+    function generateUniqueTransactionReference() {
+      // Get current timestamp in milliseconds
+      const timestamp = new Date().getTime();
+
+      // Generate a random string (you can use a library for this for better randomness)
+      const randomString =
+        Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15);
+
+      // Combine timestamp and random string to create a unique reference
+      const uniqueReference = `txn-${timestamp}-${randomString}`;
+
+      return uniqueReference;
+    }
+
+    // Example usage
+    const uniqueTransactionReference = generateUniqueTransactionReference();
+    console.log(uniqueTransactionReference);
+
     // Initiate Flutterwave payment
     const response = await got
       .post("https://api.flutterwave.com/v3/payments", {
