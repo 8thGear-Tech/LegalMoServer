@@ -231,49 +231,66 @@ export const updateProduct = async (req, res) => {
     });
   }
 
-  const { productName, productPrice, productDescription } = req.body;
-
-  // Upload image if provided
-  if (req.file) {
-    try {
-      const uploadResult = await cloudinary.uploader.upload(req.file.path, {
-        public_id: `${Date.now()}-${req.file.originalname}`, // Use a unique public_id
-      });
-      req.body.productImage = uploadResult.secure_url;
-    } catch (error) {
-      res.status(500).send({ error: "Failed to upload product image" });
-      return; // Halt execution
-    }
+  const adminExists = await Admin.findById(req.userId);
+  if (!adminExists) {
+    res.status(403);
+    throw new Error("You are not authorized to update this product");
   }
 
-  const adminExists = await Admin.findById(req.userId);
-  if (adminExists) {
-    try {
-      const updateProduct = await Product.findByIdAndUpdate(
-        req.params.id,
-        {
-          $set: {
-            productName,
-            productPrice,
-            productImage: req.body.productImage,
-            productDescription,
-          },
-        },
-        { new: true } // Return the updated product
-      );
-      res.status(200).json(updateProduct);
-    } catch (error) {
-      res
-        .status(500)
-        .send({ error: "Something went wrong while updating the product" });
-      console.error(error); // Log the error for debugging
+  try {
+    let updateFields = {
+      productName: req.body.productName,
+      productPrice: req.body.productPrice,
+      productDescription: req.body.productDescription,
+    };
+
+    if (req.file) {
+      const { originalname } = req.file;
+      const fileExtension = originalname.split(".").pop();
+      const publicId = `${Date.now()}-${originalname.replace(
+        `.${fileExtension}`,
+        ""
+      )}`;
+
+      const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+        public_id: publicId,
+      });
+
+      if (uploadResult.secure_url) {
+        // If image upload is successful, update the productImage field
+        updateFields.productImage = uploadResult.secure_url;
+      } else {
+        return res
+          .status(500)
+          .send({ error: "Failed to upload product image" });
+      }
     }
-  } else {
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      { $set: updateFields },
+      { new: true }
+    );
+
+    if (!updatedProduct) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Product not found",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: updatedProduct,
+    });
+  } catch (error) {
     res
-      .status(403)
-      .send({ error: "You are not authorized to update this product" });
+      .status(500)
+      .send({ error: "Something went wrong while updating the product" });
+    console.log(error);
   }
 };
+
 export const deleteProduct = async (req, res) => {
   const adminExists = await Admin.findById(req.userId);
   if (adminExists) {
