@@ -55,7 +55,12 @@ router.get("/product-api/product/:id", singleProduct);
 // };
 
 router.post("/api/create", authToken, upload.single("productImage"), create);
-router.put("/api/update/:id", authToken, updateProduct);
+router.put(
+  "/api/update/:id",
+  authToken,
+  upload.single("productImage"),
+  updateProduct
+);
 router.delete("/api/delete/:id", authToken, deleteProduct);
 
 // {
