@@ -219,7 +219,6 @@ export const getProducts = async (req, res) => {
 //     throw new Error("You are not authorized to update this product");
 //   }
 // };
-
 export const updateProduct = async (req, res) => {
   const validate = productupdate.validate(req.body, options);
   if (validate.error) {
@@ -257,7 +256,6 @@ export const updateProduct = async (req, res) => {
         }
       }
 
-      // const { productName, productPrice, productDescription } =
       const { productName, productPrice, productDescription, productImage } =
         req.body;
 
