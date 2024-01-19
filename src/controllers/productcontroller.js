@@ -239,7 +239,7 @@ export const updateProduct = async (req, res) => {
   }
 
   const { productName, productPrice, productDescription } = req.body;
-  let productImage; // Initialize productImage
+  let productImage = req.body.productImage; // Initialize productImage with the existing value
 
   // Check if there is a file in the request
   if (req.file) {
@@ -276,7 +276,7 @@ export const updateProduct = async (req, res) => {
           productName,
           productPrice,
           productDescription,
-          productImage: productImage || req.body.productImage, // Use productImage or the existing value
+          productImage,
         },
       },
       { new: true }
