@@ -548,9 +548,7 @@ export const applyForJob = async (req, res) => {
     return;
   }
   try {
-    const job = await Job.findById(req.params.jobId).populate(
-      "productId companyId assignedTo appliedLawer"
-    );
+    const job = await Job.findById(req.params.jobId);
     if (lawyer.verified == false) {
       return res.status(400).json({
         status: "fail",
@@ -561,24 +559,31 @@ export const applyForJob = async (req, res) => {
     if (!job) {
       return res.status(400).json({ error: "Job not found" });
     }
-    //check if lawyer is already assigned to the job
-    if (job.assignedTo.toHexString().includes(req.userId)) {
-      return res
-        .status(400)
-        .json({ error: "You are already assigned to this job" });
-    }
-
-    //check if lawyer already applied for this job
-    if (job.appliedLawer.toHexString().includes(req.userId)) {
+    //check if lawyer is already assigned to the job after changing lawyer id to object id
+    const lawyernewId = new ObjectId(req.userId);
+    console.log(lawyernewId);
+    if (job.assignedTo.includes(lawyernewId)) {
       return res.status(400).json({
         status: "fail",
-        message: "You are already applied for this job",
+        message: "You are already assigned to this job",
       });
     }
+
+    //check if lawyer has already applied for the job
+    if (job.appliedLawer.includes(lawyernewId)) {
+      return res.status(400).json({
+        status: "fail",
+        message: "You have already applied for this job",
+      });
+    }
+
     if (lawyer.verified == true) {
       job.appliedLawer.push(req.userId);
       await job.save();
-      return res.status(200).send(job);
+      const fullJob = await job.populate(
+        "productId companyId assignedTo appliedLawer"
+      );
+      return res.status(200).send(fullJob);
     } else {
       return res.status(400).json({
         status: "fail",
