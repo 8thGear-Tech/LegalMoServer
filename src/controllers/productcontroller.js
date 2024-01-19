@@ -257,8 +257,8 @@ export const updateProduct = async (req, res) => {
         }
       }
 
-      const { productName, productPrice, productDescription } =
-        // const { productName, productPrice, productDescription, productImage } =
+      // const { productName, productPrice, productDescription } =
+      const { productName, productPrice, productDescription, productImage } =
         req.body;
 
       const updateProduct = await Product.findByIdAndUpdate(
