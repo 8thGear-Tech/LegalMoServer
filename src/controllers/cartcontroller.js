@@ -382,7 +382,7 @@ export const checkout = async (req, res) => {
       ref: response.tx_ref,
       amount: cart.bill,
       currency: "NGN", // Update with the actual currency
-      status: "pendinng", // You may set an initial status based on your needs
+      status: "pending", // You may set an initial status based on your needs
     });
     await transactionDetails.save();
 
