@@ -234,55 +234,30 @@ export const updateProduct = async (req, res) => {
   const adminExists = await Admin.findById(req.userId);
   if (adminExists) {
     try {
-      const upload = async (req, res) => {
+      // Check if there's a file in the request
+      if (req.file) {
         const { originalname } = req.file;
-        const fileExtension = originalname.split(".").pop(); // Extracting file extension
+        const fileExtension = originalname.split(".").pop();
         const publicId = `${Date.now()}-${originalname.replace(
           `.${fileExtension}`,
           ""
         )}`;
+
+        // Await the file upload to complete
         const uploadResult = await cloudinary.uploader.upload(req.file.path, {
           public_id: publicId,
         });
 
-        // const { originalname } = req.file;
-        // const publicId = `${Date.now()}-${originalname}`;
-        // const uploadResult = await cloudinary.uploader.upload(req.file.path, {
-        //   public_id: publicId,
-        // });
-
         if (uploadResult.secure_url) {
-          // Use the secure_url to save the product image URL to the database
+          // If image upload is successful, update the product image URL
           req.body.productImage = uploadResult.secure_url;
-
-          // Proceed with creating the product using the rest of the code
         } else {
-          res.status(500).send({ error: "Failed to upload product image" });
+          return res
+            .status(500)
+            .send({ error: "Failed to upload product image" });
         }
-      };
-      // // Check if there's a file in the request
-      // if (req.file) {
-      //   const { originalname } = req.file;
-      //   const fileExtension = originalname.split(".").pop();
-      //   const publicId = `${Date.now()}-${originalname.replace(
-      //     `.${fileExtension}`,
-      //     ""
-      //   )}`;
-      //   const uploadResult = await cloudinary.uploader.upload(req.file.path, {
-      //     public_id: publicId,
-      //   });
+      }
 
-      //   if (uploadResult.secure_url) {
-      //     // If image upload is successful, update the product image URL
-      //     req.body.productImage = uploadResult.secure_url;
-      //   } else {
-      //     return res
-      //       .status(500)
-      //       .send({ error: "Failed to upload product image" });
-      //   }
-      // }
-
-      await upload(req, res);
       const { productName, productPrice, productDescription, productImage } =
         req.body;
 
