@@ -588,7 +588,7 @@ export const applyForJob = async (req, res) => {
       return res.status(400).json({
         status: "fail",
         message:
-          "Your account has not been verified, contact support for assistance",
+          "Your account has not been verified, contact support for assistance ss",
       });
     }
   } catch (error) {
