@@ -266,7 +266,7 @@ export const updateProduct = async (req, res) => {
 
       const updateProduct = await Product.findByIdAndUpdate(
         req.params.id,
-        { $set: updateFields },
+        updateFields,
         { new: true }
       );
 
