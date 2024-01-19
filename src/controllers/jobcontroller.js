@@ -2,7 +2,8 @@ import { Admin } from "../models/adminmodel.js";
 import { Company } from "../models/companymodel.js";
 import { Job } from "../models/jobmodel.js";
 import { Lawyer } from "../models/lawyermodel.js";
-import sendEmail from "../utils/email.js";
+import { sendEmail } from "../utils/email.js";
+import { ObjectId } from "mongodb";
 // FOR ADMIN
 
 //view al jobs for request products
@@ -20,7 +21,7 @@ export const allJob = async (req, res) => {
     //   allJobsWithProducts.push(populatedJob);
     // }
     return res.status(200).send(jobs);
-  } catch (error) {
+  } catch (t iderror) {
     res.status(500).json({ error: error.message });
   }
 };
