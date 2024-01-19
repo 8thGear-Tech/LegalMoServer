@@ -231,63 +231,44 @@ export const updateProduct = async (req, res) => {
     });
   }
 
+  const { productName, productPrice, productDescription } = req.body;
+
+  // Upload image if provided
+  if (req.file) {
+    try {
+      const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+        public_id: `${Date.now()}-${req.file.originalname}`, // Use a unique public_id
+      });
+      req.body.productImage = uploadResult.secure_url;
+    } catch (error) {
+      res.status(500).send({ error: "Failed to upload product image" });
+      return; // Halt execution
+    }
+  }
+
   const adminExists = await Admin.findById(req.userId);
   if (adminExists) {
     try {
-      let updateFields = {
-        productName: req.body.productName,
-        productPrice: req.body.productPrice,
-        productDescription: req.body.productDescription,
-      };
-
-      // Check if there's a file in the request
-      if (req.file) {
-        const { originalname } = req.file;
-        const fileExtension = originalname.split(".").pop();
-        const publicId = `${Date.now()}-${originalname.replace(
-          `.${fileExtension}`,
-          ""
-        )}`;
-
-        // Await the file upload to complete
-        const uploadResult = await cloudinary.uploader.upload(req.file.path, {
-          public_id: publicId,
-        });
-
-        if (uploadResult.secure_url) {
-          // If image upload is successful, update the product image URL
-          updateFields.productImage = uploadResult.secure_url;
-        } else {
-          return res
-            .status(500)
-            .send({ error: "Failed to upload product image" });
-        }
-      }
-
       const updateProduct = await Product.findByIdAndUpdate(
         req.params.id,
-        updateFields,
-        { new: true }
+        {
+          $set: { productName, productPrice, productImage, productDescription },
+        },
+        { new: true } // Return the updated product
       );
-
-      if (updateProduct) {
-        return res.status(200).json({
-          status: "success",
-          data: updateProduct,
-        });
-      } else {
-        throw new Error("Something went wrong while updating the product");
-      }
+      res.status(200).json(updateProduct);
     } catch (error) {
-      res.status(500).send(error.message);
-      console.log(error);
+      res
+        .status(500)
+        .send({ error: "Something went wrong while updating the product" });
+      console.error(error); // Log the error for debugging
     }
   } else {
-    res.status(403);
-    throw new Error("You are not authorized to update this product");
+    res
+      .status(403)
+      .send({ error: "You are not authorized to update this product" });
   }
 };
-
 export const deleteProduct = async (req, res) => {
   const adminExists = await Admin.findById(req.userId);
   if (adminExists) {
