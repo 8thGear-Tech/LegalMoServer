@@ -3,6 +3,7 @@ import { Company } from "../models/companymodel.js";
 import { Job } from "../models/jobmodel.js";
 import { Lawyer } from "../models/lawyermodel.js";
 import { sendEmail } from "../utils/email.js";
+import { ObjectId } from "mongoose";
 // FOR ADMIN
 
 //view al jobs for request products
