@@ -1,9 +1,11 @@
 import { Product } from "../models/productmodel.js";
 import { Cart } from "../models/cartmodel.js";
 import { Company } from "../models/companymodel.js";
+import { Transaction } from "../models/transactionmodel.js";
 import { addCart, options } from "../utils/cartvalidation.js";
 import { Job } from "../models/jobmodel.js";
 import { sendEmail } from "../utils/email.js";
+import got from "got";
 
 export const addToCart = async (req, res) => {
   const companyExists = await Company.findById(req.userId);
@@ -207,75 +209,220 @@ export const clearCart = async (req, res) => {
   }
 };
 
-export const checkout = async (req, res) => {
-  const company = await Company.findById(req.userId);
-  if (!company) {
-    res.status(404).send({ message: "Unauthorized!, You must be a company" });
-    return;
-  }
-  const companyId = req.userId;
-  const companyName = company.companyName;
-  console.log(companyName);
+// export const checkout = async (req, res) => {
+//   const company = await Company.findById(req.userId);
+//   if (!company) {
+//     res.status(404).send({ message: "Unauthorized!, You must be a company" });
+//     return;
+//   }
+//   const companyId = req.userId;
+//   const companyName = company.companyName;
+//   console.log(companyName);
 
-  const cart = await Cart.findOne({ companyId }).populate("companyId products");
-  console.log(cart);
+//   const cart = await Cart.findOne({ companyId }).populate("companyId products");
+//   console.log(cart);
+//   try {
+//     if (cart === null) {
+//       res.status(400).send("Nothing in your cart");
+//       return;
+//     }
+//     if (cart.products) {
+//       cart.products.forEach((product) => {
+//         const jobs = new Job({
+//           companyId: req.userId,
+//           productId: product.productId,
+//           companyDetail: product.detail,
+//           companyFile: product.file,
+//           adminDetail: "",
+//           adminFile: "",
+//           lawyerRequestedDetail: "",
+//           companyFileName: product.fileName,
+//           adminFileName: "",
+//         });
+//         jobs
+//           .save()
+//           .then(() => {
+//             console.log("Job saved");
+//           })
+//           .catch((err) => {
+//             console.log(err);
+//           });
+//       });
+//       await Cart.deleteMany({ companyId });
+//       const productIden = cart.products[0].productId.toHexString();
+//       const product = await Product.findById(productIden);
+//       const productNaming = product.productName;
+//       console.log(product);
+//       console.log(productNaming);
+//       console.log(cart.bill);
+//       // html: `<p>Hello ${companyName}</p>
+//       await sendEmail({
+//         email: company.officialEmail,
+//         subject: "Purchase Completed",
+//         message: `Purchase Completed`,
+//         html: `<p>Hello</p>
+//                 <p>Thank your for placing an order with LegalMO. We are pleased to confirm the receipt of your order </p>
+//                 <p>Order details:</p>
+//                 <p>Item(s): ${productNaming} </p>
+//                 <p>Total Amount: ${cart.bill}}</p>
+//                 <p>Your order is now being processed and will be completed between 10-14 working days. You will receive a notification once your order has been dropped on your dashboard.</p>
+//                 <p>We appreciate the trust you have placed in us and aim to provide you with the highest quality of service. If you have any questions or need further assistance, please do not hesitate to contact our customer service team at info@legalmo.biz or 08094818884. Thank you for choosing LegalMO. We value your business and look forward to serving you again.</p>
+//                 <p>Warm regards,</p>
+//                 <p>LegalMO</p>
+//                 <p></p>
+//                 `,
+//       });
+//       return res.status(201).json("Checkout successful");
+//     } else {
+//       res.status(400).send("Nothing in your cart");
+//     }
+//   } catch (error) {
+//     res.status(500).send("something went wrong");
+//   }
+// };
+
+//current up
+
+export const checkout = async (req, res) => {
   try {
-    if (cart === null) {
-      res.status(400).send("Nothing in your cart");
-      return;
+    const company = await Company.findById(req.userId);
+    if (!company) {
+      return res
+        .status(404)
+        .send({ message: "Unauthorized!, You must be a company" });
     }
-    if (cart.products) {
-      cart.products.forEach((product) => {
-        const jobs = new Job({
-          companyId: req.userId,
-          productId: product.productId,
-          companyDetail: product.detail,
-          companyFile: product.file,
-          adminDetail: "",
-          adminFile: "",
-          lawyerRequestedDetail: "",
-          companyFileName: product.fileName,
-          adminFileName: "",
-        });
-        jobs
-          .save()
-          .then(() => {
-            console.log("Job saved");
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      });
-      await Cart.deleteMany({ companyId });
-      const productIden = cart.products[0].productId.toHexString();
-      const product = await Product.findById(productIden);
-      const productNaming = product.productName;
-      console.log(product);
-      console.log(productNaming);
-      console.log(cart.bill);
-      // html: `<p>Hello ${companyName}</p>
-      await sendEmail({
-        email: company.officialEmail,
-        subject: "Purchase Completed",
-        message: `Purchase Completed`,
-        html: `<p>Hello</p> 
-                <p>Thank your for placing an order with LegalMO. We are pleased to confirm the receipt of your order </p>
-                <p>Order details:</p>
-                <p>Item(s): ${productNaming} </p>
-                <p>Total Amount: ${cart.bill}}</p>
-                <p>Your order is now being processed and will be completed between 10-14 working days. You will receive a notification once your order has been dropped on your dashboard.</p>
-                <p>We appreciate the trust you have placed in us and aim to provide you with the highest quality of service. If you have any questions or need further assistance, please do not hesitate to contact our customer service team at info@legalmo.biz or 08094818884. Thank you for choosing LegalMO. We value your business and look forward to serving you again.</p>
-                <p>Warm regards,</p>
-                <p>LegalMO</p>
-                <p></p>
-                `,
-      });
-      return res.status(201).json("Checkout successful");
-    } else {
-      res.status(400).send("Nothing in your cart");
+
+    const companyId = req.userId;
+    const cart = await Cart.findOne({ companyId }).populate(
+      "companyId products"
+    );
+
+    if (cart === null || !cart.products || cart.products.length === 0) {
+      return res.status(400).send("Nothing in your cart");
     }
+
+    // Iterate through cart products and save as jobs
+    const jobsPromises = cart.products.map(async (product) => {
+      const newJob = new Job({
+        companyId: req.userId,
+        productId: product.productId,
+        companyDetail: product.detail,
+        companyFile: product.file,
+        adminDetail: "",
+        adminFile: "",
+        lawyerRequestedDetail: "",
+        companyFileName: product.fileName,
+        adminFileName: "",
+      });
+
+      await newJob.save();
+      console.log("Job saved");
+    });
+
+    // Wait for all jobs to be saved before proceeding
+    await Promise.all(jobsPromises);
+
+    // Clear the cart after saving jobs
+    await Cart.deleteMany({ companyId });
+
+    const productIden = cart.products[0].productId.toHexString();
+    const product = await Product.findById(productIden);
+    const productNaming = product.productName;
+
+    // Initiate Flutterwave payment
+    const response = await got
+      .post("https://api.flutterwave.com/v3/payments", {
+        headers: {
+          Authorization: `Bearer ${process.env.FLW_SECRET_KEY}`,
+        },
+        json: {
+          tx_ref: generateUniqueTransactionReference(),
+          amount: cart.bill,
+          currency: "NGN",
+          redirect_url: "https://www.legalmo.biz/",
+          // redirect_url: "YOUR_REDIRECT_URL",
+          meta: {
+            consumer_id: req.userId,
+            consumer_mac: "92a3-912ba-1192a",
+          },
+          customer: {
+            email: company.officialEmail,
+            phoneNumber: company.phoneNumber, // Update with the actual phone number
+            name: company.name, // Update with the actual name
+          },
+          // customizations: {
+          //   title: "Pied Piper Payments",
+          //   logo: "http://www.piedpiper.com/app/themes/joystick-v27/images/logo.png",
+          // },
+        },
+      })
+      .json();
+
+    // Save the Flutterwave transaction details in your database
+    const transactionDetails = new Transaction({
+      ref: response.tx_ref,
+      amount: cart.bill,
+      currency: "NGN", // Update with the actual currency
+      status: "pending", // You may set an initial status based on your needs
+    });
+    await transactionDetails.save();
+
+    return res
+      .status(201)
+      .json({ status: "success", paymentLink: response.data.link });
   } catch (error) {
-    res.status(500).send("something went wrong");
+    console.error(error);
+    return res.status(500).send("Failed to initiate payment");
+  }
+};
+
+const secretHash = process.env.FLW_SECRET_HASH; // Set your secret hash
+
+// Webhook Handling (with secret hash implementation)
+export const flutterwaveWebhook = async (req, res) => {
+  // app.post('/flutterwave-webhook', (req, res) => {
+  try {
+    // Check for the signature if a secret hash is specified
+    const signature = req.headers["verif-hash"];
+    if (secretHash && (!signature || signature !== secretHash)) {
+      // Invalid signature; discard the request
+      console.error("Invalid signature. Discarding request.");
+      return res.status(401).end();
+    }
+
+    const eventData = req.body;
+
+    // Retrieve the corresponding transaction in your database
+    const transactionDetails = await Transaction.findOne({
+      ref: eventData.tx_ref,
+    });
+
+    if (transactionDetails) {
+      // Update the transaction status based on eventData.status
+      transactionDetails.status = eventData.status;
+      await transactionDetails.save();
+
+      // If the payment is successful, send the purchase confirmation email
+      if (eventData.status === "successful") {
+        const company = await Company.findById(transactionDetails.consumer_id);
+        if (company) {
+          await sendEmail({
+            email: company.officialEmail,
+            subject: "Purchase Completed",
+            message: "Purchase Completed",
+            html: `<p>Hello</p> 
+                   <p>Thank you for placing an order with LegalMO. We are pleased to confirm the receipt of your order.</p>
+                   <!-- Rest of your email content -->
+                   `,
+          });
+        }
+      }
+    }
+
+    res.status(200).end();
+  } catch (error) {
+    console.error("Error handling Flutterwave webhook:", error);
+    res.status(500).end();
   }
 };
 
