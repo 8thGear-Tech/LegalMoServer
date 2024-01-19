@@ -21,7 +21,7 @@ export const allJob = async (req, res) => {
     //   allJobsWithProducts.push(populatedJob);
     // }
     return res.status(200).send(jobs);
-  } catch (t iderror) {
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
