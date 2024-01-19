@@ -184,6 +184,42 @@ export const getProducts = async (req, res) => {
   }
 };
 
+// export const updateProduct = async (req, res) => {
+//   const validate = productupdate.validate(req.body, options);
+//   if (validate.error) {
+//     const message = validate.error.details
+//       .map((detail) => detail.message)
+//       .join(",");
+//     return res.status(400).send({
+//       status: "fail",
+//       message,
+//     });
+//   }
+//   const { productName, productPrice, productDescription, productImage } =
+//     req.body;
+//   const adminExists = await Admin.findById(req.userId);
+//   if (adminExists) {
+//     try {
+//       const updateProduct = await Product.findByIdAndUpdate(
+//         req.params.id,
+//         {
+//           $set: { productName, productPrice, productImage, productDescription },
+//         },
+//         { new: true }
+//       );
+//       res.status(200).json(updateProduct);
+//       if (!updateProduct)
+//         throw Error("Something went wrong while updating the product");
+//     } catch {
+//       res.send(error);
+//       console.log(error);
+//     }
+//   } else {
+//     res.status(403);
+//     throw new Error("You are not authorized to update this product");
+//   }
+// };
+
 export const updateProduct = async (req, res) => {
   const validate = productupdate.validate(req.body, options);
   if (validate.error) {
@@ -195,28 +231,67 @@ export const updateProduct = async (req, res) => {
       message,
     });
   }
-  const { productName, productPrice, productDescription, productImage } =
-    req.body;
+
   const adminExists = await Admin.findById(req.userId);
-  if (adminExists) {
-    try {
-      const updateProduct = await Product.findByIdAndUpdate(
-        req.params.id,
-        {
-          $set: { productName, productPrice, productImage, productDescription },
-        },
-        { new: true }
-      );
-      res.status(200).json(updateProduct);
-      if (!updateProduct)
-        throw Error("Something went wrong while updating the product");
-    } catch {
-      res.send(error);
-      console.log(error);
-    }
-  } else {
+  if (!adminExists) {
     res.status(403);
     throw new Error("You are not authorized to update this product");
+  }
+
+  const { productName, productPrice, productDescription } = req.body;
+
+  // Check if there is a file in the request
+  if (req.file) {
+    try {
+      // Upload the new image
+      const { originalname } = req.file;
+      const fileExtension = originalname.split(".").pop();
+      const publicId = `${Date.now()}-${originalname.replace(
+        `.${fileExtension}`,
+        ""
+      )}`;
+      const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+        public_id: publicId,
+      });
+
+      if (uploadResult.secure_url) {
+        // Use the secure_url to update the product image URL in the database
+        req.body.productImage = uploadResult.secure_url;
+      } else {
+        res.status(500).send({ error: "Failed to upload product image" });
+        return;
+      }
+    } catch (error) {
+      res.status(500).send({ error: "Failed to upload product image" });
+      return;
+    }
+  }
+
+  try {
+    const updateProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          productName,
+          productPrice,
+          productDescription,
+          productImage: req.body.productImage || productImage,
+        },
+      },
+      { new: true }
+    );
+
+    if (!updateProduct) {
+      res.status(404).send({ error: "Product not found" });
+      return;
+    }
+
+    res.status(200).json(updateProduct);
+  } catch (error) {
+    res
+      .status(500)
+      .send({ error: "Something went wrong while updating the product" });
+    console.log(error);
   }
 };
 
