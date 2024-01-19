@@ -256,6 +256,7 @@ export const updateProduct = async (req, res) => {
         }
       }
 
+      await upload(req, res);
       const { productName, productPrice, productDescription, productImage } =
         req.body;
 
