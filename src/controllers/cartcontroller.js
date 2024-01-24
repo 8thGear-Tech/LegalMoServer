@@ -392,7 +392,7 @@ export const checkout = async (req, res) => {
     await transactionDetails.save();
     return res
       .status(201)
-      .json({ status: "success", paymentLink: response.data.data.link });
+      .json({ status: "success", paymentLink: response.data.link });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: error.message });
