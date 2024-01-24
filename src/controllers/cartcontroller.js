@@ -379,6 +379,9 @@ export const checkout = async (req, res) => {
 
     console.log(response);
 
+    // Redirect the user to the payment link
+    window.location.href = response.data.link;
+
     // Save the Flutterwave transaction details in your database
     const transactionDetails = new Transaction({
       ref: response.tx_ref,
