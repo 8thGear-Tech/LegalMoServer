@@ -380,7 +380,7 @@ export const checkout = async (req, res) => {
     console.log(response);
 
     // Redirect the user to the payment link
-    window.location.href = response.data.link;
+    // window.location.href = response.data.link;
 
     // Save the Flutterwave transaction details in your database
     const transactionDetails = new Transaction({
@@ -392,7 +392,7 @@ export const checkout = async (req, res) => {
     await transactionDetails.save();
     return res
       .status(201)
-      .json({ status: "success", paymentLink: response.data.link });
+      .json({ status: "success", paymentLink: response.data.data.link });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: error.message });
