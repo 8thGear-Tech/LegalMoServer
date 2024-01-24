@@ -395,7 +395,8 @@ export const checkout = async (req, res) => {
       .json({ status: "success", paymentLink: response.data.link });
   } catch (error) {
     console.error(error);
-    return res.status(500).send("Failed to initiate payment");
+    return res.status(500).json({ error: error.message });
+    // return res.status(500).send("Failed to initiate payment");
   }
 };
 
