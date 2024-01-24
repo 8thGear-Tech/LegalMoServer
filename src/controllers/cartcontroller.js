@@ -377,6 +377,8 @@ export const checkout = async (req, res) => {
       })
       .json();
 
+    console.log(response);
+
     // Save the Flutterwave transaction details in your database
     const transactionDetails = new Transaction({
       ref: response.tx_ref,
@@ -385,7 +387,6 @@ export const checkout = async (req, res) => {
       status: "pending", // You may set an initial status based on your needs
     });
     await transactionDetails.save();
-
     return res
       .status(201)
       .json({ status: "success", paymentLink: response.data.link });
