@@ -452,74 +452,55 @@ export const clearCart = async (req, res) => {
 
 export const checkout = async (req, res) => {
   // ... (existing code)
-
-  const company = await Company.findById(req.userId);
-  if (!company) {
-    res.status(404).send({ message: "Unauthorized!, You must be a company" });
-    return;
-  }
-  const companyId = req.userId;
-  const companyName = company.companyName;
-  console.log(companyName);
-
-  const cart = await Cart.findOne({ companyId }).populate("companyId products");
-  console.log(cart);
-
   try {
-    // Existing code...
-
-    if (cart === null) {
-      res.status(400).send("Nothing in your cart");
-      return;
+    // Assuming you have a Company model
+    const company = await Company.findById(req.userId);
+    if (!company) {
+      return res
+        .status(404)
+        .send({ message: "Unauthorized!, You must be a company" });
     }
-    if (cart.products) {
-      // Existing code...
 
-      // Step 1: Assemble payment details
-      const paymentDetails = {
-        tx_ref: "hooli-tx-1920bbtytty",
-        amount: cart.bill, // Use the total amount from your cart
-        currency: "NGN",
-        redirect_url:
-          "https://webhook.site/9d0b00ba-9a69-44fa-a43d-a82c33c36fdc",
-        meta: {
-          consumer_id: 23,
-          consumer_mac: "92a3-912ba-1192a",
-        },
-        customer: {
-          email: "user@gmail.com",
-          phonenumber: "080****4528",
-          name: "Yemi Desola",
-        },
-        customizations: {
-          title: "Pied Piper Payments",
-          logo: "http://www.piedpiper.com/app/themes/joystick-v27/images/logo.png",
-        },
-      };
+    const companyId = req.userId;
+    const cart = await Cart.findOne({ companyId }).populate(
+      "companyId products"
+    );
 
-      // Step 2: Get a payment link
-      try {
-        const response = await got
-          .post("https://api.flutterwave.com/v3/payments", {
-            headers: {
-              Authorization: `Bearer ${process.env.FLW_SECRET_KEY}`,
-            },
-            json: paymentDetails,
-          })
-          .json();
+    if (!cart || !cart.products || cart.products.length === 0) {
+      return res.status(400).send("Nothing in your cart");
+    }
 
-        // Step 3: Redirect the user to the payment link
-        res.redirect(response.data.link);
-      } catch (err) {
-        console.log(err.code);
-        console.log(err.response.body);
-        res.status(500).send("Failed to initiate payment");
+    // Calculate the total amount from the cart products
+    const totalAmount = cart.products.reduce(
+      (acc, product) => acc + product.price,
+      0
+    );
+
+    const flutterwaveRequest = {
+      tx_ref: `legalmo-tx-${Date.now()}`,
+      amount: totalAmount,
+      currency: "NGN",
+      redirect_url: "https://webhook.site/9d0b00ba-9a69-44fa-a43d-a82c33c36fdc",
+      // ... other payment details
+    };
+
+    const response = await axios.post(
+      "https://api.flutterwave.com/v3/payments",
+      flutterwaveRequest,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.FLW_SECRET_KEY}`,
+        },
       }
-    } else {
-      res.status(400).send("Nothing in your cart");
-    }
+    );
+
+    // Redirect the user to the generated Flutterwave link
+    return res.json({ link: response.data.data.link });
   } catch (error) {
-    res.status(500).send("something went wrong");
+    console.error("Error from Flutterwave:", error.message);
+    return res
+      .status(error.response ? error.response.status : 500)
+      .json({ error: "Something went wrong" });
   }
 };
 
