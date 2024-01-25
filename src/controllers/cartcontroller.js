@@ -453,44 +453,73 @@ export const clearCart = async (req, res) => {
 export const checkout = async (req, res) => {
   // ... (existing code)
 
-  // Step 1: Assemble payment details
-  const paymentDetails = {
-    tx_ref: "hooli-tx-1920bbtytty",
-    amount: cart.bill, // Use the total amount from your cart
-    currency: "NGN",
-    redirect_url: "https://webhook.site/9d0b00ba-9a69-44fa-a43d-a82c33c36fdc",
-    meta: {
-      consumer_id: 23,
-      consumer_mac: "92a3-912ba-1192a",
-    },
-    customer: {
-      email: "user@gmail.com",
-      phonenumber: "080****4528",
-      name: "Yemi Desola",
-    },
-    customizations: {
-      title: "Pied Piper Payments",
-      logo: "http://www.piedpiper.com/app/themes/joystick-v27/images/logo.png",
-    },
-  };
+  const company = await Company.findById(req.userId);
+  if (!company) {
+    res.status(404).send({ message: "Unauthorized!, You must be a company" });
+    return;
+  }
+  const companyId = req.userId;
+  const companyName = company.companyName;
+  console.log(companyName);
 
-  // Step 2: Get a payment link
+  const cart = await Cart.findOne({ companyId }).populate("companyId products");
+  console.log(cart);
+
   try {
-    const response = await got
-      .post("https://api.flutterwave.com/v3/payments", {
-        headers: {
-          Authorization: `Bearer ${process.env.FLW_SECRET_KEY}`,
-        },
-        json: paymentDetails,
-      })
-      .json();
+    // Existing code...
 
-    // Step 3: Redirect the user to the payment link
-    res.redirect(response.data.link);
-  } catch (err) {
-    console.log(err.code);
-    console.log(err.response.body);
-    res.status(500).send("Failed to initiate payment");
+    if (cart === null) {
+      res.status(400).send("Nothing in your cart");
+      return;
+    }
+    if (cart.products) {
+      // Existing code...
+
+      // Step 1: Assemble payment details
+      const paymentDetails = {
+        tx_ref: "hooli-tx-1920bbtytty",
+        amount: cart.bill, // Use the total amount from your cart
+        currency: "NGN",
+        redirect_url:
+          "https://webhook.site/9d0b00ba-9a69-44fa-a43d-a82c33c36fdc",
+        meta: {
+          consumer_id: 23,
+          consumer_mac: "92a3-912ba-1192a",
+        },
+        customer: {
+          email: "user@gmail.com",
+          phonenumber: "080****4528",
+          name: "Yemi Desola",
+        },
+        customizations: {
+          title: "Pied Piper Payments",
+          logo: "http://www.piedpiper.com/app/themes/joystick-v27/images/logo.png",
+        },
+      };
+
+      // Step 2: Get a payment link
+      try {
+        const response = await got
+          .post("https://api.flutterwave.com/v3/payments", {
+            headers: {
+              Authorization: `Bearer ${process.env.FLW_SECRET_KEY}`,
+            },
+            json: paymentDetails,
+          })
+          .json();
+
+        // Step 3: Redirect the user to the payment link
+        res.redirect(response.data.link);
+      } catch (err) {
+        console.log(err.code);
+        console.log(err.response.body);
+        res.status(500).send("Failed to initiate payment");
+      }
+    } else {
+      res.status(400).send("Nothing in your cart");
+    }
+  } catch (error) {
+    res.status(500).send("something went wrong");
   }
 };
 
