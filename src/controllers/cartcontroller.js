@@ -484,7 +484,7 @@ export const checkout = async (req, res) => {
       // ... other payment details
     };
 
-    const response = await axios.post(
+    const response = await got.post(
       "https://api.flutterwave.com/v3/payments",
       flutterwaveRequest,
       {
