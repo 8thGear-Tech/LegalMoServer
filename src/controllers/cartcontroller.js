@@ -285,85 +285,84 @@ export const clearCart = async (req, res) => {
 
 export const checkout = async (req, res) => {
   const company = await Company.findById(req.userId);
-  if (!company) {
-    res.status(404).send({ message: "Unauthorized!, You must be a company" });
-    return;
-  }
-  const companyId = req.userId;
-  const companyName = company.companyName;
 
+  if (!company) {
+    return res
+      .status(404)
+      .send({ message: "Unauthorized!, You must be a company" });
+  }
+
+  const companyId = req.userId;
   const cart = await Cart.findOne({ companyId }).populate("companyId products");
+
   try {
-    if (cart === null) {
-      res.status(400).send("Nothing in your cart");
-      return;
+    if (!cart || !cart.products || cart.products.length === 0) {
+      return res.status(400).send("Nothing in your cart");
     }
-    if (cart.products) {
-      // Create jobs for each product in the cart
-      cart.products.forEach((product) => {
-        const jobs = new Job({
-          companyId: req.userId,
-          productId: product.productId,
-          companyDetail: product.detail,
-          companyFile: product.file,
-          adminDetail: "",
-          adminFile: "",
-          lawyerRequestedDetail: "",
-          companyFileName: product.fileName,
-          adminFileName: "",
-        });
-        jobs
-          .save()
-          .then(() => {
-            console.log("Job saved");
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+
+    // Create jobs for each product in the cart
+    cart.products.forEach((product) => {
+      const jobs = new Job({
+        companyId: req.userId,
+        productId: product.productId,
+        companyDetail: product.detail,
+        companyFile: product.file,
+        adminDetail: "",
+        adminFile: "",
+        lawyerRequestedDetail: "",
+        companyFileName: product.fileName,
+        adminFileName: "",
       });
 
-      // Calculate total amount and generate tx_ref
-      const totalAmount = cart.bill;
-      const txRef = generateUniqueTxRef();
+      jobs
+        .save()
+        .then(() => {
+          console.log("Job saved");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
 
-      // Build payment details object
-      const paymentDetails = {
-        tx_ref: txRef,
-        amount: totalAmount,
-        currency: "NGN",
-        redirect_url: "https://your-order-confirmation-page.com",
-        customer: {
-          email: company.officialEmail,
-        },
-      };
+    // Calculate total amount and generate tx_ref
+    const totalAmount = cart.bill;
+    const txRef = generateUniqueTxRef();
 
-      // Initiate payment with Flutterwave
-      // ... (Rest of the Flutterwave payment code as previously provided)
-      try {
-        const response = await got.post(
-          "https://api.flutterwave.com/v3/payments",
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.FLW_SECRET_KEY}`,
-            },
-            json: paymentDetails,
-          }
-        );
+    // Build payment details object
+    const paymentDetails = {
+      tx_ref: txRef,
+      amount: totalAmount,
+      currency: "NGN",
+      redirect_url: "https://your-order-confirmation-page.com",
+      customer: {
+        email: company.officialEmail,
+      },
+    };
 
-        if (response.statusCode === 200) {
-          const paymentUrl = response.body.data.link;
-          return res.redirect(paymentUrl);
-        } else {
-          throw new Error(`Failed to initiate payment: ${response.statusCode}`);
-        }
-      } catch (error) {
-        console.error(error);
-        return res.status(500).send("Something went wrong");
+    // Initiate payment with Flutterwave
+    try {
+      const response = await got
+        .post("https://api.flutterwave.com/v3/payments", {
+          headers: {
+            Authorization: `Bearer ${process.env.FLW_SECRET_KEY}`,
+          },
+          json: paymentDetails,
+        })
+        .json();
+
+      if (response.status === "success") {
+        const paymentUrl = response.data.link;
+        return res.redirect(paymentUrl);
+      } else {
+        console.error(response.message);
+        return res.status(500).send("Failed to initiate payment");
       }
-    } else {
-      res.status(400).send("Nothing in your cart");
+    } catch (error) {
+      console.error(error.message);
+      return res.status(500).send("Failed to initiate payment");
     }
   } catch (error) {
-    res.status(500).send("Something went wrong");
+    console.error(error.message);
+    return res.status(500).send("Something went wrong");
   }
 };
