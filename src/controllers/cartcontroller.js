@@ -340,17 +340,17 @@ export const checkout = async (req, res) => {
         const paymentLink = response.data.link;
 
         // Redirect the user to the payment link
-        res.redirect(paymentLink);
+        return res.redirect(paymentLink);
       } catch (err) {
         console.error(err.code);
         console.error(err.response.body);
         // Handle errors appropriately
-        res.status(500).send("Failed to initiate payment");
+        return res.status(500).send("Failed to initiate payment");
       }
     } else {
-      res.status(400).send("Nothing in your cart");
+      return res.status(400).send("Nothing in your cart");
     }
   } catch (error) {
-    res.status(500).send("something went wrong");
+    return res.status(500).send("something went wrong");
   }
 };
