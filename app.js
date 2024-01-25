@@ -64,7 +64,12 @@ app.use("/", lawyerRouter);
 
 app.use(
   cors({
-    origin: ["http://localhost:5005", "http://localhost:3000"], // Add your second origin here
+    origin: [
+      "http://localhost:5005",
+      "http://localhost:3000",
+      "https://api.flutterwave.com/v3/payments",
+      "https://www.legalmo.biz/",
+    ], // Add your second origin here
   })
 );
 
