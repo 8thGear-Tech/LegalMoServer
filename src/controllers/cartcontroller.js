@@ -291,17 +291,15 @@ export const checkout = async (req, res) => {
   }
   const companyId = req.userId;
   const companyName = company.companyName;
-  console.log(companyName);
 
   const cart = await Cart.findOne({ companyId }).populate("companyId products");
-  console.log(cart);
   try {
     if (cart === null) {
       res.status(400).send("Nothing in your cart");
       return;
     }
     if (cart.products) {
-      // ... (your existing code)
+      // Create jobs for each product in the cart
       cart.products.forEach((product) => {
         const jobs = new Job({
           companyId: req.userId,
@@ -323,78 +321,49 @@ export const checkout = async (req, res) => {
             console.log(err);
           });
       });
-      await Cart.deleteMany({ companyId });
-      const productIden = cart.products[0].productId.toHexString();
-      const product = await Product.findById(productIden);
-      const productNaming = product.productName;
-      console.log(product);
-      console.log(productNaming);
-      console.log(cart.bill);
-      // html: `<p>Hello ${companyName}</p>
-      await sendEmail({
-        email: company.officialEmail,
-        subject: "Purchase Completed",
-        message: `Purchase Completed`,
-        html: `<p>Hello</p>
-                      <p>Thank your for placing an order with LegalMO. We are pleased to confirm the receipt of your order </p>
-                      <p>Order details:</p>
-                      <p>Item(s): ${productNaming} </p>
-                      <p>Total Amount: ${cart.bill}}</p>
-                      <p>Your order is now being processed and will be completed between 10-14 working days. You will receive a notification once your order has been dropped on your dashboard.</p>
-                      <p>We appreciate the trust you have placed in us and aim to provide you with the highest quality of service. If you have any questions or need further assistance, please do not hesitate to contact our customer service team at info@legalmo.biz or 08094818884. Thank you for choosing LegalMO. We value your business and look forward to serving you again.</p>
-                      <p>Warm regards,</p>
-                      <p>LegalMO</p>
-                      <p></p>
-                      `,
-      });
-      // Step 1: Assemble payment details
+
+      // Calculate total amount and generate tx_ref
+      const totalAmount = cart.bill;
+      const txRef = generateUniqueTxRef();
+
+      // Build payment details object
       const paymentDetails = {
-        tx_ref: "hooli-tx-1920bbtytty",
-        amount: cart.bill.toString(), // Assuming cart.bill is the total amount
+        tx_ref: txRef,
+        amount: totalAmount,
         currency: "NGN",
-        redirect_url:
-          "https://webhook.site/9d0b00ba-9a69-44fa-a43d-a82c33c36fdc",
-        meta: {
-          consumer_id: 23,
-          consumer_mac: "92a3-912ba-1192a",
-        },
+        redirect_url: "https://your-order-confirmation-page.com",
         customer: {
-          email: "user@gmail.com",
-          phonenumber: "080****4528",
-          name: "Yemi Desola",
-        },
-        customizations: {
-          title: "Pied Piper Payments",
-          logo: "http://www.piedpiper.com/app/themes/joystick-v27/images/logo.png",
+          email: company.officialEmail,
         },
       };
 
-      // Step 2: Get a payment link
+      // Initiate payment with Flutterwave
+      // ... (Rest of the Flutterwave payment code as previously provided)
       try {
-        const response = await got
-          .post("https://api.flutterwave.com/v3/payments", {
+        const response = await got.post(
+          "https://api.flutterwave.com/v3/payments",
+          {
             headers: {
               Authorization: `Bearer ${process.env.FLW_SECRET_KEY}`,
             },
             json: paymentDetails,
-          })
-          .json();
+          }
+        );
 
-        // Extract the payment link from the response
-        const paymentLink = response.data.link;
-
-        // Redirect the user to the payment link
-        return res.redirect(paymentLink);
-      } catch (err) {
-        console.error(err.code);
-        console.error(err.response.body);
-        // Handle errors appropriately
-        return res.status(500).send("Failed to initiate payment");
+        if (response.statusCode === 200) {
+          const paymentUrl = response.body.data.link;
+          return res.redirect(paymentUrl);
+        } else {
+          throw new Error(`Failed to initiate payment: ${response.statusCode}`);
+        }
+      } catch (error) {
+        console.error(error);
+        return res.status(500).send("Something went wrong");
       }
     } else {
-      return res.status(400).send("Nothing in your cart");
+      res.status(400).send("Nothing in your cart");
     }
   } catch (error) {
-    return res.status(500).send("something went wrong");
+    res.status(500).send("Something went wrong");
   }
 };
