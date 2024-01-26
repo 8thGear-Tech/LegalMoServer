@@ -525,7 +525,13 @@ export const usersLogin = async (req, res) => {
         .json({
           status: "success",
           token,
-          data: { user },
+          // data: { user },
+          data: {
+            user: {
+              _id: user._id,
+              name: user.name,
+            },
+          },
         });
     } else {
       return res.status(401).json({
