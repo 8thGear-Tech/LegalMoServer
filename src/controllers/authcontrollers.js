@@ -530,6 +530,8 @@ export const usersLogin = async (req, res) => {
             user: {
               _id: user._id,
               name: user.name,
+              contactName: user.contactName,
+              officialEmail: user.officialEmail,
             },
           },
         });
