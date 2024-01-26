@@ -512,13 +512,7 @@ export const usersLogin = async (req, res) => {
       // Generate token and set cookie with token to be sent to the client and kept for 30 days
       //  console.log(userType)
       const _id = user.id;
-      const token = generateToken(
-        _id,
-        userType,
-        // name,
-        officialEmail,
-        phoneNumber
-      );
+      const token = generateToken(_id, userType);
       req.headers.authorization = `Bearer ${token}`;
 
       // Send response
@@ -531,7 +525,7 @@ export const usersLogin = async (req, res) => {
         .json({
           status: "success",
           token,
-          data: { user, token },
+          data: { user },
         });
     } else {
       return res.status(401).json({
