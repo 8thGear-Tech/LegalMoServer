@@ -11,7 +11,7 @@ dotenv.config({ path: "./configenv.env" });
 // Generates a JSON Web Token (JWT) for a user.
 const jwtsecret = process.env.JWT_SECRET;
 export const generateToken = (id, userType) => {
-  return jwt.sign({ id, userType }, jwtsecret, {
+  return jwt.sign({ id, userType, email, phoneNumber, name }, jwtsecret, {
     expiresIn: "7d",
     // expiresIn: process.env.JWT_EXPIRES_IN,
   });
