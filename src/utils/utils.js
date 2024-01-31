@@ -39,9 +39,10 @@ export const passwordMatch = (password, passwordConfirm) => {
 export async function sendConfirmationEmail(userEmail, token, name) {
   // try {
   //   //  const currentUrl = "http://localhost:5005/";
-  //   const currentUrl = "https://legalmo-server.onrender.com/";
+  // const currentUrl = "https://legalmo-server.onrender.com/";
   try {
-    const currentUrl = "https://www.legalmo.biz/login";
+    const currentUrl = "https://legalmo-server.onrender.com/";
+    // const currentUrl = "https://www.legalmo.biz/login";
 
     await sendEmail({
       email: userEmail,
