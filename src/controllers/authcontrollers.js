@@ -512,12 +512,12 @@ export const usersLogin = async (req, res) => {
       // Generate token and set cookie with token to be sent to the client and kept for 30 days
       //  console.log(userType)
       const _id = user.id;
-      // const userDetails = {
-      //   officialEmail: user.officialEmail,
-      //   phoneNumber: user.phoneNumber,
-      //   name: user.name,
-      //   // Add other user details as needed
-      // };
+      const userDetails = {
+        officialEmail: user.officialEmail,
+        phoneNumber: user.phoneNumber,
+        name: user.name,
+        // Add other user details as needed
+      };
       const token = generateToken(_id, userType);
       // const token = generateToken(_id, userType, userDetails);
       req.headers.authorization = `Bearer ${token}`;
