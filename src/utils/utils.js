@@ -18,7 +18,7 @@ export const generateToken = (
   name
 ) => {
   return jwt.sign(
-    { id, userType, officialEmail, phoneNumber, name },
+    { id, userType, email: { officialEmail, phoneNumber, name } },
     jwtsecret,
     {
       expiresIn: "7d",
