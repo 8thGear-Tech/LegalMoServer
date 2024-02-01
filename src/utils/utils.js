@@ -42,6 +42,8 @@ export async function sendConfirmationEmail(userEmail, token, name) {
   // const currentUrl = "https://legalmo-server.onrender.com/";
   try {
     // const currentUrl = "https://legalmo-server.onrender.com/";
+    // https://legalmo-server.onrender.com/api/useremail/confirm/:token
+    // api/useremail/confirm/:token
     const currentUrl = "https://www.legalmo.biz/login";
 
     await sendEmail({

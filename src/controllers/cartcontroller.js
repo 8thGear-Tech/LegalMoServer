@@ -227,6 +227,28 @@ export const checkout = async (req, res) => {
       return;
     }
     if (cart.products) {
+      //transaction starts
+      // Create a new transaction record
+      let transactionStatus;
+
+      // Check Flutterwave status and map it to your enum
+      if (req.body.status === "successful") {
+        transactionStatus = "success";
+      } else if (req.body.status === "failed") {
+        transactionStatus = "failed";
+      } else {
+        transactionStatus = "pending";
+      }
+      // Create a new transaction entry
+      const transaction = new Transaction({
+        ref: `${req.body.tx_ref}`, // Use Flutterwave tx_ref as a reference
+        status: transactionStatus,
+        currency: "NGN", // Update with the actual currency
+        amount: cart.bill, // Update with the actual amount
+      });
+
+      await transaction.save();
+      //transaction ends
       cart.products.forEach((product) => {
         const jobs = new Job({
           companyId: req.userId,
@@ -264,7 +286,7 @@ export const checkout = async (req, res) => {
                 <p>Thank your for placing an order with LegalMO. We are pleased to confirm the receipt of your order </p>
                 <p>Order details:</p>
                 <p>Item(s): ${productNaming} </p>
-                <p>Total Amount: ${cart.bill}}</p>
+                <p>Total Amount: ${cart.bill}</p>
                 <p>Your order is now being processed and will be completed between 10-14 working days. You will receive a notification once your order has been dropped on your dashboard.</p>
                 <p>We appreciate the trust you have placed in us and aim to provide you with the highest quality of service. If you have any questions or need further assistance, please do not hesitate to contact our customer service team at info@legalmo.biz or 08094818884. Thank you for choosing LegalMO. We value your business and look forward to serving you again.</p>
                 <p>Warm regards,</p>
