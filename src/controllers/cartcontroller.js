@@ -228,23 +228,56 @@ export const checkout = async (req, res) => {
     }
     if (cart.products) {
       //transaction starts
-      // Create a new transaction record
+      const {
+        tx_ref,
+        //  flw_ref,
+        //  amount,
+        //  currency,
+        status,
+        //  customer,
+        //  created_at,
+      } = req.body.data;
       let transactionStatus;
 
-      // Check Flutterwave status and map it to your enum
-      if (data.status === "successful") {
+      if (status === "successful") {
         transactionStatus = "success";
-      } else if (data.status === "failed") {
+      } else if (status === "failed") {
         transactionStatus = "failed";
       } else {
         transactionStatus = "pending";
       }
-      // Create a new transaction entry
+      // // Create a new transaction record
+      // let transactionStatus;
+
+      // // Check Flutterwave status and map it to your enum
+      // if (data.status === "successful") {
+      //   transactionStatus = "success";
+      // } else if (data.status === "failed") {
+      //   transactionStatus = "failed";
+      // } else {
+      //   transactionStatus = "pending";
+      // }
+      // // Create a new transaction entry
+      // const transaction = new Transaction({
+      //   ref: `${data.tx_ref}`, // Use Flutterwave tx_ref as a reference
+      //   status: transactionStatus,
+      //   currency: "NGN", // Update with the actual currency
+      //   amount: cart.bill, // Update with the actual amount
+      // });
+
+      // await transaction.save();
       const transaction = new Transaction({
-        ref: `${data.tx_ref}`, // Use Flutterwave tx_ref as a reference
+        ref: tx_ref,
         status: transactionStatus,
-        currency: "NGN", // Update with the actual currency
-        amount: cart.bill, // Update with the actual amount
+        //  currency,
+        //  amount,
+        //  flw_ref,
+        //  customer: {
+        //    id: customer.id,
+        //    name: customer.name,
+        //  },
+        created_at,
+        // Add more fields based on the webhook payload
       });
 
       await transaction.save();
