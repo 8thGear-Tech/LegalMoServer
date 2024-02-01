@@ -232,16 +232,16 @@ export const checkout = async (req, res) => {
       let transactionStatus;
 
       // Check Flutterwave status and map it to your enum
-      if (req.body.status === "successful") {
+      if (data.status === "successful") {
         transactionStatus = "success";
-      } else if (req.body.status === "failed") {
+      } else if (data.status === "failed") {
         transactionStatus = "failed";
       } else {
         transactionStatus = "pending";
       }
       // Create a new transaction entry
       const transaction = new Transaction({
-        ref: `${req.body.tx_ref}`, // Use Flutterwave tx_ref as a reference
+        ref: `${data.tx_ref}`, // Use Flutterwave tx_ref as a reference
         status: transactionStatus,
         currency: "NGN", // Update with the actual currency
         amount: cart.bill, // Update with the actual amount
