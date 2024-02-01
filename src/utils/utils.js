@@ -17,14 +17,10 @@ export const generateToken = (
   // phoneNumber,
   // name
 ) => {
-  return jwt.sign(
-    { id, userType, officialEmail, phoneNumber, name },
-    jwtsecret,
-    {
-      expiresIn: "7d",
-      // expiresIn: process.env.JWT_EXPIRES_IN,
-    }
-  );
+  return jwt.sign({ id, userType }, jwtsecret, {
+    expiresIn: "7d",
+    // expiresIn: process.env.JWT_EXPIRES_IN,
+  });
 };
 export const emailConfirmationToken = (id, userType) => {
   return jwt.sign({ id, userType }, jwtsecret, {
