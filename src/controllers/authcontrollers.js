@@ -518,8 +518,8 @@ export const usersLogin = async (req, res) => {
         name: user.name,
         // Add other user details as needed
       };
-      const token = generateToken(_id, userType);
-      // const token = generateToken(_id, userType, userDetails);
+      // const token = generateToken(_id, userType);
+      const token = generateToken(_id, userType, userDetails);
       req.headers.authorization = `Bearer ${token}`;
 
       // Send response
