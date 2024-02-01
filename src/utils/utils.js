@@ -12,10 +12,10 @@ dotenv.config({ path: "./configenv.env" });
 const jwtsecret = process.env.JWT_SECRET;
 export const generateToken = (
   id,
-  userType,
-  officialEmail,
-  phoneNumber,
-  name
+  userType
+  // officialEmail,
+  // phoneNumber,
+  // name
 ) => {
   return jwt.sign(
     { id, userType, officialEmail, phoneNumber, name },
