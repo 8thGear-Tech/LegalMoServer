@@ -10,36 +10,36 @@ import {
 import { checkInternetConnection } from "../utils/utils.js";
 
 const jwtsecret = process.env.JWT_SECRET;
-export const authenticateUser = async (req, res, next) => {
-  try {
-    // check if the user is connected to the internet
-    await checkInternetConnection();
+// export const authenticateUser = async (req, res, next) => {
+//   try {
+//     // check if the user is connected to the internet
+//     await checkInternetConnection();
 
-    const token = req.headers.authorization?.split(" ")[1] || req.cookies.token;
-    console.log("Token:", token);
+//     const token = req.headers.authorization?.split(" ")[1] || req.cookies.token;
+//     console.log("Token:", token);
 
-    if (!token) {
-      console.log("No Token");
-      return res.status(401).json({ message: "Unidentified user" });
-    }
+//     if (!token) {
+//       console.log("No Token");
+//       return res.status(401).json({ message: "Unidentified user" });
+//     }
 
-    const decoded = jwt.verify(token, jwtsecret);
-    console.log("Decoded Token:", decoded);
+//     const decoded = jwt.verify(token, jwtsecret);
+//     console.log("Decoded Token:", decoded);
 
-    req.userId = decoded.id;
-    req.userType = decoded.userType;
+//     req.userId = decoded.id;
+//     req.userType = decoded.userType;
 
-    next();
-  } catch (error) {
-    if (error.message === "No internet connection") {
-      return res.status(503).json({
-        status: "fail",
-        message: "No internet connection",
-      });
-    }
-    res.status(401).json({ message: "You are not authorized" });
-  }
-};
+//     next();
+//   } catch (error) {
+//     if (error.message === "No internet connection") {
+//       return res.status(503).json({
+//         status: "fail",
+//         message: "No internet connection",
+//       });
+//     }
+//     res.status(401).json({ message: "You are not authorized" });
+//   }
+// };
 export const isAdminUser = async (req, res, next) => {
   // Check if the user is connected to the internet
   await checkInternetConnection();
