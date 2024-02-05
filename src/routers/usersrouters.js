@@ -10,7 +10,7 @@ import {
 } from "../controllers/usersControllers.js";
 import {
   profileBasedOnUserType,
-  // authenticateUser,
+  authenticateUser,
   isAdminUser,
   updateProfileBasedOnUser,
 } from "../controllers/middleware.js";
@@ -33,7 +33,7 @@ const upload = multer({ storage: storage });
 
 const router = express.Router();
 
-// router.use(authenticateUser);
+router.use(authenticateUser);
 router.use("/getLawyer", isAdminUser, getOneLawyer);
 router.use("/getCompany", isAdminUser, getOneCompany);
 router.get("/userprofile", profileBasedOnUserType);
