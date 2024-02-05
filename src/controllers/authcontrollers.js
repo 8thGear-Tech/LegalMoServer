@@ -162,7 +162,7 @@ export const companySignup = async (req, res) => {
        const emailSent = await sendConfirmationEmail(newCompany.officialEmail, token, newCompany.name);
  
        if (emailSent) {
-         res.status(201).json({
+         res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 }).status(201).json({
           status: 'success',
           message: 'Confirmation email sent successfully',
           data: {
@@ -250,9 +250,11 @@ export const lawyerSignup = async (req, res) => {
     const { _id } = newLawyer;
     const userType = 'lawyer';
     const token = emailConfirmationToken(_id, userType);
+    req.headers.authorization = `Bearer ${token}`;
 
     // Send the Confirmation Email to Lawyer
-        const emailSent = await sendConfirmationEmail(newLawyer.officialEmail, token, newLawyer.name);
+    const emailSent = await sendConfirmationEmail(newLawyer.officialEmail, token, newLawyer.name);
+    res.cookie('jwt', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 });
  
         if (emailSent) {
           res.status(201).json({

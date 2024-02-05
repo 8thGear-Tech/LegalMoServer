@@ -8,7 +8,11 @@ export const authenticateUser = async (req, res, next) => {
     // check if the user is connected to the internet
     await checkInternetConnection();
 
-    const token = req.headers.authorization?.split(' ')[1] || req.cookies.token;
+    // Log the Authorization header and cookies
+    console.log('Authorization header:', req.headers.authorization);
+    console.log('Cookies:', req.cookies);
+
+    const token = req.cookies.jwt;
     
     if (!token) {
       console.log("No Token");
