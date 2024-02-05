@@ -45,18 +45,17 @@ export const confirmEmail = async (req, res) => {
       }
     }
 
-    console.log('I got here 1')
+    console.log("I got here 1");
     // Log the decoded token
-    console.log('Decoded token:', decoded);
+    console.log("Decoded token:", decoded);
 
     // Determine the user type from the token payload
     const userType = decoded.userType;
-    console.log('I got here 2')
+    console.log("I got here 2");
 
-
-      // Log the user ID and user type
-    console.log('User ID:', decoded.id);
-    console.log('User type:', userType);
+    // Log the user ID and user type
+    console.log("User ID:", decoded.id);
+    console.log("User type:", userType);
 
     // Find the user by their ID (decoded from the token) based on the user type
     let user;
@@ -86,9 +85,10 @@ export const confirmEmail = async (req, res) => {
     await user.save();
 
     // Optionally, you can redirect the user to a login page or show a confirmation success message.
-    res
-      .status(200)
-      .send(`${userType} Email Confirmed Successfully. You can now log in.`);
+    // res
+    //   .status(200)
+    //   .send(`${userType} Email Confirmed Successfully. You can now log in.`);
+    res.status(200).redirect("http://legalmo.biz/login");
   } catch (error) {
     console.error("Email confirmation error:", error);
     res.status(500).send("Internal server error.");
