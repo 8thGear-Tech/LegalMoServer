@@ -22,7 +22,7 @@ router.post("/login", upload.none(), usersLogin);
 router.post("/company/signup", upload.none(), companySignup);
 router.post("/lawyer/signup", upload.none(), lawyerSignup);
 router.post("/admin/signup", upload.none(), adminSignup);
-router.get("/useremail/confir", confirmEmail);
+router.get("/useremail/confirm", confirmEmail);
 // router.get("/useremail/confirm/:token", confirmEmail);
 router.post("/forgot-password", forgotPassword);
 router.post("/confirm-reset-token", resetPasswordToken);
