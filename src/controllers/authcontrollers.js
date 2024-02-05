@@ -185,14 +185,20 @@ export const companySignup = async (req, res) => {
     );
 
     if (emailSent) {
-      res.status(201).json({
-        status: "success",
-        message: "Confirmation email sent successfully",
-        data: {
-          company: newCompany,
-          youtoken: token,
-        },
-      });
+      res
+        .cookie("jwt", token, {
+          httpOnly: true,
+          maxAge: 1000 * 60 * 60 * 24 * 7,
+        })
+        .status(201)
+        .json({
+          status: "success",
+          message: "Confirmation email sent successfully",
+          data: {
+            company: newCompany,
+            youtoken: token,
+          },
+        });
     } else {
       // Handle email sending error
       res.status(500).json({
@@ -278,6 +284,7 @@ export const lawyerSignup = async (req, res) => {
     const { _id } = newLawyer;
     const userType = "lawyer";
     const token = emailConfirmationToken(_id, userType);
+    req.headers.authorization = `Bearer ${token}`;
 
     // Send the Confirmation Email to Lawyer
     const emailSent = await sendConfirmationEmail(
@@ -285,6 +292,10 @@ export const lawyerSignup = async (req, res) => {
       token,
       newLawyer.name
     );
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    });
 
     if (emailSent) {
       res.status(201).json({

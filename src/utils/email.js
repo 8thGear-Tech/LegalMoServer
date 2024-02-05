@@ -45,8 +45,18 @@ export const confirmEmail = async (req, res) => {
       }
     }
 
+    console.log('I got here 1')
+    // Log the decoded token
+    console.log('Decoded token:', decoded);
+
     // Determine the user type from the token payload
     const userType = decoded.userType;
+    console.log('I got here 2')
+
+
+      // Log the user ID and user type
+    console.log('User ID:', decoded.id);
+    console.log('User type:', userType);
 
     // Find the user by their ID (decoded from the token) based on the user type
     let user;

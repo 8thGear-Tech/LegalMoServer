@@ -37,15 +37,10 @@ export const passwordMatch = (password, passwordConfirm) => {
 };
 // Function to send confirmation email
 export async function sendConfirmationEmail(userEmail, token, name) {
-  // try {
-  //   //  const currentUrl = "http://localhost:5005/";
-  // const currentUrl = "https://legalmo-server.onrender.com/";
   try {
-    // const currentUrl = "https://legalmo-server.onrender.com/";
+    //  const currentUrl = "http://localhost:5005/api/useremail/confirm";
     const currentUrl =
-      "https://legalmo-server.onrender.com/api/useremail/confirm/";
-    // api/useremail/confirm/:token
-    // const currentUrl = "https://www.legalmo.biz/login";
+      "https://legalmo-server.onrender.com/api/useremail/confirm";
 
     await sendEmail({
       email: userEmail,
@@ -54,14 +49,13 @@ export async function sendConfirmationEmail(userEmail, token, name) {
         <p>Hello ${name}</p>
         <p>Thank you for signing up</p>
         <p>To get you started, please click on the button below to confirm your email address</p>
-        <a href="${currentUrl}/${token}" style="background-color: #4CAF50; color: white; padding: 15px 15px; text-align: center; text-decoration: none; display: inline-block; border-radius: 10px;" >Confirm Email</a>
+        <a href="${currentUrl}/${token}" style="background-color: #4CAF50; color: white; padding: 15px 15px; text-align: center; text-decoration: none; display: inline-block; border-radius: 10px;">Confirm Email</a>
         <p>If you didn't submit your email address to join our community, kindly ignore this email.</p>
       `,
     });
-    //ywyuo-server.onrender.com/api/useremail/confirm/?token=yourToken
 
-    // Return true to indicate that the email was successfully sent
-    https: return true;
+    // Return true to indicate that the email was successssfully sent
+    return true;
   } catch (error) {
     console.error("Email sending error:", error);
     // Return false to indicate that there was an error sending the email
