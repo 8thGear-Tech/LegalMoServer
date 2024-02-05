@@ -9,13 +9,13 @@ export const authenticateUser = async (req, res, next) => {
     await checkInternetConnection();
 
     // Log the Authorization header and cookies
-    console.log('Authorization header:', req.headers.authorization);
-    console.log('Cookies:', req.cookies);
+    // console.log('Authorization header:', req.headers.authorization);
+    // console.log('Cookies:', req.cookies);
 
     const token = req.cookies.jwt;
     
     if (!token) {
-      console.log("No Token");
+      // console.log("No Token");
       return res.status(401).json({ message: 'Unidentified user' });
     }
 
