@@ -43,7 +43,7 @@ export async function sendConfirmationEmail(userEmail, token, name) {
   try {
     // const currentUrl = "https://legalmo-server.onrender.com/";
     const currentUrl =
-      "https://legalmo-server.onrender.com/api/useremail/confirm";
+      "https://legalmo-server.onrender.com/api/useremail/confirm/";
     // api/useremail/confirm/:token
     // const currentUrl = "https://www.legalmo.biz/login";
 
@@ -58,9 +58,10 @@ export async function sendConfirmationEmail(userEmail, token, name) {
         <p>If you didn't submit your email address to join our community, kindly ignore this email.</p>
       `,
     });
+    //ywyuo-server.onrender.com/api/useremail/confirm/?token=yourToken
 
     // Return true to indicate that the email was successfully sent
-    return true;
+    https: return true;
   } catch (error) {
     console.error("Email sending error:", error);
     // Return false to indicate that there was an error sending the email
