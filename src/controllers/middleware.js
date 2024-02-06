@@ -19,7 +19,8 @@ export const authenticateUser = async (req, res, next) => {
     // console.log('Authorization header:', req.headers.authorization);
     // console.log('Cookies:', req.cookies);
 
-    const token = req.cookies.jwt;
+    const token = req.headers.authorization.split(" ")[1] || req.cookies.jwt;
+    // const token = req.cookies.jwt;
 
     if (!token) {
       // console.log("No Token");
