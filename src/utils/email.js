@@ -88,7 +88,7 @@ export const confirmEmail = async (req, res) => {
     // res
     //   .status(200)
     //   .send(`${userType} Email Confirmed Successfully. You can now log in.`);
-    res.status(200).redirect("http://legalmo.biz/login");
+    res.status(200).redirect("http://legalmo.biz/confirm-email");
   } catch (error) {
     console.error("Email confirmation error:", error);
     res.status(500).send("Internal server error.");
