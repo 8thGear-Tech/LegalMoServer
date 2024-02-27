@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # AUTHENTICATION
 
 ## Creating an account
@@ -97,8 +96,6 @@ Passwords are expected to adhere to the following conventions:
 
 Please make sure to create a password that adheres to these rules to help ensure the security of your account.
 
-=======
->>>>>>> debe69d712d8b8426343f63ffea351ac9138ffba
 # Endpoints
 
 ## FOR ADMIN
@@ -251,15 +248,15 @@ Please make sure to create a password that adheres to these rules to help ensure
 - **Request Body**: JSON field
 
 - **Example**:
+
   ```json
   {
     "companyId": "sksjhd494940202020brgr"
   }
   ```
-  <<<<<<< HEAD
+
   - You are allowed to use special characters like `@`,`$`,`!`,`%`,`*`,`?`, and `&` in your password.
 
-<<<<<<< HEAD
 5. **Has a length between 8 and 30 characters.**
    - Your password must have a length that falls within the range of 8 to 30 characters.
 
@@ -280,22 +277,18 @@ On doing this, a token is sent alongside the email.
 After sending the request, a link to create a new password will be displayed on the user's screen.
 
 The response to these will be a JSON object with the following information:
-<<<<<<< HEAD
 
 - status (string): The status of the request (success or failure).
 - message (string): It contains a link that makes a POST request to /api/reset-password?userType=${userType}&userEmail=${userEmail}&token=${token} redirecting the user to the new password page.
 
 ## Create a new password
 
-=======
-
 - status (string): The status of the request (success or failure).
 - message (string): It contains a link that makes a POST request to /api/reset-password?userType=${userType}&userEmail=${userEmail}&token=${token} redirecting the user to the new password page.
 
 ## Create a new password
 
-> > > > > > > bffe29891abd3df7878bd576891dc8eae36d7bdf
-> > > > > > > **To create a new password, you make a POST request to the /api/reset-password endpoint. The request body should contain the following information:**
+**To create a new password, you make a POST request to the /api/reset-password endpoint. The request body should contain the following information:**
 
 - password (string): A password different from the initil one.
 - passwordConfirm (string): To confirm the password entered earlier.
@@ -324,12 +317,9 @@ The response to these will be a JSON object with the following information:
   }
   ```
 
-### 2. GET ALL JOBS
-=======
 ## JOB ENDPOINTS
 
 ### 1. GET ALL JOBS
->>>>>>> debe69d712d8b8426343f63ffea351ac9138ffba
 
 - **Endpoint:** `/api/jobs`
 - **HTTP Method:** GET
@@ -353,7 +343,6 @@ The response to these will be a JSON object with the following information:
   {}
   ```
 
-<<<<<<< HEAD
 ### 4. GET ALL UNASSIGNED JOBS
 
 - **Endpoint:** `/api/unassign`
@@ -391,9 +380,6 @@ The response to these will be a JSON object with the following information:
   ```
 
 ### 6. DELETE JOB
-=======
-### 3. DELETE JOB
->>>>>>> debe69d712d8b8426343f63ffea351ac9138ffba
 
 - **Endpoint:** `/api/deletejob`
 - **HTTP Method:** DELETE
@@ -505,9 +491,6 @@ The response to these will be a JSON object with the following information:
 - **Url**: [https://localhost:5005/api/completejob]()
 - **Request params**: url(job id)
 
-<<<<<<< HEAD
-> > > > > > > # 27b7a3e15d49ec4507b40577e418b4ca9318f9a4
-
 - status (string): The status of the request (success or failure).
 - message (string): A message indicating the success or failure of the password reset process.
 
@@ -515,30 +498,19 @@ The response to these will be a JSON object with the following information:
 
 **To update a user's profile, you make a PATCH request to the /api/updateprofile/?\_id endpoint.The id of the user should be included in the query. The request body should then contain the information the user wants to update**
 
-<<<<<<< HEAD
-
-> > > > > > > # 423e17e8cf5475ce7f0dbbdb07eab00c80a55525
-
 ## Resend confirmation email
 
-<<<<<<< HEAD
-
-<<<<<<< HEAD
 **If a user failed to confirm their email address on signup, this "/api/resendcomfirmemail" endpoint should be consumed to resend a new confirmation email**
 
-> > > > > > > # a8c92714df19e342a8b93643bf6e93b63fd8b3cc
-> > > > > > >
-> > > > > > > **If a user failed to confirm their email address on signup, this "/api/resendconfirmemail" endpoint should be consumed to resend a new confirmation email. The email of the user requesting the token should be included in a form that send the requery to the api**
-> > > > > > > aa85266a3941b1059dac0c294a1e8a6afda5ff83
-> > > > > > > =======
-> > > > > > > **If a user failed to confirm their email address on signup, this "/api/resendconfirmemail" endpoint should be consumed to resend a new confirmation email. The email of the user requesting the token should be included in a form that send the requery to the api**
+**If a user failed to confirm their email address on signup, this "/api/resendconfirmemail" endpoint should be consumed to resend a new confirmation email. The email of the user requesting the token should be included in a form that send the requery to the api**
+**If a user failed to confirm their email address on signup, this "/api/resendconfirmemail" endpoint should be consumed to resend a new confirmation email. The email of the user requesting the token should be included in a form that send the requery to the api**
 
 ## view profile
 
 **To view a user's profile, you make a GET request to the /api/userprofile/?\_id endpoint.The id of the user should be included in the query.**
 
-> > > > > > > bffe29891abd3df7878bd576891dc8eae36d7bdf
-=======
+> > > > > > > # bffe29891abd3df7878bd576891dc8eae36d7bdf
+
 ### 11. VIEW JOB DETAILS
 
 - **Endpoint:** `/api/viewjobdetails/:jobId`
@@ -746,4 +718,3 @@ The response to these will be a JSON object with the following information:
     {success: true}
   }
   ```
->>>>>>> debe69d712d8b8426343f63ffea351ac9138ffba
